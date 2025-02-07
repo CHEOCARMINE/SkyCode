@@ -6,51 +6,37 @@
     <title>Iniciar Sesión</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <style>
-        body {
-            background-color: #2C2F33; /* Fondo gris oscuro */
-            height: 100vh;
-        }
-        .login-container {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 400px;
-        }
-        .btn-primary {
-            background-color: #0033A0; /* Azul rey */
-            border: none;
-        }
-        .btn-primary:hover {
-            background-color: #00267D; /* Azul más oscuro */
-        }
-        .input-group-text {
-            background-color: #0033A0;
-            color: white;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css"> <!-- Archivo CSS externo -->
 </head>
 <body class="d-flex justify-content-center align-items-center">
     <div class="login-container">
         <h2 class="text-center text-dark fw-bold">Iniciar Sesión</h2>
 
         <!-- Campo de usuario -->
-        <div class="input-group mt-3">
-            <span class="input-group-text"><i class="bi bi-person"></i></span>
-            <input class="form-control" type="text" placeholder="Usuario">
+        <div class="mb-3">
+            <label for="username" class="form-label">Usuario</label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                <input id="username" class="form-control" type="text" placeholder="Usuario" maxlength="10">
+            </div>
+            <div id="username-error" class="error">Máximo 10 caracteres y no se permiten puntos.</div>
         </div>
 
         <!-- Campo de contraseña -->
-        <div class="input-group mt-3">
-            <span class="input-group-text"><i class="bi bi-lock"></i></span>
-            <input class="form-control" type="password" placeholder="Contraseña">
+        <div class="mb-3">
+            <label for="password" class="form-label">Contraseña</label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                <input id="password" class="form-control" type="password" placeholder="Contraseña" maxlength="10">
+            </div>
+            <div id="password-error" class="error">Máximo 10 caracteres y no se permiten puntos.</div>
         </div>
 
         <!-- Botón de inicio de sesión -->
-        <button class="btn btn-primary w-100 mt-4">Iniciar Sesión</button>
+        <button class="btn btn-primary w-100 mt-3" onclick="validateForm()">Iniciar Sesión</button>
     </div>
 
+    <script src="script.js"></script> <!-- Archivo JavaScript externo -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
