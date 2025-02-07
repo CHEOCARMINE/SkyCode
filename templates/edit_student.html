@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Alumno</title>
+</head>
+<body>
+    <h1>Editar Alumno</h1>
+    <form action="{{ url_for('manage_students.actualizar_alumno', id=alumno.id) }}" method="POST">
+        <label>Nombre:</label>
+        <input type="text" name="nombre" value="{{ alumno.nombre }}" required>
+        <label>Matrícula:</label>
+        <input type="text" name="matricula" value="{{ alumno.matricula }}" required>
+        <button type="submit">Actualizar</button>
+    </form>
+</body>
+</html>
