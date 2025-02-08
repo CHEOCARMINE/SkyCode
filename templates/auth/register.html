@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Alumno</title>
+</head>
+<body>
+    <h2>Registro de Alumno</h2>
+    <form action="/registrar_alumno" method="post" enctype="multipart/form-data">
+        <label for="matricula">Matrícula:</label>
+        <input type="text" id="matricula" name="matricula" required><br><br>
+        
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required><br><br>
+        
+        <label for="correo">Correo:</label>
+        <input type="email" id="correo" name="correo" required><br><br>
+        
+        <label for="certificado">Certificado de Preparatoria:</label>
+        <input type="file" id="certificado" name="certificado" required><br><br>
+        
+        <label for="curp">CURP:</label>
+        <input type="file" id="curp" name="curp" required><br><br>
+        
+        <label for="comprobante_pago">Comprobante de Pago:</label>
+        <input type="file" id="comprobante_pago" name="comprobante_pago" required><br><br>
+        
+        <button type="submit">Registrar Alumno</button>
+    </form>
+</body>
+</html>
