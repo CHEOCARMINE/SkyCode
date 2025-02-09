@@ -1,0 +1,33 @@
+body {
+    background-color: #2C2F33; /* Fondo gris oscuro */
+    height: 100vh;
+}
+
+.login-container {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+}
+
+.btn-primary {
+    background-color: #0033A0; /* Azul rey */
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #00267D; /* Azul más oscuro */
+}
+
+.input-group-text {
+    background-color: #0033A0;
+    color: white;
+}
+
+.error {
+    color: red;
+    font-size: 0.9rem;
+    display: none;
+}
