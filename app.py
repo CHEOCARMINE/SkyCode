@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 from database import init_db, db
+from models import Alumno  # Asegúrate de importar el modelo Alumno
 from functions.user_management.manage_students import manage_students
 
 app = Flask(__name__)
@@ -17,7 +18,8 @@ app.register_blueprint(manage_students)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    alumnos = Alumno.query.all()
+    return render_template('index.html', alumnos=alumnos)
 
 @app.route('/agregar_alumno')
 def agregar_alumno():
@@ -25,3 +27,4 @@ def agregar_alumno():
 
 if __name__ == '__main__':
     app.run(debug=True)
+

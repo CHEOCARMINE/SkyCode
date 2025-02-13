@@ -4,18 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Alumnos</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <h1>Lista de Alumnos</h1>
-    <a href="{{ url_for('manage_students.crear_alumno') }}">Agregar Alumno</a>
-    <ul>
-        {% for alumno in alumnos %}
-            <li>
-                {{ alumno.nombre }} - {{ alumno.matricula }}
-                <a href="{{ url_for('manage_students.actualizar_alumno', id=alumno.id) }}">Editar</a>
-                <a href="{{ url_for('manage_students.eliminar_alumno', id=alumno.id) }}">Eliminar</a>
-            </li>
-        {% endfor %}
-    </ul>
+    <div class="container mt-5">
+        <h1 class="mb-4">Lista de Alumnos</h1>
+        <a href="{{ url_for('agregar_alumno') }}" class="btn btn-primary mb-4">Agregar Alumno</a>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario ID</th>
+                    <th>Matrícula</th>
+                    <th>Nombre</th>
+                    <th>Domicilio</th>
+                    <th>Teléfono</th>
+                    <th>Correo Electrónico</th>
+                    <th>Estatus</th>
+                    <th>Carrera</th>
+                    <th>Certificado de Preparatoria</th>
+                    <th>CURP</th>
+                    <th>Comprobante de Pago</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for alumno in alumnos %}
+                <tr>
+                    <td>{{ alumno.id }}</td>
+                    <td>{{ alumno.usuario_id }}</td>
+                    <td>{{ alumno.matricula }}</td>
+                    <td>{{ alumno.nombre }}</td>
+                    <td>{{ alumno.domicilio }}</td>
+                    <td>{{ alumno.telefono }}</td>
+                    <td>{{ alumno.correo_electronico }}</td>
+                    <td>{{ alumno.estatus }}</td>
+                    <td>{{ alumno.carrera }}</td>
+                    <td>{{ alumno.certificado_preparatoria }}</td>
+                    <td>{{ alumno.curp }}</td>
+                    <td>{{ alumno.comprobante_pago }}</td>
+                    <td>
+                        <a href="{{ url_for('manage_students.editar_alumno', id=alumno.id) }}" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="{{ url_for('manage_students.eliminar_alumno', id=alumno.id) }}" class="btn btn-danger btn-sm">Eliminar</a>
+                    </td>                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
