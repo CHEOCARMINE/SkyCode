@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Alumno</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Editar Alumno</h1>
+        <form action="{{ url_for('manage_students.actualizar_alumno', id=alumno.id) }}" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>Usuario ID:</label>
+                <input type="number" name="usuario_id" value="{{ alumno.usuario_id }}" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Matrícula:</label>
+                <input type="text" name="matricula" value="{{ alumno.matricula }}" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Nombre:</label>
+                <input type="text" name="nombre" value="{{ alumno.nombre }}" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Domicilio:</label>
+                <input type="text" name="domicilio" value="{{ alumno.domicilio }}" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Teléfono:</label>
+                <input type="text" name="telefono" value="{{ alumno.telefono }}" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Correo Electrónico:</label>
+                <input type="email" name="correo_electronico" value="{{ alumno.correo_electronico }}" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Estatus:</label>
+                <input type="text" name="estatus" value="{{ alumno.estatus }}" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Carrera:</label>
+                <input type="text" name="carrera" value="{{ alumno.carrera }}" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Certificado de Preparatoria:</label>
+                <input type="file" name="certificado_preparatoria" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>CURP:</label>
+                <input type="text" name="curp" value="{{ alumno.curp }}" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Comprobante de Pago:</label>
+                <input type="file" name="comprobante_pago" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
