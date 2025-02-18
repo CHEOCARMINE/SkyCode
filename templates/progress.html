@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial Académico</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 800px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 40px;
+        }
+
+        h2 {
+            color: #343a40;
+            font-weight: bold;
+        }
+
+        .progress {
+            height: 25px;
+            border-radius: 5px;
+            overflow: hidden;
+            background: #e9ecef;
+        }
+
+        .progress-bar {
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        table {
+            margin-top: 20px;
+        }
+
+        th {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+        }
+
+        td {
+            text-align: center;
+        }
+
+        .badge-success {
+            background-color: #28a745;
+        }
+
+        .badge-danger {
+            background-color: #dc3545;
+        }
+
+        .badge-warning {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .btn-back {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2 class="text-center mb-4"> Historial Académico</h2>
+
+        <!-- Resumen -->
+        <div class="card p-3">
+            <h4> Resumen</h4>
+            <ul class="list-group">
+                <li class="list-group-item"><strong>Usuario:</strong> {{ username | default("Invitado") }}</li>
+    
+                <li class="list-group-item"><strong>Materias Aprobadas:</strong> 
+                    <span class="badge bg-success">{{ aprobadas | default(0) }}</span>
+                </li>
+                <li class="list-group-item"><strong>Materias Reprobadas:</strong> 
+                    <span class="badge bg-danger">{{ reprobadas | default(0) }}</span>
+                </li>
+                <li class="list-group-item"><strong>Avance Total de la Carrera:</strong> 
+                    <span class="badge bg-warning text-dark">{{ avance | default(0) }}%</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Barra de Progreso -->
+        <div class="mt-4">
+            <h4>Progreso de la Carrera</h4>
+            <div class="progress">
+                <div id="progress-bar" class="progress-bar bg-success progress-bar-striped progress-bar-animated"
+                     role="progressbar"
+                     aria-valuemin="0" aria-valuemax="100">
+                </div>
+            </div>
+            
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    let avance = parseInt("{{ avance | default(0) }}");
+                    let progressBar = document.getElementById("progress-bar");
+            
+                    progressBar.style.width = avance + "%";
+                    progressBar.setAttribute("aria-valuenow", avance);
+                    progressBar.innerText = avance + "%";
+                });
+            </script>
+            
+
+            </div>
+        </div>
+
+        <!-- Tabla de Calificaciones -->
+        <div class="mt-4">
+            <h4>Calificaciones</h4>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Materia</th>
+                        <th>Calificación</th>
+                        <th>Cuatrimestre</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if calificaciones %}
+                        {% for cal in calificaciones %}
+                        <tr>
+                            <td>{{ cal.materia }}</td>
+                            <td>
+                                {% if cal.calificacion >= 7 %}
+                                    <span class="badge bg-success">{{ cal.calificacion }}</span>
+                                {% else %}
+                                    <span class="badge bg-danger">{{ cal.calificacion }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ cal.cuatrimestre }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3" class="text-center text-muted">No hay calificaciones disponibles</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Botón de regreso -->
+        <div class="text-center">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-dark btn-back"> Volver </a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
