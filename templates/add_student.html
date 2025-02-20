@@ -12,10 +12,6 @@
         <h1 class="mt-5">Agregar Alumno</h1>
         <form action="{{ url_for('manage_students.crear_alumno') }}" method="POST" enctype="multipart/form-data">
             <div class="form-group">
-                <label>Usuario ID (opcional):</label>
-                <input type="number" name="usuario_id" class="form-control">
-            </div>
-            <div class="form-group">
                 <label>Matrícula:</label>
                 <input type="text" name="matricula" class="form-control" required>
             </div>
@@ -36,24 +32,32 @@
                 <input type="email" name="correo_electronico" class="form-control" required>
             </div>
             <div class="form-group">
-                <label>Estatus:</label>
-                <input type="text" name="estatus" class="form-control">
-            </div>
-            <div class="form-group">
-                <label>Carrera:</label>
-                <input type="text" name="carrera" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label>Certificado de Preparatoria:</label>
-                <input type="file" name="certificado_preparatoria" class="form-control" required>
-            </div>
-            <div class="form-group">
                 <label>CURP:</label>
                 <input type="text" name="curp" class="form-control" required>
             </div>
             <div class="form-group">
+                <label>Certificado de Preparatoria:</label>
+                <input type="file" name="certificado_preparatoria" class="form-control">
+            </div>
+            <div class="form-group">
                 <label>Comprobante de Pago:</label>
-                <input type="file" name="comprobante_pago" class="form-control" required>
+                <input type="file" name="comprobante_pago" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Estado:</label>
+                <select class="form-control" name="estado_id" required>
+                    {% for estado in estados %}
+                    <option value="{{ estado.id }}">{{ estado.nombre_estado }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Carrera:</label>
+                <select class="form-control" name="carrera_id" required>
+                    {% for carrera in carreras %}
+                    <option value="{{ carrera.id }}">{{ carrera.nombre }}</option>
+                    {% endfor %}
+                </select>
             </div>
             <button type="submit" class="btn btn-primary">Guardar</button>
         </form>
