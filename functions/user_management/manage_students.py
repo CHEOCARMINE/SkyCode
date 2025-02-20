@@ -2,7 +2,7 @@ import os
 from flask import Blueprint, request, jsonify, redirect, url_for, flash, render_template
 from werkzeug.utils import secure_filename
 from database import db
-from models import Alumno, EstadoAlumno, Carrera
+from models import Alumno, EstadoAlumno, Carrera, Materia
 from sqlalchemy import text
 
 manage_students = Blueprint('manage_students', __name__)
@@ -279,4 +279,43 @@ def ver_materias_pendientes(alumno_id):
         return render_template('ver_materias.html', materias_pendientes=materias_pendientes, materias_sugeridas=materias_sugeridas)
     except Exception as e:
         print(f"Error al obtener materias pendientes: {e}")
+        return jsonify({"error": str(e)}), 400
+
+@manage_students.route('/agregar_materia', methods=['GET', 'POST'])
+def agregar_materia():
+    if request.method == 'POST':
+        try:
+            nombre = request.form.get('nombre')
+            crn = request.form.get('crn')
+            codigo = request.form.get('codigo')
+            creditos = request.form.get('creditos')
+            correlativa_id = request.form.get('correlativa_id')
+
+            nueva_materia = Materia(
+                nombre=nombre,
+                crn=crn,
+                codigo=codigo,
+                creditos=creditos,
+                correlativa_id=correlativa_id
+            )
+            db.session.add(nueva_materia)
+            db.session.commit()
+            flash('Materia agregada con éxito', 'success')
+            return redirect(url_for('manage_students.vista_de_materias'))
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error al agregar materia: {e}")
+            return jsonify({"error": str(e)}), 400
+    else:
+        materias = Materia.query.all()  # Obtener todas las materias para seleccionar correlativas
+        return render_template('agregar_materia.html', materias=materias)
+
+@manage_students.route('/vista_de_materias', methods=['GET'])
+def vista_de_materias():
+    try:
+        # Obtener todas las materias de la base de datos
+        materias = Materia.query.all()
+        return render_template('vista_de_materias.html', materias=materias)
+    except Exception as e:
+        print(f"Error al obtener materias: {e}")
         return jsonify({"error": str(e)}), 400
