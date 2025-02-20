@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selección de Materias</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f5f5f7;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .btn {
+            background-color: #2980B9;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 15px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #1ABC9C;
+        }
+        .historial {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            background-color: #fff;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .historial h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .materia-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+    <script>
+        const materiasCargadas = [];
+
+        async function agregarMateria() {
+            const crnInput = document.getElementById('crn');
+            const crnValue = crnInput.value.trim();
+            if (crnValue) {
+                try {
+                    const response = await fetch('/getMateria', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({ crn: crnValue })
+                    });
+                    const materiaName = await response.json();
+                    if (materiaName !== "CRN no encontrado") {
+                        const materiaItem = document.createElement('div');
+                        materiaItem.className = 'materia-item';
+                        materiaItem.textContent = `Materia: ${materiaName} (CRN: ${crnValue})`;
+                        document.getElementById('historial').appendChild(materiaItem);
+                        materiasCargadas.push({ crn: crnValue, nombre: materiaName });
+                    } else {
+                        alert('CRN no encontrado. Por favor, intenta nuevamente.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+                crnInput.value = '';
+            }
+        }
+
+        function guardarMaterias() {
+            // Aquí puedes agregar la lógica para guardar todas las materias en la base de datos.
+            console.log('Materias a guardar:', materiasCargadas);
+            alert('Materias guardadas exitosamente.');
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Selección de Materias</h1>
+        </div>
+        <div class="form-group">
+            <label for="crn">Ingresa el CRN de la Materia</label>
+            <input type="text" id="crn" name="crn" placeholder="Ej. 1234" required>
+        </div>
+        <button type="button" class="btn" onclick="agregarMateria()">Agregar Materia</button>
+        <div class="historial" id="historial">
+            <h2>Historial de Materias</h2>
+            <!-- Las materias cargadas se mostrarán aquí -->
+        </div>
+        <button type="button" class="btn" onclick="guardarMaterias()">Guardar Cambios</button>
+    </div>
+</body>
+</html>

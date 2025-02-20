@@ -1,8 +1,14 @@
+/* Fondo de la página */
 body {
     background-color: #2C2F33; /* Fondo gris oscuro */
     height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
 }
 
+/* Contenedor del login */
 .login-container {
     background: white;
     padding: 2.5rem;
@@ -10,22 +16,50 @@ body {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     width: 100%;
     max-width: 400px;
+    text-align: center;
 }
 
+/* Título */
+.login-container h2 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+/* Inputs y labels */
+label {
+    display: block;
+    font-weight: bold;
+    text-align: left;
+    margin: 10px 0 5px;
+    color: #333;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Botón de login */
 .btn-primary {
     background-color: #0033A0; /* Azul rey */
+    color: white;
     border: none;
+    padding: 10px;
+    width: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: 0.3s;
 }
 
 .btn-primary:hover {
     background-color: #00267D; /* Azul más oscuro */
 }
 
-.input-group-text {
-    background-color: #0033A0;
-    color: white;
-}
-
+/* Mensajes de error */
 .error {
     color: red;
     font-size: 0.9rem;

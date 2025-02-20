@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil del Alumno</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .banner {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .profile-header img {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            margin-right: 20px;
+        }
+        .profile-header h2 {
+            margin: 0;
+            color: #333;
+        }
+        .profile-header p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .profile-nav {
+            display: flex;
+            justify-content: space-around;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .profile-nav a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .profile-nav a:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section h3 {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .section p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .section .info-item {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="banner">
+        <h1>Perfil del Alumno</h1>
+    </div>
+    <div class="container">
+        <div class="profile-header">
+            <img src="profile.jpg" alt="Foto de perfil">
+            <div>
+                <h2>Juan Pérez</h2>
+                <p>Alumno de Ingeniería Informática</p>
+                <p>Universidad de Campeche</p>
+            </div>
+        </div>
+        <div class="profile-nav">
+            <a href="#">Acerca de</a>
+            <a href="#">Información</a>
+            <a href="#">Inscrito en</a>
+            <a href="#">Objetivos</a>
+            <a href="#">Completada</a>
+        </div>
+        <div class="section">
+            <h3>Datos Generales</h3>
+            <div class="info-item"><strong>Nombre Completo:</strong> Juan Pérez</div>
+            <div class="info-item"><strong>Matrícula:</strong> 123456789</div>
+            <div class="info-item"><strong>Correo Electrónico:</strong> juan.perez@universidad.com</div>
+            <div class="info-item"><strong>Teléfono:</strong> (123) 456-7890</div>
+            <div class="info-item"><strong>Dirección:</strong> Calle Falsa 123, Ciudad, País</div>
+            <div class="info-item"><strong>Carrera:</strong> Ingeniería Informática</div>
+        </div>
+    </div>
+</body>
+</html>
