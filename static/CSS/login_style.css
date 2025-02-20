@@ -1,33 +1,90 @@
-body {
-    background-color: #2C2F33; /* Fondo gris oscuro */
-    height: 100vh;
+/* Colores proporcionados */
+:root {
+    --background-color: #F5F5F5;
+    --primary-color: #2C3E50;
+    --success-color: #27AE60;
+    --warning-color: #F1C40F;
+    --error-color: #E74C3C;
+    --text-main: #333333;
+    --text-secondary: #7F8C8D;
 }
 
+/* Estilos Generales */
+body {
+    background-color: var(--background-color);
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Contenedor del Login */
 .login-container {
     background: white;
-    padding: 2.5rem;
-    border-radius: 12px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    width: 100%;
-    max-width: 400px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 320px;
+    text-align: center;
 }
 
-.btn-primary {
-    background-color: #0033A0; /* Azul rey */
+h2 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+/* Estilos del Formulario */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    text-align: left;
+    font-weight: bold;
+    color: var(--text-main);
+    margin-bottom: 5px;
+}
+
+input {
+    padding: 10px;
+    border: 1px solid var(--text-secondary);
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: var(--text-main);
+}
+
+button {
+    background: var(--success-color);
+    color: white;
+    padding: 10px;
     border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
 }
 
-.btn-primary:hover {
-    background-color: #00267D; /* Azul más oscuro */
+button:hover {
+    background: #219150;
 }
 
-.input-group-text {
-    background-color: #0033A0;
+/* Mensajes */
+.message {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    display: none;
+}
+
+.success {
+    background-color: var(--success-color);
     color: white;
 }
 
 .error {
-    color: red;
-    font-size: 0.9rem;
-    display: none;
+    background-color: var(--error-color);
+    color: white;
 }

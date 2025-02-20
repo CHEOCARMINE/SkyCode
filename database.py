@@ -11,3 +11,14 @@ db_config = {
 # ✅ Función para obtener la conexión a la base de datos
 def get_db_connection():
     return mysql.connector.connect(**db_config)
+
+
+def test_connection():
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+        cursor.execute("SELECT 1")  # Consulta de prueba
+        print("✅ Conexión exitosa a la base de datos.")
+        db.close()
+    except Exception as e:
+        print(f"❌ Error de conexión a la BD: {e}")

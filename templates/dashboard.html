@@ -1,1 +1,86 @@
-<a href="{{ url_for('progress') }}" class="btn btn-primary">Ver Historial Académico</a>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+
+    <!-- Barra de navegación superior -->
+    <nav class="navbar navbar-dark bg-dark p-3">
+        <a class="navbar-brand mx-3" href="#">Dashboard</a>
+        <span class="navbar-text text-light">Bienvenido, {{ username }}</span>
+        <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm mx-3">Cerrar Sesión</a>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Menú lateral -->
+            <nav class="col-md-2 d-none d-md-block bg-dark sidebar">
+                <div class="position-sticky">
+                    <ul class="nav flex-column mt-4">
+                        <li class="nav-item">
+                            <a class="nav-link text-light" href="{{ url_for('dashboard') }}">🏠 Inicio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" href="{{ url_for('progress') }}">📊 Progreso Académico</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" href="{{ url_for('reports') }}">📈 Reportes</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Contenido principal -->
+            <main class="col-md-10 ml-sm-auto px-md-4">
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="card card-stat bg-primary text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Alumnos Inscritos</h5>
+                                <p class="card-text display-4">{{ total_inscritos }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card card-stat bg-success text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Alumnos Egresados</h5>
+                                <p class="card-text display-4">{{ total_egresados }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card card-stat bg-warning text-dark">
+                            <div class="card-body">
+                                <h5 class="card-title">Promedio Global</h5>
+                                <p class="card-text display-4">{{ promedio_global }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón Mejorado para acceder a Progress -->
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('progress') }}" class="btn btn-success btn-lg">
+                        📚 Ver Historial Académico
+                    </a>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify, session, render_template, redirect, url_for
 from database import get_db_connection  # Importa la conexión a la base de datos
+from functions.reports.generate_statistical_report import obtener_estadisticas_generales
 import bcrypt
 import os
-
 # ✅ Configuración de la aplicación
 app = Flask(__name__)
 app.secret_key = os.urandom(24)  # Clave para manejar sesiones
@@ -14,14 +14,20 @@ app.secret_key = os.urandom(24)  # Clave para manejar sesiones
 def login():
     if request.method == 'POST':
         data = request.get_json()
-        username = data.get("username", "").strip()
-        password = data.get("password", "").strip()
+        user_id = data.get("id").strip() if data.get("id") else None
+        password = data.get("password")
+
+        # Verificar si el usuario quiere entrar como invitado
+        if user_id == "invitado":
+            session["usuario_id"] = None
+            session["rol"] = "Invitado"
+            return jsonify({"success": True, "message": "Inicio de sesión como invitado", "redirect": "/dashboard"})
 
         db = get_db_connection()
         cursor = db.cursor(dictionary=True)
 
-        # ✅ Buscar el usuario en la base de datos
-        cursor.execute("SELECT * FROM Usuarios WHERE nombre_usuario = %s", (username,))
+        # Buscar el usuario en la base de datos
+        cursor.execute("SELECT * FROM Usuarios WHERE id = %s", (user_id,))
         user = cursor.fetchone()
         db.close()
 
@@ -29,12 +35,10 @@ def login():
             stored_password = user["contraseña"]
             stored_rol = user["rol"]
 
-            # ✅ Comparar la contraseña ingresada con la almacenada en la BD
+            # Comparar la contraseña ingresada con la almacenada en la BD
             if bcrypt.checkpw(password.encode('utf-8'), stored_password.encode('utf-8')):
                 session["usuario_id"] = user["id"]
-                session["username"] = user["nombre_usuario"]
                 session["rol"] = stored_rol
-
                 return jsonify({"success": True, "message": "Inicio de sesión exitoso", "redirect": "/dashboard"})
             else:
                 return jsonify({"success": False, "message": "Usuario o contraseña incorrectos"}), 401
@@ -42,6 +46,7 @@ def login():
         return jsonify({"success": False, "message": "Usuario no encontrado"}), 404
 
     return render_template('auth/login.html')
+
 
 
 # ==========================
@@ -100,6 +105,20 @@ def progress():
                            reprobadas=reprobadas, 
                            avance=avance)
 
+@app.route('/reports')
+def reports():
+    from functions.reports.generate_statistical_report import generate_statistical_report  # Importamos dentro de la función para evitar importaciones circulares
+
+    # Obtener datos desde la función de reportes
+    estadisticas = generate_statistical_report()
+
+    return render_template("reports.html", 
+                           total_inscritos=estadisticas.get("total_inscritos", 0),
+                           total_egresados=estadisticas.get("total_egresados", 0),
+                           promedio_global=estadisticas.get("promedio_global", 0.0),
+                           promedios_carreras=estadisticas.get("promedios_carreras", []))
+
+
 
 # ==========================
 # 📌 RUTA PARA EL DASHBOARD
@@ -123,4 +142,4 @@ def logout():
 
 # ✅ Iniciar la aplicación
 if __name__ == '__main__':
-    app.run(debug=True, port=5023)
+    app.run(debug=True, port=5030)

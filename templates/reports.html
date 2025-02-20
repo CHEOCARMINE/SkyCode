@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes Estadísticos</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+    <!-- CSS Personalizado -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reports.css') }}">
+
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Barra de Navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">Reportes Académicos</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Contenido -->
+    <div class="container mt-5">
+        <div class="row">
+            <!-- Tarjeta: Total de Inscritos -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Total de Inscritos</h5>
+                        <p class="stat-number text-success">{{ total_inscritos }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta: Total de Egresados -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Total de Egresados</h5>
+                        <p class="stat-number text-warning">{{ total_egresados }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta: Promedio Global -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Promedio Global</h5>
+                        <p class="stat-number text-danger">{{ promedio_global }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección: Gráfico de Promedios -->
+        <div class="mt-5">
+            <h4 class="text-center">Promedio Global por Carrera</h4>
+            <canvas id="chartPromedios"></canvas>
+        </div>
+
+        <!-- Tabla de Datos -->
+        <div class="mt-5">
+            <h4 class="text-center">Detalles por Carrera</h4>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Carrera</th>
+                            <th>Inscritos</th>
+                            <th>Egresados</th>
+                            <th>Promedio Global</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for carrera in promedios_carreras %}
+                        <tr>
+                            <td>{{ carrera.carrera }}</td>
+                            <td>{{ carrera.inscritos }}</td>
+                            <td>{{ carrera.egresados }}</td>
+                            <td>{{ carrera.promedio_global }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center">No hay datos disponibles</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Botón de Regreso -->
+        <div class="text-center mt-4">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Volver al Dashboard</a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Script de Chart.js -->
+    <script type="application/json" id="jsonPromedios">
+        {{ promedios_carreras | tojson }}
+    </script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let jsonElement = document.getElementById("jsonPromedios");
+            let promediosCarreras = JSON.parse(jsonElement.textContent || "[]");
+    
+            if (!Array.isArray(promediosCarreras)) {
+                console.error("Los datos de promediosCarreras no son un array:", promediosCarreras);
+                return;
+            }
+    
+            let labels = promediosCarreras.map(carrera => carrera.carrera);
+            let data = promediosCarreras.map(carrera => carrera.promedio_global);
+    
+            let ctx = document.getElementById("chartPromedios").getContext("2d");
+            new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Promedio Global",
+                        data: data,
+                        backgroundColor: "#27AE60",
+                        borderColor: "#1E8449",
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        });
+    </script>
+    
+
+</body>
+</html>

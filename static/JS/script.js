@@ -1,35 +1,43 @@
-function validateInput(input, errorElement) {
-    const value = input.value;
-    if (value.length > 10 || value.includes(".")) {
-        errorElement.style.display = "block";
-        input.classList.add("is-invalid");
-    } else {
-        errorElement.style.display = "none";
-        input.classList.remove("is-invalid");
-    }
-}
+document.addEventListener("DOMContentLoaded", function () {
+    const loginForm = document.getElementById("login-form");
+    const messageDiv = document.getElementById("message");
 
-function validateForm() {
-    const username = document.getElementById("username");
-    const password = document.getElementById("password");
-    const usernameError = document.getElementById("username-error");
-    const passwordError = document.getElementById("password-error");
-
-    validateInput(username, usernameError);
-    validateInput(password, passwordError);
-
-    if (username.classList.contains("is-invalid") || password.classList.contains("is-invalid")) {
-        return;
+    function showMessage(message, type) {
+        messageDiv.className = "message " + type;
+        messageDiv.innerText = message;
+        messageDiv.style.display = "block";
     }
 
-    alert("Inicio de sesión exitoso");
-}
+    loginForm.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-// Detectar cambios en los inputs y validar en tiempo real
-document.getElementById("username").addEventListener("input", function () {
-    validateInput(this, document.getElementById("username-error"));
-});
+        const userId = document.getElementById("id").value.trim();
+        const password = document.getElementById("password").value.trim();
 
-document.getElementById("password").addEventListener("input", function () {
-    validateInput(this, document.getElementById("password-error"));
+        if (userId.length === 0 || password.length === 0) {
+            showMessage("Por favor, completa todos los campos.", "error");
+            return;
+        }
+
+        fetch("/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: userId, password })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showMessage("Inicio de sesión exitoso, redirigiendo...", "success");
+                setTimeout(() => {
+                    window.location.href = "/dashboard";
+                }, 1500);
+            } else {
+                showMessage(data.message, "error");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            showMessage("Error al conectar con el servidor.", "error");
+        });
+    });
 });
