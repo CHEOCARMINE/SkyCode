@@ -2,7 +2,7 @@ from flask import Flask, jsonify
 from models import Alumno, Materia, Calificacion, db
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///yourdatabase.db'  # Actualiza esto con la URI de tu base de datos
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///yourdatabase.db'  # Actualizar esto con la URI de la base de datos
 db.init_app(app)
 
 @app.route('/alumno/<int:alumno_id>/materias-pendientes')
@@ -27,8 +27,8 @@ def ver_materias_pendientes(alumno_id):
     })
 
 def obtener_materias_sugeridas(alumno):
-    # Aquí puedes implementar la lógica para sugerir materias según el plan de estudios y las reglas específicas
-    # Por simplicidad, aquí solo estamos devolviendo todas las materias del próximo cuatrimestre
+    # Aqui se puede implementar la lógica para sugerir materias según el plan de estudios y las reglas específicas
+    # Debido a que aun no se implementa de manera correcta, aquí solo estamos devolviendo todas las materias del próximo cuatrimestre
     return Materia.query.join(PlanEstudios).filter(PlanEstudios.cuatrimestre == alumno.carrera.creditos // 24 + 1).all()
 
 if __name__ == '__main__':
