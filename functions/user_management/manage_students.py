@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify, redirect, url_for, flash, render_
 from werkzeug.utils import secure_filename
 from database import db
 from models import Alumno, EstadoAlumno, Carrera
+from sqlalchemy import text
 
 manage_students = Blueprint('manage_students', __name__)
 
@@ -232,3 +233,50 @@ def eliminar_alumno(id):
     db.session.delete(alumno)
     db.session.commit()
     return jsonify({"mensaje": "Alumno eliminado con éxito"})
+
+
+
+
+@manage_students.route('/ver_materias_pendientes/<int:alumno_id>', methods=['GET'])
+def ver_materias_pendientes(alumno_id):
+    try:
+        # Consulta para obtener materias pendientes o reprobadas
+        materias_pendientes = db.session.execute(
+            text(
+                """
+                SELECT pe.materia_id, m.nombre
+                FROM Plan_Estudios pe
+                JOIN Materias m ON pe.materia_id = m.id
+                LEFT JOIN Calificaciones c ON pe.materia_id = c.materia_id AND c.alumno_id = :alumno_id
+                WHERE c.materia_id IS NULL OR c.calificacion < :umbral_aprobacion
+                """
+            ),
+            {"alumno_id": alumno_id, "umbral_aprobacion": 6}  # Ajusta el umbral de aprobación según tu sistema
+        ).fetchall()
+
+        # Consulta para obtener materias sugeridas
+        materias_sugeridas = db.session.execute(
+            text(
+                """
+                SELECT m.id, m.nombre
+                FROM Materias m
+                WHERE m.correlativa_id IS NULL OR m.correlativa_id IN (
+                    SELECT pe.materia_id
+                    FROM Plan_Estudios pe
+                    JOIN Calificaciones c ON pe.materia_id = c.materia_id
+                    WHERE c.alumno_id = :alumno_id AND c.calificacion >= :umbral_aprobacion
+                )
+                AND m.id NOT IN (
+                    SELECT c.materia_id
+                    FROM Calificaciones c
+                    WHERE c.alumno_id = :alumno_id AND c.calificacion >= :umbral_aprobacion
+                )
+                """
+            ),
+            {"alumno_id": alumno_id, "umbral_aprobacion": 6}
+        ).fetchall()
+
+        return render_template('ver_materias.html', materias_pendientes=materias_pendientes, materias_sugeridas=materias_sugeridas)
+    except Exception as e:
+        print(f"Error al obtener materias pendientes: {e}")
+        return jsonify({"error": str(e)}), 400
