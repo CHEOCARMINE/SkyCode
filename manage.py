@@ -1,3 +1,56 @@
+#Ejemplo de login con roles al momento de iniciar sesion
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+import mysql.connector
+from config import get_db_connection
+from flask_bcrypt import Bcrypt
+
+app = Flask(__name__)
+app.secret_key = 'clave_secreta'
+bcrypt = Bcrypt(app)
+
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        usuario = request.form['usuario']
+        contraseña = request.form['contraseña']
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM usuarios WHERE nombre_usuario = %s AND activo = 1", (usuario,))
+        user = cursor.fetchone()
+        conn.close()
+
+        if user and bcrypt.check_password_hash(user['contraseña'], contraseña):
+            session['usuario'] = user['nombre_usuario']
+            session['rol'] = user['rol']
+
+            if user['rol'] == 'directivo':
+                return redirect(url_for('dashboard', rol='directivo'))
+            elif user['rol'] == 'coordinador':
+                return redirect(url_for('dashboard', rol='coordinador'))
+            elif user['rol'] == 'alumno':
+                return redirect(url_for('dashboard', rol='alumno'))
+        else:
+            flash("Usuario o contraseña incorrectos, o cuenta inactiva.", "danger")
+
+    return render_template('login.html')
+
+@app.route('/dashboard/<rol>')
+def dashboard(rol):
+    if 'usuario' not in session:
+        return redirect(url_for('login'))
+    return render_template('dashboard.html', rol=rol)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+#Ver materias pendientes
 from flask import Flask, jsonify
 from models import Alumno, Materia, Calificacion, db
 
@@ -78,3 +131,5 @@ def validar_carga(alumno_id):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
