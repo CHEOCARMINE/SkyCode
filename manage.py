@@ -55,10 +55,10 @@ from flask import Flask, jsonify
 from models import Alumno, Materia, Calificacion, db
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///yourdatabase.db'  # Actualizar esto con la URI de la base de datos
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://ulzjbyhniqbdiwgh:6dJiPKrE1AXfiS1jsfOV@bef4yknw2tlo8ei20zko-mysql.services.clever-cloud.com:3306/bef4yknw2tlo8ei20zko'
 db.init_app(app)
 
-@app.route('/alumno/<int:alumno_id>/materias-pendientes')
+@app.route('/materias_pendientes')
 def ver_materias_pendientes(alumno_id):
     alumno = Alumno.query.get(alumno_id)
     if not alumno:
@@ -94,10 +94,10 @@ from flask import Flask, jsonify, request
 from models import Alumno, Materia, CargaAcademica, PlanEstudios, db
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///yourdatabase.db'  # Actualizar esto con la URI de la base de datos
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://ulzjbyhniqbdiwgh:6dJiPKrE1AXfiS1jsfOV@bef4yknw2tlo8ei20zko-mysql.services.clever-cloud.com:3306/bef4yknw2tlo8ei20zko'  # Actualizar esto con la URI de la base de datos
 db.init_app(app)
 
-@app.route('/alumno/<int:alumno_id>/validar-carga', methods=['POST'])
+@app.route('/validar_carga', methods=['POST'])
 def validar_carga(alumno_id):
     alumno = Alumno.query.get(alumno_id)
     if not alumno:
@@ -132,4 +132,15 @@ def validar_carga(alumno_id):
 if __name__ == '__main__':
     app.run(debug=True)
 
+#dfg
+from flask import Flask
+from config import get_db_connection
+from routes import routes
 
+app = Flask(__name__)
+db = get_db_connection(app)
+
+app.register_blueprint(routes, url_prefix='/')
+
+if __name__ == '__main__':
+    app.run(debug=True)
