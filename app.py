@@ -3,6 +3,9 @@ from config import config_by_name
 from database import init_db
 from services import init_mail
 from routes import academic_bp
+from functions.auth.login import auth_bp as login_bp
+from flask_login import LoginManager
+from models import Usuario
 
 def create_app(config_name="development"):
     """
@@ -11,6 +14,7 @@ def create_app(config_name="development"):
     - Carga la configuración correspondiente al entorno.
     - Inicializa la conexión a la base de datos.
     - Inicializa Flask-Mail.
+    - Inicializa Flask-Login.
     - Registra los blueprints (rutas) de la aplicación.
     """
     app = Flask(__name__)
@@ -22,13 +26,23 @@ def create_app(config_name="development"):
     # Inicializa Flask-Mail
     init_mail(app)
     
-    # Registra el blueprint principal
+    # Inicializa Flask-Login
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+    login_manager.login_view = 'auth.login'
+    
+    @login_manager.user_loader
+    def load_user(user_id):
+        return Usuario.query.get(int(user_id))
+    
+    # Registra los blueprints
     app.register_blueprint(academic_bp)
+    app.register_blueprint(login_bp)
 
     # Manejo del error 413 (Request Entity Too Large)
     @app.errorhandler(413)
     def request_entity_too_large(error):
-        flash("El archivo subido es demasiado grande.", "danger")
+        flash("El archivo subido es demasiado grande.", "registe-danger")
         return redirect(url_for('academic_bp.registrar_alumno'))
     
     return app

@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
 
 db = SQLAlchemy()
 
@@ -76,7 +77,7 @@ class Alumno(db.Model):
     def __repr__(self):
         return f"<Alumno {self.primer_nombre} {self.primer_apellido}>"
 
-class Usuario(db.Model):
+class Usuario(db.Model, UserMixin):
     __tablename__ = "Usuarios"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     contraseña = db.Column(db.String(255), nullable=False)
