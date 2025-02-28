@@ -43,55 +43,24 @@
         </a>
       </li>
 
-      <!-- Divisor -->
-      <hr class="sidebar-divider">
+       <!-- Divisor -->
+  <hr class="sidebar-divider">
 
-      <!-- Encabezado de sección -->
+  {% if current_user.is_authenticated %}
+    {# Si el usuario es Alumno (rol_id = 1) #}
+    {% if current_user.rol_id == 1 %}
+      <!-- Encabezado de sección para Alumno -->
       <div class="sidebar-heading">
         Alumno
       </div>
+      {# Aquí puedes agregar enlaces específicos para Alumno #}
 
-      <!-- Elementos de navegación -->
-      <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('academic_bp.index') }}">
-          <i class="fas fa-fw fa-table"></i>
-          <span>Ejemplo de tabloide</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('academic_bp.index') }}">
-          <i class="fas fa-fw fa-wrench"></i>
-          <span>Ejemplo de herramienta</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('academic_bp.index') }}">
-          <i class="fas fa-fw fa-folder"></i>
-          <span>Ejemplo de carpeta</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('academic_bp.index') }}">
-          <i class="fas fa-fw fa-chart-area"></i>
-          <span>Ejemplo de gráfico</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('academic_bp.index') }}">
-          <i class="fas fa-fw fa-cog"></i>
-          <span>Ejemplo de configuración</span>
-        </a>
-      </li>
-
-      <!-- Divisor -->
-      <hr class="sidebar-divider">
-
+    {% elif current_user.rol_id == 2 %}
       <!-- Encabezado de sección para Coordinador -->
       <div class="sidebar-heading">
         Coordinador
       </div>
-
-      <!-- Link para registro de alumno -->
+      <!-- Link para registro de alumno, visible solo para Coordinador -->
       <li class="nav-item">
         <a class="nav-link" href="{{ url_for('academic_bp.registrar_alumno') }}">
           <i class="fas fa-fw fa-table"></i>
@@ -99,16 +68,17 @@
         </a>
       </li>
 
-      <!-- Divisor -->
-      <hr class="sidebar-divider">
-
-      <!-- Encabezado de sección para Administrador -->
+    {% elif current_user.rol_id == 3 %}
+      <!-- Encabezado de sección para Directivo -->
       <div class="sidebar-heading">
-        Administrador
+        Directivo
       </div>
+      {# Aquí puedes agregar enlaces específicos para Directivo #}
+    {% endif %}
+  {% endif %}
 
-      <!-- Divisor -->
-      <hr class="sidebar-divider d-none d-md-block">
+  <!-- Divisor -->
+  <hr class="sidebar-divider d-none d-md-block">
 
       <!-- Botón para contraer la barra lateral -->
       <div class="text-center d-none d-md-inline">
@@ -134,7 +104,18 @@
             <!-- Elemento de navegación - Información del usuario -->
             <li class="nav-item dropdown no-arrow">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{% if current_user.is_authenticated %}
+                  {% if current_user.alumno %}
+                    {{ current_user.alumno.primer_nombre }} {{ current_user.alumno.primer_apellido }}
+                  {% elif current_user.coordinador_directivo %}
+                    {{ current_user.coordinador_directivo.primer_nombre }} {{ current_user.coordinador_directivo.primer_apellido }}
+                  {% else %}
+                    Usuario
+                  {% endif %}
+                {% else %}
+                  Invitado
+                {% endif %}
+                </span>
                 <img class="img-profile rounded-circle" src="{{ url_for('static', filename='images/undraw_profile.svg') }}">
               </a>
               <!-- Menú desplegable de información del usuario -->
@@ -192,7 +173,7 @@
         <div class="modal-body">Selecciona "Cerrar sesión" a continuación si deseas finalizar tu sesión actual.</div>
         <div class="modal-footer">
           <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
-          <a class="btn btn-primary" href="{{ url_for('academic_bp.index') }}">Cerrar sesión</a>
+          <a class="btn btn-primary" href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
         </div>
       </div>
     </div>

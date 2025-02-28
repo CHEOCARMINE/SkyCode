@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
 
 db = SQLAlchemy()
 
@@ -49,7 +50,7 @@ class Domicilio(db.Model):
     numero_casa = db.Column(db.String(50), nullable=False)
 
     def __repr__(self):
-        return f"<Domicilio {self.calle} {self.numero_calle}, {self.colonia}, {self.municipio}>"
+        return f"<Domicilio {self.calle} {self.numero_casa}, {self.colonia}, {self.municipio}>"
 
 class Alumno(db.Model):
     __tablename__ = "Alumnos"
@@ -76,7 +77,7 @@ class Alumno(db.Model):
     def __repr__(self):
         return f"<Alumno {self.primer_nombre} {self.primer_apellido}>"
 
-class Usuario(db.Model):
+class Usuario(db.Model, UserMixin):
     __tablename__ = "Usuarios"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     contraseña = db.Column(db.String(255), nullable=False)
@@ -84,10 +85,12 @@ class Usuario(db.Model):
     activo = db.Column(db.Boolean, default=True)
     fecha_creacion = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
     alumno_id = db.Column(db.Integer, db.ForeignKey("Alumnos.id"), unique=True)
+    coordinador_directivo_id = db.Column(db.Integer, db.ForeignKey("Coordinadores_Directivos.id"), unique=True)
 
+    # Relaciones
     rol = db.relationship("Role", backref="usuarios")
-    # Relación uno a uno con Alumno (si corresponde)
     alumno = db.relationship("Alumno", backref=db.backref("usuario", uselist=False))
+    coordinador_directivo = db.relationship("Coordinadores_Directivos", backref=db.backref("usuario", uselist=False))
 
     def __repr__(self):
         return f"<Usuario ID: {self.id}>"
@@ -227,3 +230,15 @@ class Reporte(db.Model):
 
     def __repr__(self):
         return f"<Reporte ID: {self.id}>"
+    
+class Coordinadores_Directivos(db.Model):
+    __tablename__ = "Coordinadores_Directivos"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    matricula = db.Column(db.String(20), unique=True, nullable=False)
+    primer_nombre = db.Column(db.String(100), nullable=False)
+    primer_apellido = db.Column(db.String(100), nullable=False)
+    correo_electronico = db.Column(db.String(100))
+    
+    def __repr__(self):
+        return f"<Coordinadores_Directivos {self.primer_nombre} {self.primer_apellido}>"
+

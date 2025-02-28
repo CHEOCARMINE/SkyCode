@@ -1,0 +1,31 @@
+      <!-- Elementos de navegación -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('academic_bp.index') }}">
+          <i class="fas fa-fw fa-table"></i>
+          <span>Ejemplo de tabloide</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('academic_bp.index') }}">
+          <i class="fas fa-fw fa-wrench"></i>
+          <span>Ejemplo de herramienta</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('academic_bp.index') }}">
+          <i class="fas fa-fw fa-folder"></i>
+          <span>Ejemplo de carpeta</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('academic_bp.index') }}">
+          <i class="fas fa-fw fa-chart-area"></i>
+          <span>Ejemplo de gráfico</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('academic_bp.index') }}">
+          <i class="fas fa-fw fa-cog"></i>
+          <span>Ejemplo de configuración</span>
+        </a>
+      </li>

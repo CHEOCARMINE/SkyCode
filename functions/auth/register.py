@@ -41,51 +41,51 @@ def registrar_alumno():
 
         # Validaciones básicas de formato
         if not validate_curp(curp):
-            flash("El CURP no cumple con el formato requerido.", "danger")
+            flash("El CURP no cumple con el formato requerido.", "register-danger")
             return redirect(url_for('academic_bp.registrar_alumno'))
         if not validate_telefono(telefono):
-            flash("El teléfono debe contener exactamente 10 dígitos.", "danger")
+            flash("El teléfono debe contener exactamente 10 dígitos.", "register-danger")
             return redirect(url_for('academic_bp.registrar_alumno'))
         if not validate_correo(correo):
-            flash("El correo no es válido o no pertenece a un dominio permitido.", "danger")
+            flash("El correo no es válido o no pertenece a un dominio permitido.", "register-danger")
             return redirect(url_for('academic_bp.registrar_alumno'))
 
         # Validar que los campos de nombres y apellidos contengan solo letras
         if not validate_letters(primer_nombre):
-            flash("El primer nombre debe contener solo letras y espacios.", "danger")
+            flash("El primer nombre debe contener solo letras y espacios.", "register-danger")
             return redirect(url_for('academic_bp.registrar_alumno'))
         if segundo_nombre and not validate_letters(segundo_nombre, required=False):
-            flash("El segundo nombre debe contener solo letras y espacios.", "danger")
+            flash("El segundo nombre debe contener solo letras y espacios.", "register-danger")
             return redirect(url_for('academic_bp.registrar_alumno'))
         if not validate_letters(primer_apellido):
-            flash("El primer apellido debe contener solo letras y espacios.", "danger")
+            flash("El primer apellido debe contener solo letras y espacios.", "register-danger")
             return redirect(url_for('academic_bp.registrar_alumno'))
         if not validate_letters(segundo_apellido):
-            flash("El segundo apellido debe contener solo letras y espacios.", "danger")
+            flash("El segundo apellido debe contener solo letras y espacios.", "register-danger")
             return redirect(url_for('academic_bp.registrar_alumno'))
         
         # Validar campos de domicilio: estado, municipio y colonia solo deben contener letras y espacios
         if not validate_letters(estado):
-            flash("El estado debe contener solo letras y espacios.", "danger")
+            flash("El estado debe contener solo letras y espacios.", "register-danger")
             return redirect(url_for('academic_bp.registrar_alumno'))
         if not validate_letters(municipio):
-            flash("El municipio debe contener solo letras y espacios.", "danger")
+            flash("El municipio debe contener solo letras y espacios.", "register-danger")
             return redirect(url_for('academic_bp.registrar_alumno'))
         if not validate_letters(colonia):
-            flash("La colonia debe contener solo letras y espacios.", "danger")
+            flash("La colonia debe contener solo letras y espacios.", "register-danger")
             return redirect(url_for('academic_bp.registrar_alumno'))
         # Validar el código postal: solo números y exactamente 5 dígitos
         if not validate_postal_code(cp):
-            flash("El código postal debe contener exactamente 5 dígitos numéricos.", "danger")
+            flash("El código postal debe contener exactamente 5 dígitos numéricos.", "register-danger")
             return redirect(url_for('academic_bp.registrar_alumno'))
         # Validar el número de casa: debe ser alfanumérico (se permiten espacios y guiones)
         if not validate_alphanumeric(numero_casa):
-            flash("El número de casa debe contener solo caracteres alfanuméricos, espacios y guiones.", "danger")
+            flash("El número de casa debe contener solo caracteres alfanuméricos, espacios y guiones.", "register-danger")
             return redirect(url_for('academic_bp.registrar_alumno'))
 
         # Verificar duplicidad del CURP
         if existe_alumno_por_curp(curp):
-            flash("El CURP ya está registrado en el sistema.", "danger")
+            flash("El CURP ya está registrado en el sistema.", "register-danger")
             return redirect(url_for('academic_bp.registrar_alumno'))
 
         # Validar y procesar los archivos
@@ -95,7 +95,7 @@ def registrar_alumno():
         if certificado_file:
             valid, mensaje = validate_file(certificado_file)
             if not valid:
-                flash(f"Certificado: {mensaje}", "danger")
+                flash(f"Certificado: {mensaje}", "register-danger")
                 return redirect(url_for('academic_bp.registrar_alumno'))
             certificado_data = certificado_file.read()
         else:
@@ -104,7 +104,7 @@ def registrar_alumno():
         if comprobante_file:
             valid, mensaje = validate_file(comprobante_file)
             if not valid:
-                flash(f"Comprobante: {mensaje}", "danger")
+                flash(f"Comprobante: {mensaje}", "register-danger")
                 return redirect(url_for('academic_bp.registrar_alumno'))
             comprobante_data = comprobante_file.read()
         else:
@@ -149,7 +149,7 @@ def registrar_alumno():
             crear_usuario_para_alumno(nuevo_alumno.id, hashed_password, rol_id=1)  # Se asume que 1 es 'Alumno'
         except Exception as e:
             # Si ocurre un error al crear el usuario, se registra el error y se muestra un mensaje
-            flash("Hubo un problema al crear el usuario asociado. Por favor, inténtalo nuevamente.", "danger")
+            flash("Hubo un problema al crear el usuario asociado. Por favor, inténtalo nuevamente.", "register-danger")
             return redirect(url_for('academic_bp.registrar_alumno'))
 
         # Preparar y enviar el correo con las credenciales temporales
@@ -164,7 +164,7 @@ def registrar_alumno():
         )
         send_email(subject, recipients, body)
 
-        flash("Alumno registrado exitosamente. Se ha enviado un correo con la contraseña temporal.", "success")
+        flash("Alumno registrado exitosamente. Se ha enviado un correo con la contraseña temporal.", "register-success")
         return redirect(url_for('academic_bp.registrar_alumno'))
     else:
         from models import Carrera

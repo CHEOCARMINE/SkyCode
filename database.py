@@ -20,7 +20,8 @@ from models import (
     EvaluacionDocente,
     Notificacion,
     Reporte,
-    Domicilio
+    Domicilio,
+    Coordinadores_Directivos
 )
 
 bcrypt = Bcrypt()
@@ -88,7 +89,7 @@ def insertar_alumno(matricula, primer_nombre, segundo_nombre, primer_apellido, s
     db.session.commit()
     return nuevo_alumno
 
-def crear_usuario_para_alumno(alumno_id, hashed_password, rol_id=2):
+def crear_usuario_para_alumno(alumno_id, hashed_password, rol_id=1):
     """
     Crea el usuario asociado al alumno usando su ID, encripta la contraseña y lo guarda.
     Retorna el objeto Usuario creado.
