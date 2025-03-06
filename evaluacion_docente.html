@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Docente</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 600px; margin: auto; }
+        .question { margin-bottom: 20px; }
+        .stars { display: flex; flex-direction: row-reverse; justify-content: flex-end; }
+        .stars input { display: none; }
+        .stars label { font-size: 25px; color: gray; cursor: pointer; }
+        .stars input:checked ~ label { color: gold; }
+        textarea { width: 100%; height: 100px; margin-top: 10px; }
+        button { padding: 10px 20px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Evaluación del Docente</h2>
+        <form action="/submit_evaluacion" method="post">
+            
+            <div class="question">
+                <p><strong>1. Claridad y dominio del tema:</strong></p>
+                <p>¿El docente explica de manera clara y demuestra conocimiento en la materia?</p>
+                <div class="stars">
+                    <input type="radio" name="claridad" value="5" id="claridad-5"><label for="claridad-5">★</label>
+                    <input type="radio" name="claridad" value="4" id="claridad-4"><label for="claridad-4">★</label>
+                    <input type="radio" name="claridad" value="3" id="claridad-3"><label for="claridad-3">★</label>
+                    <input type="radio" name="claridad" value="2" id="claridad-2"><label for="claridad-2">★</label>
+                    <input type="radio" name="claridad" value="1" id="claridad-1"><label for="claridad-1">★</label>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p><strong>2. Material y recursos utilizados:</strong></p>
+                <p>¿El docente utiliza materiales adecuados y recursos complementarios?</p>
+                <div class="stars">
+                    <input type="radio" name="material" value="5" id="material-5"><label for="material-5">★</label>
+                    <input type="radio" name="material" value="4" id="material-4"><label for="material-4">★</label>
+                    <input type="radio" name="material" value="3" id="material-3"><label for="material-3">★</label>
+                    <input type="radio" name="material" value="2" id="material-2"><label for="material-2">★</label>
+                    <input type="radio" name="material" value="1" id="material-1"><label for="material-1">★</label>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p><strong>3. Interacción con los alumnos:</strong></p>
+                <p>¿El docente responde preguntas y fomenta la participación?</p>
+                <div class="stars">
+                    <input type="radio" name="interaccion" value="5" id="interaccion-5"><label for="interaccion-5">★</label>
+                    <input type="radio" name="interaccion" value="4" id="interaccion-4"><label for="interaccion-4">★</label>
+                    <input type="radio" name="interaccion" value="3" id="interaccion-3"><label for="interaccion-3">★</label>
+                    <input type="radio" name="interaccion" value="2" id="interaccion-2"><label for="interaccion-2">★</label>
+                    <input type="radio" name="interaccion" value="1" id="interaccion-1"><label for="interaccion-1">★</label>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p><strong>4. Evaluación y retroalimentación:</strong></p>
+                <p>¿El docente proporciona retroalimentación útil en sus evaluaciones?</p>
+                <div class="stars">
+                    <input type="radio" name="evaluacion" value="5" id="evaluacion-5"><label for="evaluacion-5">★</label>
+                    <input type="radio" name="evaluacion" value="4" id="evaluacion-4"><label for="evaluacion-4">★</label>
+                    <input type="radio" name="evaluacion" value="3" id="evaluacion-3"><label for="evaluacion-3">★</label>
+                    <input type="radio" name="evaluacion" value="2" id="evaluacion-2"><label for="evaluacion-2">★</label>
+                    <input type="radio" name="evaluacion" value="1" id="evaluacion-1"><label for="evaluacion-1">★</label>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p><strong>Comentario adicional:</strong></p>
+                <p>Si tienes alguna sugerencia o comentario, por favor escríbelo aquí:</p>
+                <textarea name="comentario" placeholder="Escribe tu comentario..."></textarea>
+            </div>
+            
+            <button type="submit">Enviar Evaluación</button>
+        </form>
+    </div>
+</body>
+</html>
