@@ -50,3 +50,16 @@ def create_app(config_name="development"):
 if __name__ == '__main__':
     app = create_app()
     app.run(debug=app.config.get("DEBUG", False))
+
+    
+
+from flask import Flask
+from routes import academic_bp
+
+app = Flask(__name__)
+
+# Registro del blueprint
+app.register_blueprint(academic_bp)
+
+if __name__ == '__main__':
+    app.run(debug=True)

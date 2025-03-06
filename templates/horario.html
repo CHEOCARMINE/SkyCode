@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Imprimir Horario{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Horario de Clases</h1>
+    <table class="table table-striped schedule-table">
+        <thead class="thead-dark">
+            <tr>
+                <th>Nombre de la Materia</th>
+                <th>Horario</th>
+                <th>Salón</th>
+                <th>Nombre del Docente</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for clase in clases %}
+            <tr>
+                <td>{{ clase.nombre_materia }}</td>
+                <td>{{ clase.horario }}</td>
+                <td>{{ clase.salon }}</td>
+                <td>{{ clase.nombre_docente }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
