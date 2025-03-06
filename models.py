@@ -241,4 +241,5 @@ class Coordinadores_Directivos(db.Model):
     
     def __repr__(self):
         return f"<Coordinadores_Directivos {self.primer_nombre} {self.primer_apellido}>"
-
+    
+    
