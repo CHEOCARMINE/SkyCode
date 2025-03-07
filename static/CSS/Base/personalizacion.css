@@ -1,0 +1,11 @@
+/* Agrega un espacio inferior al contenedor principal del contenido */
+#content {
+    padding-bottom: 1.5rem; 
+  }
+  
+  /* Separa el footer del contenido, agregándole margen superior y algo de padding */
+  footer.sticky-footer {
+    margin-top: 1rem;
+    padding-top: 0.5rem;
+  }
+  
