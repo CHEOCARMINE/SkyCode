@@ -1,0 +1,83 @@
+/* Estilos para el formulario de registro */
+.container {
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #2c3e50;
+    color: white;
+    font-size: 1.25rem;
+    text-align: center;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background-color: #2c3e50;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #2c3e50;
+}
+
+.form-control, .form-control-file {
+    border-radius: 6px;
+}
+
+.alert {
+    margin-bottom: 15px;
+}
+
+label {
+    font-weight: bold;
+    color: #555;
+}
+
+/* Oculta el input real */
+.custom-upload input[type="file"] {
+    display: none;
+  }
+  
+  /* Estilo del contenedor/“botón” */
+  .custom-upload label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border: 2px dashed #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #555;
+    transition: background-color 0.3s;
+    width: 100%; /* Ajusta según tu diseño */
+    text-align: center;
+  }
+  
+  .custom-upload label:hover {
+    background-color: #f5f5f5;
+  }
+  
+  /* Ícono de Bootstrap */
+  .custom-upload i {
+    font-size: 1.2rem;
+    margin-right: 8px;
+  }
+  
+  /* Permite truncar nombres muy largos, si lo deseas */
+  .file-label-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px; /* Ajusta según la preferencia */
+    display: inline-block;
+    vertical-align: middle;
+  }
+  
