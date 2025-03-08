@@ -1,18 +1,18 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_required
+from math import ceil
 from functions.auth.register import registrar_alumno as process_registration
 from functions.user_management.view_students import get_students
+from models import Carrera, EstadoAlumno
 
 academic_bp = Blueprint('academic_bp', __name__)
 
-# Ruta para el index del sitio web. Debe estar protegida con login_required para que solo los usuarios autenticados puedan acceder.
 @academic_bp.route('/', endpoint='index')
 def index():
     if not current_user.is_authenticated:
         return redirect(url_for('auth.login'))
     return render_template('index.html')
 
-# Ruta para el formulario de registro de alumnos. Debe estar protegida con login_required para que solo los usuarios autenticados puedan acceder y los coordinadores.
 @academic_bp.route('/register', methods=['GET', 'POST'])
 @login_required
 def registrar_alumno():
@@ -21,7 +21,6 @@ def registrar_alumno():
         return redirect(url_for('academic_bp.index'))
     return process_registration()
 
-# Ruta para la lista de alumnos. Debe estar protegida con login_required para que solo los usuarios autenticados puedan acceder y los coordinadores.
 @academic_bp.route('/alumnos', methods=['GET'])
 @login_required
 def alumnos():
@@ -29,10 +28,69 @@ def alumnos():
         flash("No tienes permisos para acceder a esta sección.", "danger")
         return redirect(url_for('academic_bp.index'))
 
-    nombre = request.args.get('nombre')
-    apellido = request.args.get('apellido')
-    segundo_apellido = request.args.get('segundo_apellido')
-    matricula = request.args.get('matricula')
+    # Parámetros de paginación
+    page = request.args.get('page', 1, type=int)
+    page_size = 10
 
-    students = get_students(nombre, apellido, segundo_apellido, matricula)
-    return render_template('alumnos.html', students=students)
+    # Filtros
+    nombre = request.args.get('nombre')
+    apellido_paterno = request.args.get('apellido_paterno')
+    apellido_materno = request.args.get('apellido_materno')
+    matricula = request.args.get('matricula')
+    carrera_filtro = request.args.get('carrera')
+    estado_filtro = request.args.get('estado')
+
+    # Se obtiene la Query en lugar de resultados
+    query = get_students(
+        nombre=nombre,
+        apellido_paterno=apellido_paterno,
+        apellido_materno=apellido_materno,
+        matricula=matricula,
+        carrera=carrera_filtro,
+        estado=estado_filtro,
+        as_query=True
+    )
+
+    # Contamos el total de registros filtrados
+    total = query.count()
+    # Calculamos cuántas páginas habrá en total
+    total_pages = ceil(total / page_size)
+
+    # Calculamos cuántos registros saltar (offset)
+    skip = (page - 1) * page_size
+
+    # Obtenemos solo los registros de la página actual (objetos Alumno)
+    students_page = query.offset(skip).limit(page_size).all()
+
+    # Convertimos cada objeto alumno a un diccionario, forzando la conversión a string
+    students_dict = []
+    for alumno in students_page:
+        student_data = {
+            "matricula": alumno.matricula,
+            "primer_nombre": alumno.primer_nombre,
+            "primer_apellido": alumno.primer_apellido,
+            "segundo_apellido": alumno.segundo_apellido,
+            "carrera": str(alumno.carrera.nombre) if alumno.carrera else "",
+            "estado": str(alumno.estado.nombre_estado) if alumno.estado else ""
+        }
+        students_dict.append(student_data)
+
+    # Se obtienen las opciones para los select de Carrera y EstadoAlumno
+    carreras = Carrera.query.all()
+    estados = EstadoAlumno.query.all()
+
+    return render_template(
+        'alumnos.html',
+        students=students_dict,
+        carreras=carreras,
+        estados=estados,
+        page=page,
+        total_pages=total_pages,
+        # Reenviamos los filtros para que no se pierdan
+        matricula=matricula,
+        nombre=nombre,
+        apellido_paterno=apellido_paterno,
+        apellido_materno=apellido_materno,
+        carrera_filtro=carrera_filtro,
+        estado_filtro=estado_filtro
+    )
