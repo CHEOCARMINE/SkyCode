@@ -94,3 +94,70 @@ def alumnos():
         carrera_filtro=carrera_filtro,
         estado_filtro=estado_filtro
     )
+
+@academic_bp.route('/modificar_alumno', methods=['GET', 'POST'])
+@login_required
+def modificar_alumno():
+    # Solo permitimos la modificación a usuarios con rol 2 (por ejemplo, coordinadores)
+    if current_user.rol_id != 2:
+        flash("No tienes permisos para modificar alumnos", "danger")
+        return redirect(url_for('academic_bp.alumnos'))
+    
+    if request.method == "POST":
+        # Recoger datos del formulario enviado
+        matricula = request.form.get('matricula')  # Este campo es de solo lectura
+        primer_nombre  = request.form.get('primer_nombre')
+        segundo_nombre = request.form.get('segundo_nombre')
+        primer_apellido = request.form.get('primer_apellido')
+        segundo_apellido = request.form.get('segundo_apellido')
+        curp = request.form.get('curp')
+        telefono = request.form.get('telefono')
+        correo = request.form.get('correo_electronico')
+        
+        # Datos de domicilio
+        pais = request.form.get('pais')
+        estado_domicilio = request.form.get('estado_domicilio')
+        municipio = request.form.get('municipio')
+        colonia = request.form.get('colonia')
+        cp = request.form.get('cp')
+        calle = request.form.get('calle')
+        numero_casa = request.form.get('numero_casa')
+        
+        # Relaciones: Estado del Alumno y Carrera
+        nuevo_estado = request.form.get('estado_alumno')  # Ejemplo: "Activo", "Suspendido", etc.
+        nueva_carrera = request.form.get('carrera_alumno')
+        
+        try:
+            from functions.user_management.update_students_data import actualizar_alumno_y_usuario
+            alumno_actualizado = actualizar_alumno_y_usuario(
+                matricula,
+                primer_nombre, segundo_nombre, primer_apellido, segundo_apellido,
+                curp, telefono, correo,
+                pais, estado_domicilio, municipio, colonia, cp, calle, numero_casa,
+                nuevo_estado, nueva_carrera
+            )
+            if alumno_actualizado is None:
+                flash("No se pudo actualizar el alumno. Verifica la matrícula.", "danger")
+                return redirect(url_for('academic_bp.alumnos'))
+        except Exception as e:
+            flash(f"Error al actualizar el alumno: {str(e)}", "danger")
+            return redirect(url_for('academic_bp.modificar_alumno', matricula=matricula))
+        
+        flash("Datos del alumno actualizados correctamente.", "success")
+        return redirect(url_for('academic_bp.alumnos'))
+    
+    else:
+        # Método GET: se espera que se reciba la matrícula del alumno en los parámetros de la URL
+        matricula = request.args.get('matricula')
+        if not matricula:
+            flash("No se especificó la matrícula del alumno.", "danger")
+            return redirect(url_for('academic_bp.alumnos'))
+        
+        from models import Alumno
+        alumno = Alumno.query.filter_by(matricula=matricula).first()
+        if not alumno:
+            flash("Alumno no encontrado.", "danger")
+            return redirect(url_for('academic_bp.alumnos'))
+        
+        # Renderiza la plantilla con la información actual del alumno para editar
+        return render_template("modificar_alumno.html", alumno=alumno)

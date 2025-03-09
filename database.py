@@ -111,6 +111,56 @@ def existe_alumno_por_curp(curp):
     from models import Alumno 
     return Alumno.query.filter_by(curp=curp).first()
 
+def actualizar_alumno_y_usuario(matricula, 
+                                  primer_nombre, segundo_nombre, primer_apellido, segundo_apellido,
+                                  curp, telefono, correo_electronico,
+                                  pais, estado_domicilio, municipio, colonia, cp, calle, numero_casa,
+                                  nuevo_estado, nueva_carrera):
+    # 1. Recuperar el alumno por matrícula
+    alumno = Alumno.query.filter_by(matricula=matricula).first()
+    if not alumno:
+        return None  # o lanzar una excepción
+
+    # 2. Actualizar datos personales del alumno
+    alumno.primer_nombre = primer_nombre
+    alumno.segundo_nombre = segundo_nombre
+    alumno.primer_apellido = primer_apellido
+    alumno.segundo_apellido = segundo_apellido
+    alumno.curp = curp
+    alumno.telefono = telefono
+    alumno.correo_electronico = correo_electronico
+
+    # 3. Actualizar datos del domicilio, si existe
+    if alumno.domicilio:
+        alumno.domicilio.pais = pais
+        alumno.domicilio.estado = estado_domicilio
+        alumno.domicilio.municipio = municipio
+        alumno.domicilio.colonia = colonia
+        alumno.domicilio.cp = cp
+        alumno.domicilio.calle = calle
+        alumno.domicilio.numero_casa = numero_casa
+
+    # 4. Actualizar el estado del alumno
+    estado_obj = EstadoAlumno.query.filter_by(nombre_estado=nuevo_estado).first()
+    if estado_obj:
+        alumno.estado_id = estado_obj.id
+
+    # 5. Actualizar la carrera
+    carrera_obj = Carrera.query.filter_by(nombre=nueva_carrera).first()
+    if carrera_obj:
+        alumno.carrera_id = carrera_obj.id
+
+    # 6. Actualizar el estado del usuario asociado
+    usuario = alumno.usuario  # Se asume que la relación es uno a uno
+    if usuario:
+        # Si el nuevo estado es "Activo", activa el usuario, de lo contrario, desactívalo.
+        usuario.activo = True if nuevo_estado.lower() == "activo" else False
+
+    # 7. Realizar el commit de los cambios
+    db.session.commit()
+
+    return alumno
+
 # -------------------------------------------------
 # Nota:
 # Este archivo unificado (database.py) centraliza tanto las funciones de acceso a datos

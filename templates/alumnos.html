@@ -78,9 +78,9 @@
                     <td>{{ student.carrera }}</td>
                     <td>{{ student.estado }}</td>
                     <td>
-                        {# Por el momento se comenta el enlace de modificar para evitar errores #}
-                        {# <a href="{{ url_for('academic_bp.modificar_alumno', matricula=student.matricula) }}" class="btn btn-warning">Modificar</a> #}
-                        Modificar
+                        <a href="{{ url_for('academic_bp.modificar_alumno', matricula=student.matricula) }}" class="btn btn-primary">
+                            Ver
+                        </a>
                     </td>
                 </tr>
                 {% endfor %}

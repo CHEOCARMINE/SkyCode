@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+
+{% block title %}Modificar Alumno - SkyCode{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Modificar Alumno</h1>
+    <form method="POST" action="{{ url_for('academic_bp.modificar_alumno') }}">
+        <!-- Matrícula (solo lectura) -->
+        <div class="form-group">
+            <label for="matricula">Matrícula</label>
+            <input type="text" id="matricula" name="matricula" class="form-control" 
+                   value="{{ alumno.matricula }}" readonly>
+        </div>
+
+        <!-- Datos Personales -->
+        <h4>Datos Personales</h4>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="primer_nombre">Primer Nombre</label>
+                <div class="input-group">
+                    <input type="text" id="primer_nombre" name="primer_nombre" class="form-control" 
+                           value="{{ alumno.primer_nombre }}" readonly>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" 
+                                onclick="enableField('primer_nombre')">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="segundo_nombre">Segundo Nombre</label>
+                <div class="input-group">
+                    <input type="text" id="segundo_nombre" name="segundo_nombre" class="form-control" 
+                           value="{{ alumno.segundo_nombre }}" readonly>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" 
+                                onclick="enableField('segundo_nombre')">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="primer_apellido">Apellido Paterno</label>
+                <div class="input-group">
+                    <input type="text" id="primer_apellido" name="primer_apellido" class="form-control" 
+                           value="{{ alumno.primer_apellido }}" readonly>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" 
+                                onclick="enableField('primer_apellido')">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="segundo_apellido">Apellido Materno</label>
+                <div class="input-group">
+                    <input type="text" id="segundo_apellido" name="segundo_apellido" class="form-control" 
+                           value="{{ alumno.segundo_apellido }}" readonly>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" 
+                                onclick="enableField('segundo_apellido')">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="curp">CURP</label>
+            <div class="input-group">
+                <input type="text" id="curp" name="curp" class="form-control" 
+                       value="{{ alumno.curp }}" readonly>
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-outline-secondary" 
+                            onclick="enableField('curp')">
+                        <i class="fas fa-pencil-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="telefono">Teléfono</label>
+                <div class="input-group">
+                    <input type="text" id="telefono" name="telefono" class="form-control" 
+                           value="{{ alumno.telefono }}" readonly>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" 
+                                onclick="enableField('telefono')">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="correo_electronico">Correo Electrónico</label>
+                <div class="input-group">
+                    <input type="email" id="correo_electronico" name="correo_electronico" class="form-control" 
+                           value="{{ alumno.correo_electronico }}" readonly>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" 
+                                onclick="enableField('correo_electronico')">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Datos de Domicilio -->
+        <h4>Datos de Domicilio</h4>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="pais">País</label>
+                <div class="input-group">
+                    <input type="text" id="pais" name="pais" class="form-control" 
+                           value="{{ alumno.domicilio.pais if alumno.domicilio else '' }}" readonly>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" 
+                                onclick="enableField('pais')">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="estado_domicilio">Estado</label>
+                <div class="input-group">
+                    <input type="text" id="estado_domicilio" name="estado_domicilio" class="form-control" 
+                           value="{{ alumno.domicilio.estado if alumno.domicilio else '' }}" readonly>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" 
+                                onclick="enableField('estado_domicilio')">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="municipio">Municipio</label>
+                <div class="input-group">
+                    <input type="text" id="municipio" name="municipio" class="form-control" 
+                           value="{{ alumno.domicilio.municipio if alumno.domicilio else '' }}" readonly>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" 
+                                onclick="enableField('municipio')">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="colonia">Colonia</label>
+                <div class="input-group">
+                    <input type="text" id="colonia" name="colonia" class="form-control" 
+                           value="{{ alumno.domicilio.colonia if alumno.domicilio else '' }}" readonly>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" 
+                                onclick="enableField('colonia')">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="cp">Código Postal</label>
+                <div class="input-group">
+                    <input type="text" id="cp" name="cp" class="form-control" 
+                           value="{{ alumno.domicilio.cp if alumno.domicilio else '' }}" readonly>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" 
+                                onclick="enableField('cp')">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="calle">Calle</label>
+                <div class="input-group">
+                    <input type="text" id="calle" name="calle" class="form-control" 
+                           value="{{ alumno.domicilio.calle if alumno.domicilio else '' }}" readonly>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" 
+                                onclick="enableField('calle')">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="numero_casa">Número de Casa</label>
+            <div class="input-group">
+                <input type="text" id="numero_casa" name="numero_casa" class="form-control" 
+                       value="{{ alumno.domicilio.numero_casa if alumno.domicilio else '' }}" readonly>
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-outline-secondary" 
+                            onclick="enableField('numero_casa')">
+                        <i class="fas fa-pencil-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estado del Alumno y Carrera -->
+        <h4>Estado y Carrera</h4>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="estado_alumno">Estado del Alumno</label>
+                <div class="input-group">
+                    <input type="text" id="estado_alumno" name="estado_alumno" class="form-control" 
+                           value="{{ alumno.estado.nombre_estado if alumno.estado else '' }}" readonly>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" 
+                                onclick="enableField('estado_alumno')">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <small class="form-text text-muted">Si no es "Activo", el usuario se desactivará.</small>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="carrera_alumno">Carrera</label>
+                <div class="input-group">
+                    <input type="text" id="carrera_alumno" name="carrera_alumno" class="form-control" 
+                           value="{{ alumno.carrera.nombre if alumno.carrera else '' }}" readonly>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" 
+                                onclick="enableField('carrera_alumno')">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="{{ url_for('academic_bp.alumnos') }}" class="btn btn-primary mt-3">
+            Lista de Alumnos
+        </a>
+        <button type="submit" class="btn btn-primary mt-3">Guardar Cambios</button>
+    </form>
+</div>
+
+<script src="{{ url_for('static', filename='JS/modificar_alumno_script.js') }}"></script>
+
+{% endblock %}
