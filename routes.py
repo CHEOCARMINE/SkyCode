@@ -95,6 +95,7 @@ def modificar_alumno():
     from models import EstadoAlumno, Carrera, Alumno
 
     if request.method == "POST":
+        # Recoger datos del formulario
         matricula = request.form.get('matricula')
         primer_nombre  = request.form.get('primer_nombre')
         segundo_nombre = request.form.get('segundo_nombre')
@@ -113,9 +114,11 @@ def modificar_alumno():
         calle = request.form.get('calle')
         numero_casa = request.form.get('numero_casa')
         
+        # Estado y Carrera
         nuevo_estado = request.form.get('estado_alumno')
         nueva_carrera = request.form.get('carrera_alumno')
         
+        # Contraseña y Docuemntos
         nueva_contrasena = request.form.get('contraseña')
         nuevo_certificado = request.files.get('certificado_preparatoria')
         nuevo_comprobante = request.files.get('comprobante_pago')
@@ -142,6 +145,46 @@ def modificar_alumno():
             estados = EstadoAlumno.query.all()
             carreras = Carrera.query.all()
             return render_template("modificar_alumno.html", alumno=alumno, form_data=request.form, estados=estados, carreras=carreras)
+        
+        # Construir el mensaje de correo con todos los datos modificados.
+        from services import send_email  # Asegúrate de tener implementada la función en services.py
+        subject = "Actualización de tus datos en SkyCode"
+        body = f"Hola {alumno_actualizado.primer_nombre},\n\n"
+        body += "Se han actualizado los siguientes datos en tu cuenta:\n\n"
+        # Datos personales
+        body += "Datos Personales:\n"
+        body += f"  Nombre: {alumno_actualizado.primer_nombre} {alumno_actualizado.segundo_nombre or ''}\n"
+        body += f"  Apellidos: {alumno_actualizado.primer_apellido} {alumno_actualizado.segundo_apellido}\n"
+        body += f"  CURP: {alumno_actualizado.curp}\n"
+        body += f"  Teléfono: {alumno_actualizado.telefono}\n"
+        body += f"  Correo Electrónico: {alumno_actualizado.correo_electronico}\n\n"
+        
+        # Datos de domicilio
+        if alumno_actualizado.domicilio:
+            body += "Datos de Domicilio:\n"
+            body += f"  País: {alumno_actualizado.domicilio.pais}\n"
+            body += f"  Estado: {alumno_actualizado.domicilio.estado}\n"
+            body += f"  Municipio: {alumno_actualizado.domicilio.municipio}\n"
+            body += f"  Colonia: {alumno_actualizado.domicilio.colonia}\n"
+            body += f"  Código Postal: {alumno_actualizado.domicilio.cp}\n"
+            body += f"  Calle: {alumno_actualizado.domicilio.calle}\n"
+            body += f"  Número de Casa: {alumno_actualizado.domicilio.numero_casa}\n\n"
+        else:
+            body += "No se actualizaron datos de domicilio.\n\n"
+        
+        # Estado y Carrera
+        body += f"Estado del Alumno: {alumno_actualizado.estado.nombre_estado if alumno_actualizado.estado else 'N/A'}\n"
+        body += f"Carrera: {alumno_actualizado.carrera.nombre if alumno_actualizado.carrera else 'N/A'}\n\n"
+        
+        # Incluir la nueva contraseña si se proporcionó
+        if nueva_contrasena:
+            body += f"Tu nueva contraseña es: {nueva_contrasena}\n\n"
+        
+        body += "Si tienes alguna duda o necesitas asistencia, por favor contáctanos.\n\n"
+        body += "Saludos,\nEquipo SkyCode"
+
+        # Enviar correo al alumno
+        send_email(subject, [alumno_actualizado.correo_electronico], body)
         
         flash("Datos del alumno actualizados correctamente.", "alumno-success")
         return redirect(url_for('academic_bp.alumnos'))

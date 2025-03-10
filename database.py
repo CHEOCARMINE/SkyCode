@@ -151,10 +151,10 @@ def actualizar_alumno_y_usuario(matricula,
         alumno.carrera_id = carrera_obj.id
 
     # Actualizar el estado del usuario asociado
-    usuario = alumno.usuario  # Se asume que la relación es uno a uno
+    usuario = alumno.usuario  
     if usuario:
-        # Si el nuevo estado es "Activo", activa el usuario, de lo contrario, desactívalo.
-        usuario.activo = True if nuevo_estado.lower() == "activo" else False
+        # Si el nuevo estado es "Activo", asigna 1; de lo contrario, 0.
+        usuario.activo = 1 if nuevo_estado.lower() == "activo" else 0
 
     # Realizar el commit de los cambios
     db.session.commit()

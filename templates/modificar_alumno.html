@@ -333,7 +333,7 @@
         <div class="form-group col-md-6">
         <label for="estado_alumno">Estado del Alumno</label>
         <div class="input-group">
-            <select id="estado_alumno" class="form-control" disabled>
+            <select id="estado_alumno" name="estado_alumno" class="form-control" disabled>
             {% for estado in estados %}
                 <option value="{{ estado.nombre_estado }}"
                 {% if form_data and form_data['estado_alumno'] == estado.nombre_estado %}
@@ -360,7 +360,7 @@
         <div class="form-group col-md-6">
         <label for="carrera_alumno">Carrera</label>
         <div class="input-group">
-            <select id="carrera_alumno" class="form-control" disabled>
+            <select id="carrera_alumno" name="carrera_alumno" class="form-control" disabled>
             {% for carrera in carreras %}
                 <option value="{{ carrera.nombre }}"
                 {% if form_data and form_data['carrera_alumno'] == carrera.nombre %}
