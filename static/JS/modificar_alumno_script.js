@@ -1,7 +1,12 @@
-// Función para habilitar un campo removiendo el atributo 'readonly'
 function enableField(fieldId) {
     var field = document.getElementById(fieldId);
     if (field) {
-        field.removeAttribute('readonly');
+        // Si es un select, remueve el atributo "disabled"
+        if (field.tagName.toLowerCase() === "select") {
+            field.removeAttribute("disabled");
+        } else {
+            // Para otros inputs, remueve el atributo "readonly"
+            field.removeAttribute("readonly");
+        }
     }
 }
