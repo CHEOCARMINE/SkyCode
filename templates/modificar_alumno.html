@@ -3,30 +3,32 @@
 {% block title %}Modificar Alumno - SkyCode{% endblock %}
 
 {% block content %}
+<!-- Estilos personalizados para este formulario -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modificar_alumno_style.css') }}">
 <div class="container mt-4">
     <!-- Bloque de mensajes flash para notificaciones -->
     {% with mensajes = get_flashed_messages(with_categories=true, category_filter=['modify-danger', 'modify-success']) %}
-      {% if mensajes %}
+    {% if mensajes %}
         <div class="mt-3">
-          {% for category, message in mensajes %}
+        {% for category, message in mensajes %}
             <div class="alert alert-{{ category|replace('modify-', '') }} alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
                 <span aria-hidden="true">&times;</span>
-              </button>
+            </button>
             </div>
-          {% endfor %}
+        {% endfor %}
         </div>
-      {% endif %}
+    {% endif %}
     {% endwith %}
 
     <h1 class="mb-4">Modificar Alumno</h1>
-    <form method="POST" action="{{ url_for('academic_bp.modificar_alumno') }}">
+    <form method="POST" action="{{ url_for('academic_bp.modificar_alumno') }}" enctype="multipart/form-data">
         <!-- Matrícula (solo lectura) -->
         <div class="form-group">
             <label for="matricula">Matrícula</label>
             <input type="text" id="matricula" name="matricula" class="form-control" 
-                   value="{{ form_data['matricula'] if form_data and form_data['matricula'] else alumno.matricula }}" readonly>
+                value="{{ form_data['matricula'] if form_data and form_data['matricula'] else alumno.matricula }}" readonly>
         </div>
 
         <!-- Datos Personales -->
@@ -36,7 +38,7 @@
                 <label for="primer_nombre">Primer Nombre</label>
                 <div class="input-group">
                     <input type="text" id="primer_nombre" name="primer_nombre" class="form-control" 
-                           value="{{ form_data['primer_nombre'] if form_data and form_data['primer_nombre'] else alumno.primer_nombre }}" readonly>
+                        value="{{ form_data['primer_nombre'] if form_data and form_data['primer_nombre'] else alumno.primer_nombre }}" readonly>
                     <div class="input-group-append">
                         <button type="button" class="btn btn-outline-secondary" onclick="enableField('primer_nombre')">
                             <i class="fas fa-pencil-alt"></i>
@@ -48,7 +50,7 @@
                 <label for="segundo_nombre">Segundo Nombre</label>
                 <div class="input-group">
                     <input type="text" id="segundo_nombre" name="segundo_nombre" class="form-control" 
-                           value="{{ form_data['segundo_nombre'] if form_data and form_data['segundo_nombre'] else alumno.segundo_nombre }}" readonly>
+                        value="{{ form_data['segundo_nombre'] if form_data and form_data['segundo_nombre'] else alumno.segundo_nombre }}" readonly>
                     <div class="input-group-append">
                         <button type="button" class="btn btn-outline-secondary" onclick="enableField('segundo_nombre')">
                             <i class="fas fa-pencil-alt"></i>
@@ -63,7 +65,7 @@
                 <label for="primer_apellido">Apellido Paterno</label>
                 <div class="input-group">
                     <input type="text" id="primer_apellido" name="primer_apellido" class="form-control" 
-                           value="{{ form_data['primer_apellido'] if form_data and form_data['primer_apellido'] else alumno.primer_apellido }}" readonly>
+                        value="{{ form_data['primer_apellido'] if form_data and form_data['primer_apellido'] else alumno.primer_apellido }}" readonly>
                     <div class="input-group-append">
                         <button type="button" class="btn btn-outline-secondary" onclick="enableField('primer_apellido')">
                             <i class="fas fa-pencil-alt"></i>
@@ -75,7 +77,7 @@
                 <label for="segundo_apellido">Apellido Materno</label>
                 <div class="input-group">
                     <input type="text" id="segundo_apellido" name="segundo_apellido" class="form-control" 
-                           value="{{ form_data['segundo_apellido'] if form_data and form_data['segundo_apellido'] else alumno.segundo_apellido }}" readonly>
+                        value="{{ form_data['segundo_apellido'] if form_data and form_data['segundo_apellido'] else alumno.segundo_apellido }}" readonly>
                     <div class="input-group-append">
                         <button type="button" class="btn btn-outline-secondary" onclick="enableField('segundo_apellido')">
                             <i class="fas fa-pencil-alt"></i>
@@ -89,7 +91,7 @@
             <label for="curp">CURP</label>
             <div class="input-group">
                 <input type="text" id="curp" name="curp" class="form-control" 
-                       value="{{ form_data['curp'] if form_data and form_data['curp'] else alumno.curp }}" readonly>
+                    value="{{ form_data['curp'] if form_data and form_data['curp'] else alumno.curp }}" readonly>
                 <div class="input-group-append">
                     <button type="button" class="btn btn-outline-secondary" onclick="enableField('curp')">
                         <i class="fas fa-pencil-alt"></i>
@@ -103,7 +105,7 @@
                 <label for="telefono">Teléfono</label>
                 <div class="input-group">
                     <input type="text" id="telefono" name="telefono" class="form-control" 
-                           value="{{ form_data['telefono'] if form_data and form_data['telefono'] else alumno.telefono }}" readonly>
+                        value="{{ form_data['telefono'] if form_data and form_data['telefono'] else alumno.telefono }}" readonly>
                     <div class="input-group-append">
                         <button type="button" class="btn btn-outline-secondary" onclick="enableField('telefono')">
                             <i class="fas fa-pencil-alt"></i>
@@ -115,7 +117,7 @@
                 <label for="correo_electronico">Correo Electrónico</label>
                 <div class="input-group">
                     <input type="email" id="correo_electronico" name="correo_electronico" class="form-control" 
-                           value="{{ form_data['correo_electronico'] if form_data and form_data['correo_electronico'] else alumno.correo_electronico }}" readonly>
+                        value="{{ form_data['correo_electronico'] if form_data and form_data['correo_electronico'] else alumno.correo_electronico }}" readonly>
                     <div class="input-group-append">
                         <button type="button" class="btn btn-outline-secondary" onclick="enableField('correo_electronico')">
                             <i class="fas fa-pencil-alt"></i>
@@ -125,6 +127,21 @@
             </div>
         </div>
 
+        <!-- Nuevo Campo: Contraseña -->
+        <h4>Contraseña</h4>
+        <div class="form-group">
+            <label for="contraseña">Contraseña</label>
+            <div class="input-group">
+                <input type="password" id="contraseña" name="contraseña" class="form-control" placeholder="Ingrese nueva contraseña si desea cambiarla" disabled>
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-outline-secondary" onclick="enableField('contraseña')">
+                        <i class="fas fa-pencil-alt"></i>
+                    </button>
+                </div>
+            </div>
+            <small class="form-text text-muted">Dejar en blanco si no desea cambiar la contraseña.</small>
+        </div>
+        
         <!-- Datos de Domicilio -->
         <h4>Datos de Domicilio</h4>
         <div class="form-row">
@@ -132,7 +149,7 @@
                 <label for="pais">País</label>
                 <div class="input-group">
                     <input type="text" id="pais" name="pais" class="form-control" 
-                           value="{{ form_data['pais'] if form_data and form_data['pais'] else (alumno.domicilio.pais if alumno.domicilio else '') }}" readonly>
+                        value="{{ form_data['pais'] if form_data and form_data['pais'] else (alumno.domicilio.pais if alumno.domicilio else '') }}" readonly>
                     <div class="input-group-append">
                         <button type="button" class="btn btn-outline-secondary" onclick="enableField('pais')">
                             <i class="fas fa-pencil-alt"></i>
@@ -144,7 +161,7 @@
                 <label for="estado_domicilio">Estado</label>
                 <div class="input-group">
                     <input type="text" id="estado_domicilio" name="estado_domicilio" class="form-control" 
-                           value="{{ form_data['estado_domicilio'] if form_data and form_data['estado_domicilio'] else (alumno.domicilio.estado if alumno.domicilio else '') }}" readonly>
+                        value="{{ form_data['estado_domicilio'] if form_data and form_data['estado_domicilio'] else (alumno.domicilio.estado if alumno.domicilio else '') }}" readonly>
                     <div class="input-group-append">
                         <button type="button" class="btn btn-outline-secondary" onclick="enableField('estado_domicilio')">
                             <i class="fas fa-pencil-alt"></i>
@@ -156,7 +173,7 @@
                 <label for="municipio">Municipio</label>
                 <div class="input-group">
                     <input type="text" id="municipio" name="municipio" class="form-control" 
-                           value="{{ form_data['municipio'] if form_data and form_data['municipio'] else (alumno.domicilio.municipio if alumno.domicilio else '') }}" readonly>
+                        value="{{ form_data['municipio'] if form_data and form_data['municipio'] else (alumno.domicilio.municipio if alumno.domicilio else '') }}" readonly>
                     <div class="input-group-append">
                         <button type="button" class="btn btn-outline-secondary" onclick="enableField('municipio')">
                             <i class="fas fa-pencil-alt"></i>
@@ -171,7 +188,7 @@
                 <label for="colonia">Colonia</label>
                 <div class="input-group">
                     <input type="text" id="colonia" name="colonia" class="form-control" 
-                           value="{{ form_data['colonia'] if form_data and form_data['colonia'] else (alumno.domicilio.colonia if alumno.domicilio else '') }}" readonly>
+                        value="{{ form_data['colonia'] if form_data and form_data['colonia'] else (alumno.domicilio.colonia if alumno.domicilio else '') }}" readonly>
                     <div class="input-group-append">
                         <button type="button" class="btn btn-outline-secondary" onclick="enableField('colonia')">
                             <i class="fas fa-pencil-alt"></i>
@@ -183,7 +200,7 @@
                 <label for="cp">Código Postal</label>
                 <div class="input-group">
                     <input type="text" id="cp" name="cp" class="form-control" 
-                           value="{{ form_data['cp'] if form_data and form_data['cp'] else (alumno.domicilio.cp if alumno.domicilio else '') }}" readonly>
+                        value="{{ form_data['cp'] if form_data and form_data['cp'] else (alumno.domicilio.cp if alumno.domicilio else '') }}" readonly>
                     <div class="input-group-append">
                         <button type="button" class="btn btn-outline-secondary" onclick="enableField('cp')">
                             <i class="fas fa-pencil-alt"></i>
@@ -195,7 +212,7 @@
                 <label for="calle">Calle</label>
                 <div class="input-group">
                     <input type="text" id="calle" name="calle" class="form-control" 
-                           value="{{ form_data['calle'] if form_data and form_data['calle'] else (alumno.domicilio.calle if alumno.domicilio else '') }}" readonly>
+                        value="{{ form_data['calle'] if form_data and form_data['calle'] else (alumno.domicilio.calle if alumno.domicilio else '') }}" readonly>
                     <div class="input-group-append">
                         <button type="button" class="btn btn-outline-secondary" onclick="enableField('calle')">
                             <i class="fas fa-pencil-alt"></i>
@@ -209,7 +226,7 @@
             <label for="numero_casa">Número de Casa</label>
             <div class="input-group">
                 <input type="text" id="numero_casa" name="numero_casa" class="form-control" 
-                       value="{{ form_data['numero_casa'] if form_data and form_data['numero_casa'] else (alumno.domicilio.numero_casa if alumno.domicilio else '') }}" readonly>
+                    value="{{ form_data['numero_casa'] if form_data and form_data['numero_casa'] else (alumno.domicilio.numero_casa if alumno.domicilio else '') }}" readonly>
                 <div class="input-group-append">
                     <button type="button" class="btn btn-outline-secondary" onclick="enableField('numero_casa')">
                         <i class="fas fa-pencil-alt"></i>
@@ -218,57 +235,154 @@
             </div>
         </div>
 
-        <!-- Estado y Carrera con <select> -->
-        <h4>Estado y Carrera</h4>
+        <!-- Sección para Documentos -->
+        <h4>Documentos</h4>
         <div class="form-row">
-            <!-- Select para Estado del Alumno -->
+            <!-- Certificado de Preparatoria -->
             <div class="form-group col-md-6">
-                <label for="estado_alumno">Estado del Alumno</label>
-                <div class="input-group">
-                    <select id="estado_alumno" name="estado_alumno" class="form-control" disabled>
-                        {% for estado in estados %}
-                            <option value="{{ estado.nombre_estado }}"
-                                {% if form_data and form_data['estado_alumno'] == estado.nombre_estado %}
-                                    selected
-                                {% elif alumno.estado and alumno.estado.nombre_estado == estado.nombre_estado %}
-                                    selected
-                                {% endif %}>
-                                {{ estado.nombre_estado }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                    <div class="input-group-append">
-                        <button type="button" class="btn btn-outline-secondary" onclick="enableField('estado_alumno')">
-                            <i class="fas fa-pencil-alt"></i>
-                        </button>
-                    </div>
-                </div>
-                <small class="form-text text-muted">Si no es "Activo", el usuario se desactivará.</small>
+            <!-- Texto del Label arriba -->
+            <label for="certificado_preparatoria" class="mb-1 d-block">
+                Certificado de Preparatoria (PDF, máximo 2MB):
+            </label>
+
+            <!-- Área punteada en un div.custom-upload debajo -->
+            <div class="custom-upload mb-2">
+                <input 
+                type="file"
+                id="certificado_preparatoria"
+                name="certificado_preparatoria"
+                accept="application/pdf"
+                disabled
+                >
+                <label for="certificado_preparatoria" class="file-label-text">
+                <i class="bi bi-file-earmark-plus"></i>
+                <span>Subir archivo</span>
+                </label>
             </div>
-            <!-- Select para Carrera -->
+
+            <!-- Botón de lápiz en la siguiente línea -->
+            <button 
+                type="button"
+                class="btn btn-outline-secondary mb-2"
+                onclick="enableField('certificado_preparatoria')"
+            >
+                <i class="fas fa-pencil-alt"></i>
+            </button>
+
+            <!-- Enlace para ver/descargar o texto si no existe -->
+            {% if alumno.certificado_preparatoria %}
+                <p>
+                <a 
+                    href="{{ url_for('academic_bp.descargar_certificado', matricula=alumno.matricula) }}"
+                    target="_blank"
+                >
+                    Ver/Descargar Certificado
+                </a>
+                </p>
+            {% else %}
+                <p>No se ha subido un certificado.</p>
+            {% endif %}
+            </div>
+
+            <!-- Comprobante de Pago -->
             <div class="form-group col-md-6">
-                <label for="carrera_alumno">Carrera</label>
-                <div class="input-group">
-                    <select id="carrera_alumno" name="carrera_alumno" class="form-control" disabled>
-                        {% for carrera in carreras %}
-                            <option value="{{ carrera.nombre }}"
-                                {% if form_data and form_data['carrera_alumno'] == carrera.nombre %}
-                                    selected
-                                {% elif alumno.carrera and alumno.carrera.nombre == carrera.nombre %}
-                                    selected
-                                {% endif %}>
-                                {{ carrera.nombre }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                    <div class="input-group-append">
-                        <button type="button" class="btn btn-outline-secondary" onclick="enableField('carrera_alumno')">
-                            <i class="fas fa-pencil-alt"></i>
-                        </button>
-                    </div>
-                </div>
+            <label for="comprobante_pago" class="mb-1 d-block">
+                Comprobante de Pago (PDF, máximo 2MB):
+            </label>
+            <div class="custom-upload mb-2">
+                <input 
+                type="file"
+                id="comprobante_pago"
+                name="comprobante_pago"
+                accept="application/pdf"
+                disabled
+                >
+                <label for="comprobante_pago" class="file-label-text">
+                <i class="bi bi-file-earmark-plus"></i>
+                <span>Subir archivo</span>
+                </label>
+            </div>
+
+            <button 
+                type="button"
+                class="btn btn-outline-secondary mb-2"
+                onclick="enableField('comprobante_pago')"
+            >
+                <i class="fas fa-pencil-alt"></i>
+            </button>
+
+            {% if alumno.comprobante_pago %}
+                <p>
+                <a 
+                    href="{{ url_for('academic_bp.descargar_comprobante', matricula=alumno.matricula) }}"
+                    target="_blank"
+                >
+                    Ver/Descargar Comprobante
+                </a>
+                </p>
+            {% else %}
+                <p>No se ha subido un comprobante de pago.</p>
+            {% endif %}
             </div>
         </div>
+
+<!-- Estado y Carrera con <select> -->
+    <h4>Estado y Carrera</h4>
+    <div class="form-row">
+        <!-- Select para Estado del Alumno -->
+        <div class="form-group col-md-6">
+        <label for="estado_alumno">Estado del Alumno</label>
+        <div class="input-group">
+            <select id="estado_alumno" class="form-control" disabled>
+            {% for estado in estados %}
+                <option value="{{ estado.nombre_estado }}"
+                {% if form_data and form_data['estado_alumno'] == estado.nombre_estado %}
+                    selected
+                {% elif alumno.estado and alumno.estado.nombre_estado == estado.nombre_estado %}
+                    selected
+                {% endif %}>
+                {{ estado.nombre_estado }}
+                </option>
+            {% endfor %}
+            </select>
+            <div class="input-group-append">
+            <button type="button" class="btn btn-outline-secondary" onclick="enableField('estado_alumno')">
+                <i class="fas fa-pencil-alt"></i>
+            </button>
+            </div>
+        </div>
+        <!-- Campo oculto para enviar el valor del select -->
+        <input type="hidden" name="estado_alumno" value="{{ form_data.estado_alumno if form_data and form_data.estado_alumno else (alumno.estado.nombre_estado if alumno.estado else '') }}">
+        <small class="form-text text-muted">Si no es "Activo", el usuario se desactivará.</small>
+        </div>
+
+        <!-- Select para Carrera -->
+        <div class="form-group col-md-6">
+        <label for="carrera_alumno">Carrera</label>
+        <div class="input-group">
+            <select id="carrera_alumno" class="form-control" disabled>
+            {% for carrera in carreras %}
+                <option value="{{ carrera.nombre }}"
+                {% if form_data and form_data['carrera_alumno'] == carrera.nombre %}
+                    selected
+                {% elif alumno.carrera and alumno.carrera.nombre == carrera.nombre %}
+                    selected
+                {% endif %}>
+                {{ carrera.nombre }}
+                </option>
+            {% endfor %}
+            </select>
+            <div class="input-group-append">
+            <button type="button" class="btn btn-outline-secondary" onclick="enableField('carrera_alumno')">
+                <i class="fas fa-pencil-alt"></i>
+            </button>
+            </div>
+        </div>
+        <!-- Campo oculto para enviar el valor del select -->
+        <input type="hidden" name="carrera_alumno" value="{{ form_data.carrera_alumno if form_data and form_data.carrera_alumno else (alumno.carrera.nombre if alumno.carrera else '') }}">
+        </div>
+    </div>
+    
 
         <a href="{{ url_for('academic_bp.alumnos') }}" class="btn btn-primary mt-3">
             Lista de Alumnos
