@@ -67,6 +67,14 @@
           <span>Registro de Alumno</span>
         </a>
       </li>
+      <!-- Link para lista de alumnos, visible solo para Coordinadores-->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('academic_bp.alumnos') }}">
+          <i class="fas fa-fw fa-table"></i>
+          <span>Lista de Alumnos</span>
+        </a>
+      </li>
+      {# Aquí puedes agregar enlaces específicos para Coordinadores #}
 
     {% elif current_user.rol_id == 3 %}
       <!-- Encabezado de sección para Directivo -->

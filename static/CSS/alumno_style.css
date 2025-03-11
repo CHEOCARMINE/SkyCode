@@ -1,0 +1,65 @@
+.filter-box {
+    background-color: #7f8c8d3a; 
+    border: 1px solid #dee2e6; 
+    border-radius: 0.25rem; 
+    padding: 1rem; 
+    margin-bottom: 1rem;
+}
+
+.btn-custom-clear {
+    background-color: #e74d3cb9 !important;
+    border-color: #e74d3cb9 !important;
+    color: #fff;
+    padding: 0.5rem 1rem;   
+    width: 150px;         
+    margin: 0 auto;       
+    display: block; 
+}
+
+.alumnos-table thead {
+    background-color: #2c3e50d3;
+    color: #fff;
+}
+
+.alumnos-table th,
+.alumnos-table td {
+    text-align: center;
+}
+
+.alumnos-table tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+.alumnos-table tbody tr:nth-child(even) {
+    background-color: #7f8c8da1;
+    color: #fff;
+}
+
+.pagination .page-link {
+    font-size: 1rem;         
+    padding: 0.50rem 1rem;    
+}
+
+/* Estilo para la página activa */
+.pagination .page-item.active .page-link {
+    background-color: #2980B9;  
+    border-color: #2980B9;
+    color: #fff;
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: #bdc3c7;  
+    border-color: #bdc3c7;
+    color: #fff;
+}
+
+.btn {
+    background-color: #297fb9c4;  
+    border-color: #297fb9c4;
+    color: #fff;
+}
+.btn-warning {
+    background-color: #297fb9c4;  
+    border-color: #297fb9c4;
+    color: #fff;
+}

@@ -82,7 +82,7 @@ def validate_letters(text, required=True):
     :param required: Si es True, se exige al menos un carácter; si es False, se permite vacío.
     :return: True si cumple, False en caso contrario.
     """
-    pattern = r'^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+' if required else r'^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]*$'
+    pattern = r'^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$' if required else r'^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]*$'
     return bool(re.match(pattern, text))
 
 # ----- Validación de Código Postal -----

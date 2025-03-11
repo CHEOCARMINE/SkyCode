@@ -1,0 +1,36 @@
+    .custom-upload {
+        position: relative;
+        display: inline-block;
+    }
+
+    .custom-upload input[type="file"] {
+        /* Ocultamos el input file real */
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+
+  /* El label con el borde punteado */
+    .custom-upload .file-label-text {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 16px;
+        border: 2px dashed #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+        color: #555;
+        transition: background-color 0.3s;
+        width: 100%; /* Ajusta según tu diseño */
+        text-align: center;
+    }
+
+  /* Cambios de estilo al hover */
+    .custom-upload .file-label-text:hover {
+        border-color: #aaa;
+        color: #555;
+    }

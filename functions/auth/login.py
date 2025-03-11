@@ -33,6 +33,19 @@ def login():
             flash('Usuario no existe', 'login-danger')
             return redirect(url_for('auth.login'))
 
+        if user.activo != 1:
+            if matricula.startswith('ALU'):
+                mensaje = 'La cuenta se encuentra inactiva. Por favor, contacte a su coordinador para más información.'
+            elif matricula.startswith('COO'):
+                mensaje = 'La cuenta se encuentra inactiva. Por favor, contacte a un directivo para más información.'
+            elif matricula.startswith('DIR'):
+                mensaje = 'La cuenta se encuentra inactiva. Por favor, contacte al área correspondiente para más información.'
+            else:
+                mensaje = 'La cuenta se encuentra inactiva. Por favor, contacte a su superior para más información.'
+                
+            flash(mensaje, 'login-danger')
+            return redirect(url_for('auth.login'))
+
         # Verificar la contraseña
         if bcrypt.check_password_hash(user.contraseña, password):
             login_user(user)
