@@ -1,5 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>{% block title %}SkyCode{% endblock %}</title>
+
+  <!-- Fuentes e iconos personalizados para esta plantilla -->
+  <link href="{{ url_for('static', filename='CSS/Base/fontawesome.css') }}" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+
+  <!-- Estilos personalizados para esta plantilla -->
+  <link href="{{ url_for('static', filename='CSS/Base/estilos_base.css') }}" rel="stylesheet">
+  <!-- Estilos adicionales para personalización -->
+  <link href="{{ url_for('static', filename='CSS/Base/personalizacion.css') }}" rel="stylesheet">
+</head>
+<body id="page-top">
+  <!-- Contenedor principal de la página -->
+  <div id="wrapper">
+
+    <!-- Barra lateral (Sidebar) -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+      <!-- Marca de la barra lateral -->
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('academic_bp.index') }}">
+        <div class="sidebar-brand-icon rotate-n-15">
+          <i class="fas fa-laugh-wink"></i>
+        </div>
+        <div class="sidebar-brand-text mx-3">SkyCode</div>
+      </a>
+
+      <!-- Divisor -->
+      <hr class="sidebar-divider my-0">
+
+      <!-- Elemento de navegación - Dashboard -->
+      <li class="nav-item active">
+        <a class="nav-link" href="{{ url_for('academic_bp.index') }}">
+          <i class="fas fa-fw fa-tachometer-alt"></i>
+          <span>Inicio</span>
+        </a>
+      </li>
+
+       <!-- Divisor -->
+  <hr class="sidebar-divider">
+
+  {% if current_user.is_authenticated %}
+  {% if current_user.rol_id == 1 %}
+  <!-- Encabezado de sección para Alumno -->
+  <div class="sidebar-heading">
+    Alumno
+  </div>
+  <!-- Link para ver el Avance Académico, visible solo para Alumno -->
+  <li class="nav-item">
+    <a class="nav-link" href="{{ url_for('alumno_progress.mostrar_historial_academico')
+  }}">
+      <i class="fas fa-chart-line"></i>
+      <span>Avance Académico</span>
+    </a>
+  </li>
+
+    {% elif current_user.rol_id == 2 %}
+      <!-- Encabezado de sección para Coordinador -->
+      <div class="sidebar-heading">
+        Coordinador
+      </div>
+      <!-- Link para registro de alumno, visible solo para Coordinador -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('academic_bp.registrar_alumno') }}">
+          <i class="fas fa-fw fa-table"></i>
+          <span>Registro de Alumno</span>
+        </a>
+      </li>
+      <!-- Link para lista de alumnos, visible solo para Coordinadores-->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('academic_bp.alumnos') }}">
+          <i class="fas fa-fw fa-table"></i>
+          <span>Lista de Alumnos</span>
+        </a>
+      </li>
+      {# Aquí puedes agregar enlaces específicos para Coordinadores #}
+
+    {% elif current_user.rol_id == 3 %}
+      <!-- Encabezado de sección para Directivo -->
+      <div class="sidebar-heading">
+        Directivo
+      </div>
+      {# Aquí puedes agregar enlaces específicos para Directivo #}
+    {% endif %}
+  {% endif %}
+
+  <!-- Divisor -->
+  <hr class="sidebar-divider d-none d-md-block">
+
+      <!-- Botón para contraer la barra lateral -->
+      <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+      </div>
+    </ul>
+    <!-- Fin de la barra lateral -->
+
+    <!-- Contenedor del contenido principal -->
+    <div id="content-wrapper" class="d-flex flex-column">
+      <!-- Contenido principal -->
+      <div id="content">
+        <!-- Barra superior (Topbar) -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+          <!-- Botón para mostrar/ocultar la barra lateral en dispositivos pequeños -->
+          <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button>
+
+          <!-- Menú de navegación superior -->
+          <ul class="navbar-nav ml-auto">
+
+            <!-- Elemento de navegación - Información del usuario -->
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{% if current_user.is_authenticated %}
+                  {% if current_user.alumno %}
+                    {{ current_user.alumno.primer_nombre }} {{ current_user.alumno.primer_apellido }}
+                  {% elif current_user.coordinador_directivo %}
+                    {{ current_user.coordinador_directivo.primer_nombre }} {{ current_user.coordinador_directivo.primer_apellido }}
+                  {% else %}
+                    Usuario
+                  {% endif %}
+                {% else %}
+                  Invitado
+                {% endif %}
+                </span>
+                <img class="img-profile rounded-circle" src="{{ url_for('static', filename='images/undraw_profile.svg') }}">
+              </a>
+              <!-- Menú desplegable de información del usuario -->
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Perfil
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Cerrar sesión
+                </a>
+              </div>
+            </li>
+          </ul>
+        </nav>
+        <!-- Fin de la Barra superior (Topbar) -->
+
+        {% block content %}
+        <!-- Aquí se insertará el contenido específico de cada página -->
+        {% endblock %}
+      </div>
+      <!-- Fin del Contenido principal -->
+
+      <!-- Pie de página (Footer) -->
+      <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; Your Website 2025</span>
+          </div>
+        </div>
+      </footer>
+      <!-- Fin del Pie de página -->
+    </div>
+    <!-- Fin del Contenedor del contenido principal -->
+  </div>
+  <!-- Fin del Contenedor principal de la página -->
+
+  <!-- Botón para volver arriba (Scroll to Top) -->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Modal para Cerrar sesión (Logout Modal) -->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">¿Listo para salir?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Cerrar">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">Selecciona "Cerrar sesión" a continuación si deseas finalizar tu sesión actual.</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+          <a class="btn btn-primary" href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript principal de Bootstrap -->
+  <script src="{{ url_for('static', filename='JS/Base/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='JS/Base/bootstrap.bundle.js') }}"></script>
+
+  <!-- Plugin principal de jQuery -->
+  <script src="{{ url_for('static', filename='JS/Base/easing.js') }}"></script>
+
+  <!-- Scripts personalizados para todas las páginas -->
+  <script src="{{ url_for('static', filename='JS/Base/script_base.js') }}"></script>
+
+  <!-- Plugins a nivel de página -->
+  <script src="{{ url_for('static', filename='JS/Base/chart.js') }}"></script>
+
+  <!-- Scripts personalizados a nivel de página 
+  <script src="{{ url_for('static', filename='JS/Demo/demo_area_chart.js') }}"></script>
+  <script src="{{ url_for('static', filename='JS/Demo/demo_pie_chart.js') }}"></script> -->
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
