@@ -47,13 +47,19 @@
   <hr class="sidebar-divider">
 
   {% if current_user.is_authenticated %}
-    {# Si el usuario es Alumno (rol_id = 1) #}
-    {% if current_user.rol_id == 1 %}
-      <!-- Encabezado de sección para Alumno -->
-      <div class="sidebar-heading">
-        Alumno
-      </div>
-      {# Aquí puedes agregar enlaces específicos para Alumno #}
+  {% if current_user.rol_id == 1 %}
+  <!-- Encabezado de sección para Alumno -->
+  <div class="sidebar-heading">
+    Alumno
+  </div>
+  <!-- Link para ver el Avance Académico, visible solo para Alumno -->
+  <li class="nav-item">
+    <a class="nav-link" href="{{ url_for('alumno_progress.mostrar_historial_academico')
+  }}">
+      <i class="fas fa-chart-line"></i>
+      <span>Avance Académico</span>
+    </a>
+  </li>
 
     {% elif current_user.rol_id == 2 %}
       <!-- Encabezado de sección para Coordinador -->
