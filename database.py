@@ -161,6 +161,82 @@ def actualizar_alumno_y_usuario(matricula,
 
     return alumno
 
+# ------------------------------------------------------------
+# 🔥 Aquí van las funciones NUEVAS para obtener datos académicos 🔥
+# ------------------------------------------------------------
+
+def obtener_avance_carrera(alumno_id):
+    """
+    Calcula el avance de la carrera en porcentaje basado en materias aprobadas.
+    """
+    alumno = Alumno.query.get(alumno_id)
+    if not alumno:
+        return 0
+
+    carrera = Carrera.query.get(alumno.carrera_id)
+    if not carrera:
+        return 0
+
+    creditos_aprobados = db.session.query(db.func.sum(Materia.creditos)).join(Calificacion).filter(
+        Calificacion.alumno_id == alumno_id,
+        Calificacion.calificacion >= 7  
+    ).scalar() or 0
+
+    porcentaje_avance = (creditos_aprobados / carrera.creditos) * 100
+    return round(porcentaje_avance, 2)
+
+
+def obtener_historial_academico(alumno_id):
+    """
+    Obtiene las materias aprobadas, reprobadas y en curso por cuatrimestre.
+    """
+    historial = []
+    
+    for cuatrimestre in range(1, 10):  
+        materias = db.session.query(
+            Materia.nombre.label("materia"),
+            Calificacion.calificacion.label("calificacion"),
+        ).join(Calificacion).filter(
+            Calificacion.alumno_id == alumno_id,
+            Materia.id == Calificacion.materia_id,
+            PlanEstudios.cuatrimestre == cuatrimestre,
+            PlanEstudios.materia_id == Materia.id
+        ).all()
+
+        aprobadas = sum(1 for mat in materias if mat.calificacion >= 7)
+        reprobadas = sum(1 for mat in materias if mat.calificacion < 7)
+        en_curso = sum(1 for mat in materias if mat.calificacion is None)
+
+        historial.append({
+            "cuatrimestre": cuatrimestre,
+            "aprobadas": aprobadas,
+            "reprobadas": reprobadas,
+            "en_curso": en_curso,
+            "calificaciones": [mat.calificacion for mat in materias if mat.calificacion]
+        })
+    
+    return historial
+
+
+def obtener_materias_pendientes(alumno_id):
+    """
+    Obtiene las materias pendientes (no cursadas o no aprobadas).
+    """
+    materias_pendientes = db.session.query(
+        Materia.nombre
+    ).join(PlanEstudios).filter(
+        PlanEstudios.carrera_id == Alumno.carrera_id,
+        PlanEstudios.materia_id == Materia.id,
+        ~db.exists().where(
+            (Calificacion.alumno_id == alumno_id) &
+            (Calificacion.materia_id == Materia.id) &
+            (Calificacion.calificacion >= 7)  
+        )
+    ).all()
+
+    return [materia.nombre for materia in materias_pendientes]
+
+
 # -------------------------------------------------
 # Nota:
 # Este archivo unificado (database.py) centraliza tanto las funciones de acceso a datos

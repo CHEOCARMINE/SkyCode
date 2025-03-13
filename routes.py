@@ -1,9 +1,11 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, send_file
+from flask import Blueprint, render_template, redirect, url_for, flash, request, send_file, abort
 from flask_login import current_user, login_required
 from math import ceil
 from functions.auth.register import registrar_alumno as process_registration
 from functions.user_management.view_students import get_students
 from models import Carrera, EstadoAlumno, Alumno
+from functions.academic_progress import get_academic_progress
+
 
 academic_bp = Blueprint('academic_bp', __name__)
 
@@ -231,4 +233,22 @@ def descargar_comprobante(matricula):
     BytesIO(alumno.comprobante_pago),
     download_name="comprobante.pdf",
     as_attachment=True
+    )
+
+alumno_progress_bp = Blueprint('alumno_progress', __name__)
+
+@alumno_progress_bp.route('/progress')
+@login_required
+def mostrar_historial_academico():
+    if current_user.rol_id != 1:  # Solo los alumnos pueden ver su progreso
+        flash("No tienes permisos para ver esta sección.", "danger")
+        return redirect(url_for('academic_bp.index'))
+
+    progress_data = get_academic_progress(current_user.alumno_id)
+
+    return render_template(
+        'progress.html',
+        avance=progress_data["avance"],
+        historial=progress_data["historial"],
+        pending_courses=progress_data["pending_courses"]
     )

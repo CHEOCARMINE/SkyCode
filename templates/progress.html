@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Historial Académico - SkyCode{% endblock %}
+
+{% block head_extra %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/progress_style.css') }}">
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var bars = document.querySelectorAll(".progress-bar");
+      bars.forEach(function(bar) {
+        var prog = bar.getAttribute("data-progress") || "0";
+        bar.style.width = prog + "%";
+        bar.innerText = prog + "%";
+      });
+    });
+  </script>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4 text-center">Historial Académico</h1>
+
+  <!-- Avance de Carrera -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Avance de Carrera</h5>
+    </div>
+    <div class="card-body text-center">
+      {% set prog = avance|default(0)|float %}
+      <div class="mb-2 fw-bold">
+        <h4>{{ prog|round(2) }}% Completado</h4> <!-- Porcentaje visible arriba de la barra -->
+      </div>
+      <div class="progress">
+        <div class="progress-bar" role="progressbar"
+             data-progress="{{ prog }}"
+             style="width: 0%; transition: width 1s;"
+             aria-valuenow="{{ prog }}" aria-valuemin="0" aria-valuemax="100">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Historial por Cuatrimestre -->
+  {% for cuatrimestre in range(1, 10) %}
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Cuatrimestre {{ cuatrimestre }}</h5>
+    </div>
+    <div class="card-body">
+      {% set registros = historial | selectattr("cuatrimestre", "equalto", cuatrimestre) | list %}
+      {% if registros %}
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Materias Aprobadas</th>
+              <th>Materias Reprobadas</th>
+              <th>Materias en Curso</th>
+              <th>Calificaciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for registro in registros %}
+            <tr>
+              <td>{{ registro.aprobadas }}</td>
+              <td>{{ registro.reprobadas }}</td>
+              <td>{{ registro.en_curso }}</td>
+              <td>{{ registro.calificaciones }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="text-muted text-center">No hay datos para este cuatrimestre.</p>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+
+  <!-- Detalle de Calificaciones -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Detalle de Calificaciones</h5>
+    </div>
+    <div class="card-body">
+      {% if grades %}
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Materia</th>
+              <th>Calificación</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in grades %}
+            <tr>
+              <td>{{ item.materia }}</td>
+              <td class="text-center">{{ item.calificacion }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="text-muted text-center">No se encontraron calificaciones.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Materias Pendientes -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Materias Pendientes</h5>
+    </div>
+    <div class="card-body">
+      {% if pending_courses %}
+      <ul class="list-group">
+        {% for materia in pending_courses %}
+          <li class="list-group-item">{{ materia }}</li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="text-muted text-center">No hay materias pendientes.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
