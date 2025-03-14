@@ -52,3 +52,24 @@ def create_app(config_name="development"):
 if __name__ == '__main__':
     app = create_app()
     app.run(debug=app.config.get("DEBUG", False))
+#imprimir horario
+from flask import Flask
+from config import config_by_name
+from database import init_db
+from routes import academic_bp
+
+def create_app(config_name="development"):
+    app = Flask(__name__)
+    app.config.from_object(config_by_name[config_name])
+    
+    # Inicializa la base de datos
+    init_db(app)
+    
+    # Registra los Blueprints
+    app.register_blueprint(academic_bp)
+    
+    return app
+
+if __name__ == '__main__':
+    app = create_app()
+    app.run(debug=True)

@@ -252,3 +252,16 @@ def mostrar_historial_academico():
         historial=progress_data["historial"],
         pending_courses=progress_data["pending_courses"]
     )
+
+#imprimir horario
+from flask import Blueprint
+from functions.academic import generar_horario_pdf
+
+academic_bp = Blueprint('academic_bp', __name__)
+
+@academic_bp.route('/imprimir_horario/<int:alumno_id>', endpoint='imprimir_horario')
+def imprimir_horario(alumno_id):
+    """
+    Permite al alumno descargar su horario en formato PDF.
+    """
+    return generar_horario_pdf(alumno_id)
