@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Materias{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Gestión de Materias</h1>
+    <a href="{{ url_for('academic_bp.agregar_materia') }}" class="btn btn-primary mb-3">Agregar Materia</a>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>CRN</th>
+                <th>Código</th>
+                <th>Créditos</th>
+                <th>Correlativa</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for materia in materias %}
+                <tr>
+                    <td>{{ materia.id }}</td>
+                    <td>{{ materia.nombre }}</td>
+                    <td>{{ materia.crn }}</td>
+                    <td>{{ materia.codigo }}</td>
+                    <td>{{ materia.creditos }}</td>
+                    <td>{% if materia.correlativa %}{{ materia.correlativa.nombre }}{% else %}N/A{% endif %}</td>
+                    <td>
+                        <a href="{{ url_for('academic_bp.editar_materia', id=materia.id) }}" class="btn btn-warning btn-sm">Editar</a>
+                        <form action="{{ url_for('academic_bp.eliminar_materia', id=materia.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar esta materia?');">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
