@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Materias Pendientes{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4 text-primary">Materias Pendientes</h1>
+    <h3>Materias que debes cursar o que has reprobado</h3>
+    <ul>
+        {% for materia in materias_pendientes %}
+        <li>{{ materia.nombre }} ({{ materia.codigo }})</li>
+        {% endfor %}
+    </ul>
+
+    <h3 class="mt-5">Sugerencias para el próximo cuatrimestre</h3>
+    <ul>
+        {% for materia in materias_sugeridas %}
+        <li>{{ materia.nombre }} ({{ materia.codigo }})</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

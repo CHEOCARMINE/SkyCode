@@ -52,3 +52,8 @@ def create_app(config_name="development"):
 if __name__ == '__main__':
     app = create_app()
     app.run(debug=app.config.get("DEBUG", False))
+
+#prueba de materias pendientes
+from routes import academic_bp
+
+app.register_blueprint(academic_bp)

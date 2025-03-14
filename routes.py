@@ -251,4 +251,31 @@ def mostrar_historial_academico():
         avance=progress_data["avance"],
         historial=progress_data["historial"],
         pending_courses=progress_data["pending_courses"]
+ 
+   )
+
+
+@academic_bp.route('/materias_pendientes/<int:alumno_id>', methods=['GET'], endpoint='index')
+@login_required
+def materias_pendientes(alumno_id):
+    """
+    Permite al alumno ver sus materias pendientes y sugerencias para el siguiente cuatrimestre.
+    """
+    # Verificar permisos (solo alumnos pueden acceder)
+    if current_user.rol_id != 1 or current_user.alumno_id != alumno_id:
+        flash("No tienes permisos para acceder a esta información.", "danger")
+        return redirect(url_for('academic_bp.index'))
+
+    # Obtener los datos de materias pendientes y sugeridas
+    from functions.academic import obtener_materias_pendientes
+    resultado = obtener_materias_pendientes(alumno_id)
+
+    if "error" in resultado:
+        flash(resultado["error"], "danger")
+        return redirect(url_for('academic_bp.index'))
+
+    return render_template(
+        'materias_pendientes.html',
+        materias_pendientes=resultado["pendientes"],
+        materias_sugeridas=resultado["sugerencias"]
     )
