@@ -1,12 +1,22 @@
 
 
-from flask import Blueprint, render_template, redirect, url_for, flash, request, send_file, abort
+from flask import Blueprint, app, render_template, redirect, url_for, flash, request, send_file, abort
 from flask_login import current_user, login_required
 from math import ceil
 from functions.auth.register import registrar_alumno as process_registration
 from functions.user_management.view_students import get_students
 from models import Carrera, EstadoAlumno, Alumno
 from functions.academic_progress import get_academic_progress
+from flask import Blueprint, render_template
+
+# Crear el blueprint
+academic_bp = Blueprint('academic', __name__)
+
+# Definir las rutas
+@academic_bp.route('/perfil')
+def perfil():
+    return render_template('perfil.html')
+
 
 
 academic_bp = Blueprint('academic_bp', __name__)
@@ -254,3 +264,8 @@ def mostrar_historial_academico():
         historial=progress_data["historial"],
         pending_courses=progress_data["pending_courses"]
     )
+
+from flask import render_template, session
+
+
+

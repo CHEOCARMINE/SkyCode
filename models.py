@@ -1,6 +1,6 @@
 
-=======
 from flask_login import UserMixin
+from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
@@ -244,4 +244,4 @@ class Coordinadores_Directivos(db.Model):
         return f"<Coordinadores_Directivos {self.primer_nombre} {self.primer_apellido}>"
     
     
->>>>>>> origin/main
+
