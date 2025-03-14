@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Agregar Materia{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Agregar Materia</h1>
+    <form action="{{ url_for('academic_bp.agregar_materia') }}" method="POST">
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" name="nombre" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="crn">CRN:</label>
+            <input type="text" name="crn" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="codigo">Código:</label>
+            <input type="text" name="codigo" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="creditos">Créditos:</label>
+            <input type="number" name="creditos" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="correlativa_id">Materia Correlativa:</label>
+            <select name="correlativa_id" class="form-control">
+                <option value="">Ninguna</option>
+                {% for materia in materias %}
+                    <option value="{{ materia.id }}">{{ materia.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <a href="{{ url_for('academic_bp.listar_materias') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}
