@@ -1,12 +1,12 @@
-from flask import Flask, redirect, render_template, url_for, flash
+from flask import Flask, redirect, render_template, request, url_for, flash
 from config import config_by_name
 from database import init_db
 from services import init_mail
 from routes import academic_bp
 from functions.auth.login import auth_bp as login_bp
 from flask_login import LoginManager, current_user
-from models import Usuario, Alumno
-from routes import alumno_progress_bp 
+from models import Materia, Usuario, Alumno
+from routes import alumno_progress_bp
 
 def create_app(config_name="development"):
     """
@@ -37,6 +37,16 @@ def create_app(config_name="development"):
         alumno = Alumno.query.get(usuario.alumno_id) if usuario and usuario.alumno_id else None
         return render_template('perfil.html', alumno=alumno)
 
+    @app.route('/inscripcion_materias', methods=['GET', 'POST'])
+    def inscripcion_materias():
+        materia = None
+        if request.method == 'POST':
+            crn = request.form.get('crn')
+            # Hacer la consulta a la base de datos buscando por CRN
+            materia = Materia.query.filter_by(crn=crn).first()
+
+        return render_template('inscripcion_materias.html', materia=materia)
+
     @app.route('/evaluacion_docente')
     def evaluacion_docente():
         return render_template('evaluacion_docente.html')
@@ -54,6 +64,7 @@ def create_app(config_name="development"):
     
     return app
 
+# Ejecuta la aplicación
 if __name__ == '__main__':
     app = create_app()
     app.run(debug=app.config.get("DEBUG", False))
