@@ -82,6 +82,15 @@
         .section .info-item {
             margin-bottom: 10px;
         }
+        #uploadForm {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        #profileImage {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -90,11 +99,16 @@
     </div>
     <div class="container">
         <div class="profile-header">
-            <img src="profile.jpg" alt="Foto de perfil">
+            <img id="profileImage" src="profile.jpg" alt="Foto de perfil">
             <div>
-                <h2>Juan Pérez</h2>
-                <p>Alumno de Ingeniería Informática</p>
+                <h2>{{ alumno.primer_nombre }} {{ alumno.primer_apellido }}</h2>
+                <p>Alumno de {{ alumno.carrera.nombre }}</p>
                 <p>Universidad de Campeche</p>
+                <!-- Formulario de subida de archivos -->
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <label for="fileUpload">Subir nueva foto</label>
+                    <input type="file" id="fileUpload" accept="image/*">
+                </form>
             </div>
         </div>
         <div class="profile-nav">
@@ -106,13 +120,4 @@
         </div>
         <div class="section">
             <h3>Datos Generales</h3>
-            <div class="info-item"><strong>Nombre Completo:</strong> Juan Pérez</div>
-            <div class="info-item"><strong>Matrícula:</strong> 123456789</div>
-            <div class="info-item"><strong>Correo Electrónico:</strong> juan.perez@universidad.com</div>
-            <div class="info-item"><strong>Teléfono:</strong> (123) 456-7890</div>
-            <div class="info-item"><strong>Dirección:</strong> Calle Falsa 123, Ciudad, País</div>
-            <div class="info-item"><strong>Carrera:</strong> Ingeniería Informática</div>
-        </div>
-    </div>
-</body>
-</html>
+            <div class="info-item"><strong>Nombre Completo:</strong> {{ alumno.primer_nombre }} {{ alumno.segundo_nombre }} {{ alumno.primer_apellido }} {{ alumno.segundo_apellido }}</div>
