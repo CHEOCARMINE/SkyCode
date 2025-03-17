@@ -80,6 +80,13 @@
           <span>Lista de Alumnos</span>
         </a>
       </li>
+      <!-- Link para gestión de materias, visible solo para Coordinador -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('academic_bp.listar_materias') }}">
+          <i class="fas fa-fw fa-book"></i>
+          <span>Gestión de Materias</span>
+        </a>
+      </li>
       {# Aquí puedes agregar enlaces específicos para Coordinadores #}
 
     {% elif current_user.rol_id == 3 %}
