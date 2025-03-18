@@ -390,11 +390,6 @@ def register_user_route():
 # Route para Ver Coordinadores y Directivos
 # ------------------------------------------------------------
 
-from math import ceil
-from flask import request, redirect, url_for, flash, render_template
-from flask_login import login_required, current_user
-from functions.user_management.view_user import get_coordinadores_directivos
-
 @academic_bp.route('/coordinadores_directivos', methods=['GET'])
 @login_required
 def coordinadores_directivos():
