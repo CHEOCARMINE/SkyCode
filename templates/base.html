@@ -87,16 +87,22 @@
           <span>Gestión de Materias</span>
         </a>
       </li>
-      {# Aquí puedes agregar enlaces específicos para Coordinadores #}
-
-    {% elif current_user.rol_id == 3 %}
+      {% elif current_user.rol_id == 3 %}
       <!-- Encabezado de sección para Directivo -->
       <div class="sidebar-heading">
         Directivo
       </div>
-      {# Aquí puedes agregar enlaces específicos para Directivo #}
-    {% endif %}
-  {% endif %}
+  
+      <!-- Opción para ver reportes -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('reports_bp.mostrar_reportes') }}">
+          <i class="fas fa-chart-bar"></i>
+          <span>Reportes</span>
+        </a>
+      </li>
+    {% endif %}  
+  
+  {% endif %}  
 
   <!-- Divisor -->
   <hr class="sidebar-divider d-none d-md-block">

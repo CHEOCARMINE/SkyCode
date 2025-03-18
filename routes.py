@@ -9,6 +9,8 @@ from models import Carrera, EstadoAlumno, Alumno
 from functions.academic_progress import get_academic_progress
 from services import send_email 
 from functions.user_management.update_students_data import actualizar_alumno_y_usuario
+from functions.reports.generate_statistical_report import generate_statistical_report
+from functions.reports.export_report import generar_pdf_reporte
 
 academic_bp = Blueprint('academic_bp', __name__)
 alumno_progress_bp = Blueprint('alumno_progress', __name__)
@@ -323,3 +325,35 @@ def mostrar_historial_academico():
         historial=progress_data["historial"],
         pending_courses=progress_data["pending_courses"]
     )
+
+reports_bp = Blueprint('reports_bp', __name__)
+
+@reports_bp.route('/reports')
+@login_required
+def mostrar_reportes():
+    if current_user.rol_id != 3:  # Solo los directivos pueden acceder
+        flash("No tienes permisos para acceder a esta sección.", "danger")
+        return redirect(url_for('academic_bp.index'))
+
+    report_data = generate_statistical_report()  # Obtener datos reales del reporte
+
+    return render_template('reports.html', report_data=report_data)
+
+
+@reports_bp.route('/reports/download_pdf')
+@login_required
+def download_report_pdf():
+    try:
+        datos_reporte = generate_statistical_report()  # Obtiene los datos
+
+        if not datos_reporte:
+            flash("No hay datos para generar el reporte.", "danger")
+            return redirect(url_for('reports_bp.mostrar_reportes'))
+
+        pdf_path = generar_pdf_reporte(datos_reporte)  # <-- Ahora sí pasamos los datos
+
+        return send_file(pdf_path, as_attachment=True)
+
+    except Exception as e:
+        flash(f"Error al generar el PDF: {str(e)}", "danger")
+        return redirect(url_for('reports_bp.mostrar_reportes'))

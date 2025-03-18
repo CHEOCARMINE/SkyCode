@@ -236,6 +236,53 @@ def obtener_materias_pendientes(alumno_id):
 
     return [materia.nombre for materia in materias_pendientes]
 
+def obtener_numero_alumnos_inscritos():
+    """
+    Retorna el número total de alumnos inscritos.
+    """
+    return db.session.query(Alumno).count()
+
+def obtener_numero_alumnos_egresados():
+    """
+    Retorna el número total de alumnos egresados.
+    """
+    return db.session.query(Alumno).filter(Alumno.estado_id == 3).count()
+
+
+def obtener_promedios_por_carrera():
+    """
+    Retorna un diccionario con el promedio general de calificaciones por carrera.
+    Si no hay datos, retorna 0 en lugar de "N/A".
+    """
+    carreras = db.session.query(Carrera).all()
+    promedios = {}
+
+    for carrera in carreras:
+        promedio = db.session.query(db.func.avg(Calificacion.calificacion)).join(Alumno).filter(
+            Alumno.carrera_id == carrera.id,
+            Calificacion.calificacion != None
+        ).scalar() or 0  # Si no hay datos, devuelve 0 en lugar de None o "N/A"
+        
+        promedios[carrera.nombre] = round(promedio, 2)  # Redondeo seguro
+
+    return promedios
+
+
+def obtener_estadisticas_generales():
+    try:
+        total_alumnos = Alumno.query.count()
+        total_egresados = Alumno.query.filter(Alumno.estado_id == 3).count()
+        promedio_global = db.session.query(db.func.avg(Calificacion.calificacion)).scalar() or 0
+    except Exception as e:
+        db.session.rollback()
+        raise e  # Sigue mostrando el error, pero no cierra la sesión manualmente.
+
+    return {
+        "total_alumnos": total_alumnos,
+        "total_egresados": total_egresados,
+        "promedio_global": round(promedio_global, 2)
+    }
+
 
 # -------------------------------------------------
 # Nota:
