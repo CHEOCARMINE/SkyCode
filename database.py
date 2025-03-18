@@ -243,6 +243,7 @@ def obtener_materias_pendientes(alumno_id):
 # ------------------------------------------------------------
 # Funciones para el registro de nuevos Coordiandores y Directivos
 # ------------------------------------------------------------
+
 def insertar_coordinador_directivo(matricula, primer_nombre, primer_apellido, correo_electronico):
     """
     Inserta un nuevo registro en la tabla Coordinadores_Directivos.
@@ -275,6 +276,41 @@ def crear_usuario_para_coordinador_directivo(coordinador_directivo_id, hashed_pa
 # ------------------------------------------------------------
 # Funciones para modificar a los Coordiandores y Directivos
 # ------------------------------------------------------------
+
+def actualizar_coordinador_directivo(user_id, primer_nombre, primer_apellido, correo_electronico, nuevo_estado):
+    """
+    Actualiza los datos del Coordinador/Directivo y el estado del usuario asociado.
+    
+    Parámetros:
+      - user_id: ID del Coordinador/Directivo en la tabla Coordinadores_Directivos.
+      - primer_nombre: Nuevo nombre.
+      - primer_apellido: Nuevo apellido.
+      - correo_electronico: Nuevo correo.
+      - nuevo_estado: Estado de la cuenta ("Activo" o "Inactivo").
+    
+    Retorna:
+      - El registro actualizado de Coordinadores_Directivos, o None si no se encontró.
+    """
+    # Recuperar el registro por su ID
+    registro = Coordinadores_Directivos.query.get(user_id)
+    if not registro:
+        return None
+
+    # Actualizar datos editables del registro
+    registro.primer_nombre = primer_nombre
+    registro.primer_apellido = primer_apellido
+    registro.correo_electronico = correo_electronico
+
+    # Actualizar el estado del usuario asociado (si existe)
+    usuario = registro.usuario
+    if usuario:
+        # Se usa 1 para activo y 0 para inactivo
+        usuario.activo = 1 if nuevo_estado.lower() == "activo" else 0
+
+    # Realizar commit de los cambios
+    db.session.commit()
+
+    return registro
 
 # -------------------------------------------------
 # Nota:

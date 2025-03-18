@@ -96,8 +96,9 @@
                     <td>{{ user.rol }}</td>
                     <td>{{ user.estado }}</td>
                     <td>
-                        <!-- Por ahora el botón "Ver" no contiene link -->
-                        <button class="btn btn-primary" disabled>Ver</button>
+                    <a href="{{ url_for('academic_bp.modificar_coordinador_directivo', user_id=user.id) }}" class="btn btn-primary">
+                        Ver
+                    </a>
                     </td>
                 </tr>
                 {% endfor %}

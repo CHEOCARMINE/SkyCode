@@ -3,12 +3,14 @@ from flask_login import current_user, login_required
 from math import ceil
 from functions.auth.register import registrar_alumno as process_registration
 from functions.user_management.view_students import get_students
-from models import db, Carrera, EstadoAlumno, Alumno, Materia
+from models import db, Carrera, EstadoAlumno, Alumno, Materia, Coordinadores_Directivos
 from functions.academic_progress import get_academic_progress
 from services import send_email 
 from functions.user_management.update_students_data import actualizar_alumno_y_usuario
 from functions.auth.register_user import registrar_coordinador_directivo
 from functions.user_management.view_user import get_coordinadores_directivos
+from functions.user_management.update_user_data import actualizar_coordinador_directivo
+from database import bcrypt, db
 
 academic_bp = Blueprint('academic_bp', __name__)
 alumno_progress_bp = Blueprint('alumno_progress', __name__)
@@ -448,4 +450,81 @@ def coordinadores_directivos():
         rol_filter=rol_filter
     )
 
+# ------------------------------------------------------------
 # Route para Modificar Coordinadores y Directivos
+# ------------------------------------------------------------
+
+@academic_bp.route('/modificar_coordinador_directivo', methods=['GET', 'POST'])
+@login_required
+def modificar_coordinador_directivo():
+    if current_user.rol_id != 3:
+        flash("No tienes permisos para modificar coordinadores/directivos", "coordinador-danger")
+        return redirect(url_for('academic_bp.index'))
+    
+    if request.method == "POST":
+        # Recoger datos del formulario
+        user_id = request.form.get('user_id')
+        primer_nombre = request.form.get('primer_nombre')
+        primer_apellido = request.form.get('primer_apellido')
+        correo = request.form.get('correo_electronico')
+        estado_cuenta = request.form.get('estado_cuenta')  
+        nueva_contrasena = request.form.get('contraseña')   
+        
+        try:
+            coordinador_actualizado = actualizar_coordinador_directivo(
+                user_id,
+                primer_nombre,
+                primer_apellido,
+                correo,
+                "Activo" if estado_cuenta == "1" else "Inactivo"
+            )
+            if not coordinador_actualizado:
+                flash("No se pudo actualizar el Coordinador/Directivo. Revisa los datos ingresados.", "coordinador-danger")
+                return redirect(url_for('academic_bp.modificar_coordinador_directivo', user_id=user_id))
+        except Exception as e:
+            flash(f"Error al actualizar el Coordinador/Directivo: {str(e)}", "coordinador-danger")
+            return redirect(url_for('academic_bp.modificar_coordinador_directivo', user_id=user_id))
+        
+        # Actualizar la contraseña si se proporciona
+        if nueva_contrasena:
+            usuario = coordinador_actualizado.usuario
+            if usuario:
+                hashed = bcrypt.generate_password_hash(nueva_contrasena).decode('utf-8')
+                usuario.contraseña = hashed
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            flash("Error al guardar los cambios en la base de datos.", "coordinador-danger")
+            return redirect(url_for('academic_bp.modificar_coordinador_directivo', user_id=user_id))
+        
+        # Construir el mensaje de correo con los datos modificados
+        subject = "Actualización de tus datos en SkyCode"
+        body = f"Hola {coordinador_actualizado.primer_nombre} {coordinador_actualizado.primer_apellido},\n\n"
+        body += "Se han actualizado los siguientes datos en tu cuenta:\n\n"
+        body += f"  Nombre: {coordinador_actualizado.primer_nombre}\n"
+        body += f"  Apellido: {coordinador_actualizado.primer_apellido}\n"
+        body += f"  Correo Electrónico: {coordinador_actualizado.correo_electronico}\n"
+        body += f"  Estado de la Cuenta: {'Activo' if coordinador_actualizado.usuario and coordinador_actualizado.usuario.activo else 'Inactivo'}\n"
+        if nueva_contrasena:
+            body += f"\nTu nueva contraseña es: {nueva_contrasena}\n"
+        body += "\nSi tienes alguna duda o necesitas asistencia, por favor contáctanos.\n\n"
+        body += "Saludos,\nEquipo SkyCode"
+        send_email(subject, [correo], body)
+        
+        flash("Datos del Coordinador/Directivo actualizados correctamente.", "coordinador-success")
+        return redirect(url_for('academic_bp.coordinadores_directivos'))
+    
+    else:
+        user_id = request.args.get('user_id')
+        if not user_id:
+            flash("No se especificó el ID del Coordinador/Directivo.", "coordinador-danger")
+            return redirect(url_for('academic_bp.coordinadores_directivos'))
+        
+        registro = Coordinadores_Directivos.query.get(user_id)
+        if not registro:
+            flash("Coordinador/Directivo no encontrado.", "coordinador-danger")
+            return redirect(url_for('academic_bp.coordinadores_directivos'))
+        
+        return render_template("modificar_user.html", registro=registro)
