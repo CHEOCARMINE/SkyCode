@@ -48,48 +48,56 @@
 
   {% if current_user.is_authenticated %}
   {% if current_user.rol_id == 1 %}
-  <!-- Encabezado de sección para Alumno -->
-  <div class="sidebar-heading">
-    Alumno
-  </div>
-  <!-- Link para ver el Avance Académico, visible solo para Alumno -->
-  <li class="nav-item">
-    <a class="nav-link" href="{{ url_for('alumno_progress.mostrar_historial_academico')
-  }}">
-      <i class="fas fa-chart-line"></i>
-      <span>Avance Académico</span>
-    </a>
-  </li>
+    <!-- Encabezado de sección para Alumno -->
+    <div class="sidebar-heading">
+      Alumno
+    </div>
+    <!-- Link para ver el Avance Académico, visible solo para Alumno -->
+    <li class="nav-item">
+      <a class="nav-link" href="{{ url_for('alumno_progress.mostrar_historial_academico') }}">
+        <i class="fas fa-chart-line"></i>
+        <span>Avance Académico</span>
+      </a>
+    </li>
 
-    {% elif current_user.rol_id == 2 %}
-      <!-- Encabezado de sección para Coordinador -->
-      <div class="sidebar-heading">
-        Coordinador
-      </div>
-      <!-- Link para registro de alumno, visible solo para Coordinador -->
-      <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('academic_bp.registrar_alumno') }}">
-          <i class="fas fa-fw fa-table"></i>
-          <span>Registro de Alumno</span>
-        </a>
-      </li>
-      <!-- Link para lista de alumnos, visible solo para Coordinadores-->
-      <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('academic_bp.alumnos') }}">
-          <i class="fas fa-fw fa-table"></i>
-          <span>Lista de Alumnos</span>
-        </a>
-      </li>
-      {# Aquí puedes agregar enlaces específicos para Coordinadores #}
+  {% elif current_user.rol_id == 2 %}
+    <!-- Encabezado de sección para Coordinador -->
+    <div class="sidebar-heading">
+      Coordinador
+    </div>
+    <!-- Link para registro de alumno, visible solo para Coordinador -->
+    <li class="nav-item">
+      <a class="nav-link" href="{{ url_for('academic_bp.registrar_alumno') }}">
+        <i class="fas fa-fw fa-table"></i>
+        <span>Registro de Alumno</span>
+      </a>
+    </li>
+    <!-- Link para lista de alumnos, visible solo para Coordinadores-->
+    <li class="nav-item">
+      <a class="nav-link" href="{{ url_for('academic_bp.alumnos') }}">
+        <i class="fas fa-fw fa-table"></i>
+        <span>Lista de Alumnos</span>
+      </a>
+    </li>
 
-    {% elif current_user.rol_id == 3 %}
-      <!-- Encabezado de sección para Directivo -->
-      <div class="sidebar-heading">
-        Directivo
-      </div>
-      {# Aquí puedes agregar enlaces específicos para Directivo #}
-    {% endif %}
-  {% endif %}
+  {% elif current_user.rol_id == 3 %}
+    <!-- Encabezado de sección para Directivo -->
+    <div class="sidebar-heading">
+      Directivo
+    </div>
+
+    <!-- Opción para ver reportes -->
+    <li class="nav-item">
+      <a class="nav-link" href="{{ url_for('reports_bp.mostrar_reportes') }}">
+        <i class="fas fa-chart-bar"></i>
+        <span>Reportes</span>
+      </a>
+    </li>
+  {% endif %}  <!-- Cierre del último elif -->
+
+{% endif %}  <!-- Cierre del if principal -->
+
+
 
   <!-- Divisor -->
   <hr class="sidebar-divider d-none d-md-block">

@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Reportes - SkyCode{% endblock %}
+
+{% block head_extra %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/reports_style.css') }}">
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      let searchInput = document.getElementById("search-career");
+      let rows = document.querySelectorAll(".career-row");
+
+      searchInput.addEventListener("input", function() {
+        let filter = searchInput.value.toLowerCase();
+        rows.forEach(row => {
+          let carrera = row.getAttribute("data-career").toLowerCase();
+          row.style.display = carrera.includes(filter) ? "" : "none";
+        });
+      });
+    });
+  </script>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4 text-center">Reportes Estadísticos</h1>
+
+  {% if current_user.rol_id == 3 %}
+  <div class="row">
+    <!-- Reporte de Número de Alumnos -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Número de Alumnos</h5>
+    </div>
+    <div class="card-body text-center">
+      <h3 class="fw-bold">{{ report_data.get("total_alumnos", 0) }}</h3>
+      <p class="text-muted">Alumnos inscritos</p>
+    </div>
+  </div>
+  
+  <!-- Reporte de Egresados -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Alumnos Egresados</h5>
+    </div>
+    <div class="card-body text-center">
+      <h3 class="fw-bold">{{ report_data.get("total_egresados", 0) }}</h3>
+      <p class="text-muted">Alumnos que completaron la carrera</p>
+    </div>
+  </div>
+  
+  <!-- Reporte por Carrera -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Reporte por Carrera</h5>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Carrera</th>
+              <th>Promedio</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for carrera, promedio in report_data.get("promedios_carreras", {}).items() %}
+            <tr>
+              <td>{{ carrera }}</td>
+              <td>{{ promedio }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+
+    <!-- Tarjeta de Reporte: Promedio Global -->
+    <div class="col-md-4">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Promedio Global</h5>
+        </div>
+        <div class="card-body text-center">
+          <h3 class="fw-bold">{{ promedio_global|default(0)|float|round(2) }}</h3>
+          <p class="text-muted">Promedio general de todos los alumnos</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Botón para Exportar Reporte en PDF -->
+<div class="text-center mt-4">
+    <a href="{{ url_for('reports_bp.download_report_pdf') }}" class="btn btn-primary">
+      <i class="fas fa-file-pdf"></i> Descargar Reporte en PDF
+    </a>
+</div>
+
+  {% else %}
+    <p class="text-danger text-center">No tienes permisos para ver esta página.</p>
+  {% endif %}
+</div>
+{% endblock %}
