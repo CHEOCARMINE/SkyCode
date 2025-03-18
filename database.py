@@ -111,6 +111,10 @@ def existe_alumno_por_curp(curp):
     from models import Alumno 
     return Alumno.query.filter_by(curp=curp).first()
 
+# ------------------------------------------------------------
+# Funciones para Modificar a los Alumnos
+# ------------------------------------------------------------
+
 def actualizar_alumno_y_usuario(matricula, 
                                 primer_nombre, segundo_nombre, primer_apellido, segundo_apellido,
                                 curp, telefono, correo_electronico,
@@ -236,6 +240,77 @@ def obtener_materias_pendientes(alumno_id):
 
     return [materia.nombre for materia in materias_pendientes]
 
+# ------------------------------------------------------------
+# Funciones para el registro de nuevos Coordiandores y Directivos
+# ------------------------------------------------------------
+
+def insertar_coordinador_directivo(matricula, primer_nombre, primer_apellido, correo_electronico):
+    """
+    Inserta un nuevo registro en la tabla Coordinadores_Directivos.
+    Retorna el objeto Coordinadores_Directivos insertado.
+    """
+    nuevo_registro = Coordinadores_Directivos(
+        matricula=matricula,
+        primer_nombre=primer_nombre,
+        primer_apellido=primer_apellido,
+        correo_electronico=correo_electronico
+    )
+    db.session.add(nuevo_registro)
+    db.session.commit()
+    return nuevo_registro
+
+def crear_usuario_para_coordinador_directivo(coordinador_directivo_id, hashed_password, rol_id):
+    """
+    Crea el usuario asociado al coordinador o directivo usando su ID, encripta la contraseña y lo guarda.
+    Retorna el objeto Usuario creado.
+    """
+    nuevo_usuario = Usuario(
+        contraseña=hashed_password,
+        rol_id=rol_id,
+        coordinador_directivo_id=coordinador_directivo_id
+    )
+    db.session.add(nuevo_usuario)
+    db.session.commit()
+    return nuevo_usuario
+
+# ------------------------------------------------------------
+# Funciones para modificar a los Coordiandores y Directivos
+# ------------------------------------------------------------
+
+def actualizar_coordinador_directivo(user_id, primer_nombre, primer_apellido, correo_electronico, nuevo_estado):
+    """
+    Actualiza los datos del Coordinador/Directivo y el estado del usuario asociado.
+    
+    Parámetros:
+      - user_id: ID del Coordinador/Directivo en la tabla Coordinadores_Directivos.
+      - primer_nombre: Nuevo nombre.
+      - primer_apellido: Nuevo apellido.
+      - correo_electronico: Nuevo correo.
+      - nuevo_estado: Estado de la cuenta ("Activo" o "Inactivo").
+    
+    Retorna:
+      - El registro actualizado de Coordinadores_Directivos, o None si no se encontró.
+    """
+    # Recuperar el registro por su ID
+    registro = Coordinadores_Directivos.query.get(user_id)
+    if not registro:
+        return None
+
+    # Actualizar datos editables del registro
+    registro.primer_nombre = primer_nombre
+    registro.primer_apellido = primer_apellido
+    registro.correo_electronico = correo_electronico
+
+    # Actualizar el estado del usuario asociado (si existe)
+    usuario = registro.usuario
+    if usuario:
+        # Se usa 1 para activo y 0 para inactivo
+        usuario.activo = 1 if nuevo_estado.lower() == "activo" else 0
+
+    # Realizar commit de los cambios
+    db.session.commit()
+
+    return registro
 
 # -------------------------------------------------
 # Nota:
