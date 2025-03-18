@@ -11,9 +11,12 @@ from functions.auth.register_user import registrar_coordinador_directivo
 from functions.user_management.view_user import get_coordinadores_directivos
 from functions.user_management.update_user_data import actualizar_coordinador_directivo
 from database import bcrypt, db
+from functions.reports.generate_statistical_report import generate_statistical_report
+from functions.reports.export_report import generar_pdf_reporte
 
 academic_bp = Blueprint('academic_bp', __name__)
 alumno_progress_bp = Blueprint('alumno_progress', __name__)
+reports_bp = Blueprint('reports_bp', __name__)
 
 # ------------------------------------------------------------
 # Route del Index
@@ -528,3 +531,42 @@ def modificar_coordinador_directivo():
             return redirect(url_for('academic_bp.coordinadores_directivos'))
         
         return render_template("modificar_user.html", registro=registro)
+
+# ------------------------------------------------------------
+# Route de Reporte Estadistico
+# ------------------------------------------------------------
+
+@reports_bp.route('/reports')
+@login_required
+def mostrar_reportes():
+    if current_user.rol_id != 3:  # Solo los directivos pueden acceder
+        flash("No tienes permisos para acceder a esta sección.", "danger")
+        return redirect(url_for('academic_bp.index'))
+
+    report_data = generate_statistical_report()  # Obtener datos reales del reporte
+
+    return render_template('reports.html', report_data=report_data)
+
+
+# ------------------------------------------------------------
+# Route para descargar el reporte en PDF
+# ------------------------------------------------------------
+
+@reports_bp.route('/reports/download_pdf')
+@login_required
+def download_report_pdf():
+    try:
+        datos_reporte = generate_statistical_report()  # Obtiene los datos
+
+        if not datos_reporte:
+            flash("No hay datos para generar el reporte.", "danger")
+            return redirect(url_for('reports_bp.mostrar_reportes'))
+
+        pdf_path = generar_pdf_reporte(datos_reporte)  # <-- Ahora sí pasamos los datos
+
+        return send_file(pdf_path, as_attachment=True)
+
+    except Exception as e:
+        flash(f"Error al generar el PDF: {str(e)}", "danger")
+        return redirect(url_for('reports_bp.mostrar_reportes'))
+
