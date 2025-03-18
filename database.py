@@ -236,6 +236,38 @@ def obtener_materias_pendientes(alumno_id):
 
     return [materia.nombre for materia in materias_pendientes]
 
+# ------------------------------------------------------------
+# Funciones para el registro de nuevos Coordiandores y Directivos
+# ------------------------------------------------------------
+def insertar_coordinador_directivo(matricula, primer_nombre, primer_apellido, correo_electronico):
+    """
+    Inserta un nuevo registro en la tabla Coordinadores_Directivos.
+    Retorna el objeto Coordinadores_Directivos insertado.
+    """
+    nuevo_registro = Coordinadores_Directivos(
+        matricula=matricula,
+        primer_nombre=primer_nombre,
+        primer_apellido=primer_apellido,
+        correo_electronico=correo_electronico
+    )
+    db.session.add(nuevo_registro)
+    db.session.commit()
+    return nuevo_registro
+
+def crear_usuario_para_coordinador_directivo(coordinador_directivo_id, hashed_password, rol_id):
+    """
+    Crea el usuario asociado al coordinador o directivo usando su ID, encripta la contraseña y lo guarda.
+    Retorna el objeto Usuario creado.
+    """
+    nuevo_usuario = Usuario(
+        contraseña=hashed_password,
+        rol_id=rol_id,
+        coordinador_directivo_id=coordinador_directivo_id
+    )
+    db.session.add(nuevo_usuario)
+    db.session.commit()
+    return nuevo_usuario
+
 
 # -------------------------------------------------
 # Nota:

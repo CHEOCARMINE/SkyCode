@@ -1,24 +1,25 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, send_file, abort
-from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_required
 from math import ceil
 from functions.auth.register import registrar_alumno as process_registration
-from models import db, Materia
 from functions.user_management.view_students import get_students
-from models import Carrera, EstadoAlumno, Alumno
+from models import db, Carrera, EstadoAlumno, Alumno, Materia
 from functions.academic_progress import get_academic_progress
 from services import send_email 
 from functions.user_management.update_students_data import actualizar_alumno_y_usuario
+from functions.auth.register_user import registrar_coordinador_directivo
 
 academic_bp = Blueprint('academic_bp', __name__)
 alumno_progress_bp = Blueprint('alumno_progress', __name__)
 
+# Route del Index
 @academic_bp.route('/', endpoint='index')
 def index():
     if not current_user.is_authenticated:
         return redirect(url_for('auth.login'))
     return render_template('index.html')
 
+# Route para el registro de alumnos
 @academic_bp.route('/register', methods=['GET', 'POST'])
 @login_required
 def registrar_alumno():
@@ -26,6 +27,8 @@ def registrar_alumno():
         flash("No tienes permisos para registrar alumnos", "index-danger")
         return redirect(url_for('academic_bp.index'))
     return process_registration()
+
+# Route para Materias
 @academic_bp.route('/materias', methods=['GET'])
 @login_required
 def listar_materias():
@@ -35,6 +38,7 @@ def listar_materias():
     materias = Materia.query.all()
     return render_template('vista_de_materias.html', materias=materias)
 
+# Route para agregar Materias
 @academic_bp.route('/materias/agregar', methods=['GET', 'POST'])
 @login_required
 def agregar_materia():
@@ -66,6 +70,7 @@ def agregar_materia():
     materias = Materia.query.all()
     return render_template('agregar_materia.html', materias=materias)
 
+# Route para editar Materia
 @academic_bp.route('/materias/editar/<int:id>', methods=['GET', 'POST'])
 @login_required
 def editar_materia(id):
@@ -89,6 +94,7 @@ def editar_materia(id):
     materias = Materia.query.all()
     return render_template('editar_materia.html', materia=materia, materias=materias)
 
+# Route para eliminar Materia
 @academic_bp.route('/materias/eliminar/<int:id>', methods=['POST'])
 @login_required
 def eliminar_materia(id):
@@ -101,6 +107,7 @@ def eliminar_materia(id):
     flash('Materia eliminada exitosamente.', 'success')
     return redirect(url_for('academic_bp.listar_materias'))
 
+# Route para ver alumnos
 @academic_bp.route('/alumnos', methods=['GET'])
 @login_required
 def alumnos():
@@ -165,6 +172,7 @@ def alumnos():
         estado_filtro=estado_filtro
     )
 
+# Route para modificar alumnos
 @academic_bp.route('/modificar_alumno', methods=['GET', 'POST'])
 @login_required
 def modificar_alumno():
@@ -280,6 +288,7 @@ def modificar_alumno():
         carreras = Carrera.query.all()
         return render_template("modificar_alumno.html", alumno=alumno, estados=estados, carreras=carreras)
 
+# Route para descargar Certificado
 @academic_bp.route('/descargar_certificado/<matricula>', methods=['GET'])
 @login_required
 def descargar_certificado(matricula):
@@ -294,6 +303,7 @@ def descargar_certificado(matricula):
     as_attachment=True
     )
 
+# Route para descargar Comprobante
 @academic_bp.route('/descargar_comprobante/<matricula>', methods=['GET'])
 @login_required
 def descargar_comprobante(matricula):
@@ -308,6 +318,7 @@ def descargar_comprobante(matricula):
     as_attachment=True
     )
 
+# Route para ver Progreso de Alumno
 @alumno_progress_bp.route('/progress')
 @login_required
 def mostrar_historial_academico():
@@ -323,3 +334,16 @@ def mostrar_historial_academico():
         historial=progress_data["historial"],
         pending_courses=progress_data["pending_courses"]
     )
+
+# Route para el registro de Coordinadores/Directivos
+@academic_bp.route('/register_user', methods=['GET', 'POST'])
+@login_required
+def register_user_route():
+    if current_user.rol_id != 3:
+        flash("No tienes permisos para registrar coordinadores/directivos", "index-danger")
+        return redirect(url_for('auth.index'))
+    return registrar_coordinador_directivo()
+
+# Route para Ver Coordinadores y Directivos
+
+# Route para Modificar Coordinadores y Directivos

@@ -69,7 +69,7 @@
       <!-- Link para registro de alumno, visible solo para Coordinador -->
       <li class="nav-item">
         <a class="nav-link" href="{{ url_for('academic_bp.registrar_alumno') }}">
-          <i class="fas fa-fw fa-table"></i>
+          <i class="fas fa-fw fa-user-plus"></i>
           <span>Registro de Alumno</span>
         </a>
       </li>
@@ -94,6 +94,14 @@
       <div class="sidebar-heading">
         Directivo
       </div>
+      <!-- Link para registro de Coordinador/Directivo -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('academic_bp.register_user_route') }}">
+          <i class="fas fa-fw fa-user-plus"></i>
+          <span>Registro de Coordinador/Directivo</span>
+        </a>
+      </li>
+
       {# Aquí puedes agregar enlaces específicos para Directivo #}
     {% endif %}
   {% endif %}
