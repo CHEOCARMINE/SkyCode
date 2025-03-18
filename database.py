@@ -111,6 +111,10 @@ def existe_alumno_por_curp(curp):
     from models import Alumno 
     return Alumno.query.filter_by(curp=curp).first()
 
+# ------------------------------------------------------------
+# Funciones para Modificar a los Alumnos
+# ------------------------------------------------------------
+
 def actualizar_alumno_y_usuario(matricula, 
                                 primer_nombre, segundo_nombre, primer_apellido, segundo_apellido,
                                 curp, telefono, correo_electronico,
@@ -268,6 +272,9 @@ def crear_usuario_para_coordinador_directivo(coordinador_directivo_id, hashed_pa
     db.session.commit()
     return nuevo_usuario
 
+# ------------------------------------------------------------
+# Funciones para modificar a los Coordiandores y Directivos
+# ------------------------------------------------------------
 
 # -------------------------------------------------
 # Nota:

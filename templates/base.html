@@ -76,7 +76,7 @@
       <!-- Link para lista de alumnos, visible solo para Coordinadores-->
       <li class="nav-item">
         <a class="nav-link" href="{{ url_for('academic_bp.alumnos') }}">
-          <i class="fas fa-fw fa-table"></i>
+          <i class="fas fa-users-cog"></i>
           <span>Lista de Alumnos</span>
         </a>
       </li>
@@ -99,6 +99,13 @@
         <a class="nav-link" href="{{ url_for('academic_bp.register_user_route') }}">
           <i class="fas fa-fw fa-user-plus"></i>
           <span>Registro de Coordinador/Directivo</span>
+        </a>
+      </li>
+      <!-- Link para registro de Coordinador/Directivo -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('academic_bp.coordinadores_directivos') }}">
+          <i class="fas fa-users-cog"></i>
+          <span>Lista de Coordinadores/Directivos</span>
         </a>
       </li>
 
