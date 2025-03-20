@@ -565,3 +565,38 @@ def download_report_pdf():
         flash(f"Error al generar el PDF: {str(e)}", "danger")
         return redirect(url_for('reports_bp.mostrar_reportes'))
 
+@academic_bp.route('/materias/pendientes/<int:alumno_id>', methods=['GET'])
+@login_required
+def materias_pendientes(alumno_id):
+    """
+    Muestra las materias pendientes por cursar y sugeridas para el siguiente cuatrimestre.
+    """
+    # Consultar materias pendientes
+    materias_pendientes = db.session.execute("""
+        SELECT m.id, m.nombre
+        FROM Materias m
+        LEFT JOIN Calificaciones c
+            ON m.id = c.materia_id AND c.alumno_id = :alumno_id
+        WHERE c.calificacion IS NULL OR c.calificacion < 70
+    """, {"alumno_id": alumno_id}).fetchall()
+
+    # Consultar materias sugeridas (siguiendo correlativas)
+    materias_sugeridas = db.session.execute("""
+        SELECT m.id, m.nombre
+        FROM Materias m
+        LEFT JOIN Calificaciones c
+            ON m.id = c.materia_id AND c.alumno_id = :alumno_id
+        WHERE (c.calificacion IS NULL OR c.calificacion < 70)
+          AND (m.correlativa_id IS NULL 
+            OR m.correlativa_id IN (
+                SELECT materia_id
+                FROM Calificaciones
+                WHERE calificacion >= 70 AND alumno_id = :alumno_id
+            ))
+    """, {"alumno_id": alumno_id}).fetchall()
+
+    return render_template(
+        'materias_pendientes.html',
+        pendientes=materias_pendientes,
+        sugeridas=materias_sugeridas
+    )

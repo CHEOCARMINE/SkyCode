@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Materias Pendientes{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">📚 Materias Pendientes</h1>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0 text-center">Materias Por Cursar</h2>
+        </div>
+        <div class="card-body">
+            {% if pendientes %}
+                <ul class="list-group">
+                    {% for materia in pendientes %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">{{ materia.nombre }}</span>
+                            <span class="badge bg-warning text-dark">Pendiente</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-center text-muted">✅ ¡No hay materias pendientes!</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-success text-white">
+            <h2 class="mb-0 text-center">Materias Sugeridas Para el Próximo Cuatrimestre</h2>
+        </div>
+        <div class="card-body">
+            {% if sugeridas %}
+                <ul class="list-group">
+                    {% for materia in sugeridas %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">{{ materia.nombre }}</span>
+                            <span class="badge bg-info text-white">Sugerida</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-center text-muted">💡 No hay sugerencias disponibles actualmente.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

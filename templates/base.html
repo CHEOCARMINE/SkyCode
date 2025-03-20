@@ -87,6 +87,15 @@
           <span>Gestión de Materias</span>
         </a>
       </li>
+        
+      <!-- Link para ver materias pendientes, visible solo para Alumnos -->
+<li class="nav-item">
+  <a class="nav-link" href="{{ url_for('academic_bp.materias_pendientes', alumno_id=current_user.id) }}">
+    <i class="fas fa-fw fa-clock"></i> <!-- Ícono de reloj para materias pendientes -->
+    <span>Materias Pendientes</span>
+  </a>
+</li>
+
       {% elif current_user.rol_id == 3 %}
       <!-- Encabezado de sección para Directivo -->
       <div class="sidebar-heading">
