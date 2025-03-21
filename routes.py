@@ -13,6 +13,9 @@ from functions.user_management.update_user_data import actualizar_coordinador_di
 from database import bcrypt, db
 from functions.reports.generate_statistical_report import generate_statistical_report
 from functions.reports.export_report import generar_pdf_reporte
+from functions.reports.generate_course_report import generate_course_report
+from functions.reports.export_report import generar_pdf_reporte_materia
+
 
 academic_bp = Blueprint('academic_bp', __name__)
 alumno_progress_bp = Blueprint('alumno_progress', __name__)
@@ -565,3 +568,32 @@ def download_report_pdf():
         flash(f"Error al generar el PDF: {str(e)}", "danger")
         return redirect(url_for('reports_bp.mostrar_reportes'))
 
+
+
+
+@academic_bp.route('/reportes/materia', methods=['GET'])
+@login_required
+def reporte_por_materia():
+    if current_user.rol_id != 3:
+        flash("No tienes permisos para ver esta sección.", "danger")
+        return redirect(url_for('academic_bp.index'))
+
+    materias = Materia.query.all()
+    materia_id = request.args.get('materia_id', type=int)
+    datos_materia = generate_course_report(materia_id) if materia_id else None
+
+    return render_template('reporte_por_materia.html', materias=materias, datos_materia=datos_materia, materia_id=materia_id)
+
+
+
+@academic_bp.route('/reporte-materia/pdf/<int:materia>', methods=['GET'])
+@login_required
+def descargar_reporte_materia_pdf(materia):
+    datos = generate_course_report(materia)
+    if not datos:
+        flash("No hay datos para esta materia.", "warning")
+        return redirect(url_for('academic_bp.reporte_por_materia'))
+
+    path_pdf = generar_pdf_reporte_materia(datos)
+
+    return send_file(path_pdf, as_attachment=True)

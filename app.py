@@ -9,6 +9,7 @@ from models import Usuario
 from routes import alumno_progress_bp 
 from routes import reports_bp
 
+
 def create_app(config_name="development"):
     """
     Crea y configura la aplicación Flask.
