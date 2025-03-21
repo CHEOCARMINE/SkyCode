@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -5,6 +8,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil del Alumno</title>
     <style>
+
+#uploadForm {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+#uploadForm label {
+    margin-right: 10px;
+}
+
+#uploadForm input[type="file"] {
+    margin-right: 10px;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -84,12 +118,31 @@
         }
         #uploadForm {
             display: flex;
-            flex-direction: column;
             align-items: center;
+            justify-content: center;
             margin-top: 20px;
+        }
+        #uploadForm label {
+            margin-right: 10px;
+        }
+        #uploadForm input[type="file"] {
+            margin-right: 10px;
         }
         #profileImage {
             margin-top: 10px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -108,6 +161,7 @@
                 <form id="uploadForm" enctype="multipart/form-data">
                     <label for="fileUpload">Subir nueva foto</label>
                     <input type="file" id="fileUpload" accept="image/*">
+                    <button type="submit">Subir</button>
                 </form>
             </div>
         </div>
@@ -121,3 +175,24 @@
         <div class="section">
             <h3>Datos Generales</h3>
             <div class="info-item"><strong>Nombre Completo:</strong> {{ alumno.primer_nombre }} {{ alumno.segundo_nombre }} {{ alumno.primer_apellido }} {{ alumno.segundo_apellido }}</div>
+            <div class="info-item"><strong>Matrícula:</strong> {{ alumno.matricula }}</div>
+            <div class="info-item"><strong>Correo Electrónico:</strong> {{ alumno.correo }}</div>
+            <div class="info-item"><strong>Teléfono:</strong> {{ alumno.telefono }}</div>
+            <div class="info-item"><strong>Dirección:</strong> {{ alumno.direccion }}</div>
+            <div class="info-item"><strong>Carrera:</strong> {{ alumno.carrera.nombre }}</div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var fileInput = document.getElementById('fileUpload');
+            var file = fileInput.files[0];
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('profileImage').src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+    </script>
+</body>
+</html>

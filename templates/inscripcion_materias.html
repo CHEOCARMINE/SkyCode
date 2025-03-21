@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -78,37 +79,57 @@
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+        .resumen {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
     </style>
     <script>
         const materiasCargadas = [];
 
+        async function buscarMateria(crn) {
+            try {
+                const response = await fetch(`/api/materias/${crn}`);
+                if (!response.ok) {
+                    throw new Error('CRN no encontrado');
+                }
+                const materia = await response.json();
+                return materia;
+            } catch (error) {
+                console.error('Error al buscar materia:', error);
+                return null;
+            }
+        }
+
         async function agregarMateria() {
             const crnInput = document.getElementById('crn');
             const crnValue = crnInput.value.trim();
-            if (crnValue) {
-                try {
-                    const response = await fetch('/getMateria', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: new URLSearchParams({ crn: crnValue })
-                    });
-                    const materiaName = await response.json();
-                    if (materiaName !== "CRN no encontrado") {
-                        const materiaItem = document.createElement('div');
-                        materiaItem.className = 'materia-item';
-                        materiaItem.textContent = `Materia: ${materiaName} (CRN: ${crnValue})`;
-                        document.getElementById('historial').appendChild(materiaItem);
-                        materiasCargadas.push({ crn: crnValue, nombre: materiaName });
-                    } else {
-                        alert('CRN no encontrado. Por favor, intenta nuevamente.');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                }
+            const materia = await buscarMateria(crnValue);
+            if (materia) {
+                const nuevaMateria = { crn: crnValue, nombre: materia.nombre };
+                const materiaItem = document.createElement('div');
+                materiaItem.className = 'materia-item';
+                materiaItem.textContent = `Materia: ${nuevaMateria.nombre} (CRN: ${crnValue})`;
+                document.getElementById('historial').appendChild(materiaItem);
+                materiasCargadas.push(nuevaMateria);
+                actualizarResumen();
                 crnInput.value = '';
+            } else {
+                alert('CRN no encontrado. Por favor, intenta nuevamente.');
             }
+        }
+
+        function actualizarResumen() {
+            const resumenDiv = document.getElementById('resumen');
+            resumenDiv.innerHTML = '<h2>Resumen de Carga Académica</h2>';
+            materiasCargadas.forEach(materia => {
+                const materiaResumen = document.createElement('div');
+                materiaResumen.textContent = `Materia: ${materia.nombre}`;
+                resumenDiv.appendChild(materiaResumen);
+            });
         }
 
         function guardarMaterias() {
@@ -116,6 +137,10 @@
             console.log('Materias a guardar:', materiasCargadas);
             alert('Materias guardadas exitosamente.');
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // No es necesario cargar datos al inicio, ya que se buscarán por CRN.
+        });
     </script>
 </head>
 <body>
@@ -132,7 +157,13 @@
             <h2>Historial de Materias</h2>
             <!-- Las materias cargadas se mostrarán aquí -->
         </div>
+        <div class="resumen" id="resumen">
+            <h2>Resumen de Carga Académica</h2>
+            <!-- El resumen de la carga académica se mostrará aquí -->
+        </div>
         <button type="button" class="btn" onclick="guardarMaterias()">Guardar Cambios</button>
     </div>
 </body>
 </html>
+```
+
