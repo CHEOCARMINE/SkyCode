@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 from math import ceil
 from functions.auth.register import registrar_alumno as process_registration
 from functions.user_management.view_students import get_students
-from models import db, Carrera, EstadoAlumno, Alumno, Materia, Coordinadores_Directivos
+from models import db, Carrera, EstadoAlumno, Alumno, Materia, Coordinadores_Directivos,Cuatrimestre
 from functions.academic_progress import get_academic_progress
 from services import send_email 
 from functions.user_management.update_students_data import actualizar_alumno_y_usuario
@@ -600,3 +600,70 @@ def materias_pendientes(alumno_id):
         pendientes=materias_pendientes,
         sugeridas=materias_sugeridas
     )
+# ------------------------------------------------------------
+# Route para Cuatrimestres 
+# ------------------------------------------------------------
+@academic_bp.route('/cuatrimestres', methods=['GET'])
+@login_required
+def listar_cuatrimestres():
+    """
+    Lista todos los cuatrimestres existentes.
+    """
+    cuatrimestres = Cuatrimestre.query.all()  # Consulta todos los registros en la tabla Cuatrimestres
+    return render_template('listar_cuatrimestres.html', cuatrimestres=cuatrimestres)
+@academic_bp.route('/cuatrimestres/agregar', methods=['GET', 'POST'])
+
+
+@login_required
+def agregar_cuatrimestre():
+    """
+    Permite agregar un nuevo cuatrimestre.
+    """
+    if request.method == 'POST':
+        nocuatrimestre = request.form.get('nocuatrimestre')
+        descripcion = request.form.get('descripcion')
+
+        # Crear un nuevo objeto Cuatrimestre y guardarlo en la base de datos
+        nuevo_cuatrimestre = Cuatrimestre(nocuatrimestre=nocuatrimestre, descripcion=descripcion)
+        db.session.add(nuevo_cuatrimestre)
+        db.session.commit()
+
+        flash('Cuatrimestre agregado exitosamente.', 'success')
+        return redirect(url_for('academic_bp.listar_cuatrimestres'))
+    
+    return render_template('agregar_cuatrimestre.html')
+
+@academic_bp.route('/cuatrimestres/editar/<int:id>', methods=['GET', 'POST'])
+@login_required
+def editar_cuatrimestre(id):
+    """
+    Permite editar un cuatrimestre existente.
+    """
+    cuatrimestre = Cuatrimestre.query.get_or_404(id)  # Obtiene el registro o lanza un error 404
+
+    if request.method == 'POST':
+        # Actualizar los campos
+        cuatrimestre.nocuatrimestre = request.form.get('nocuatrimestre')
+        cuatrimestre.descripcion = request.form.get('descripcion')
+        db.session.commit()
+
+        flash('Cuatrimestre actualizado exitosamente.', 'success')
+        return redirect(url_for('academic_bp.listar_cuatrimestres'))
+    
+    return render_template('editar_cuatrimestre.html', cuatrimestre=cuatrimestre)
+
+@academic_bp.route('/cuatrimestres/eliminar/<int:id>', methods=['POST'])
+
+@login_required
+def eliminar_cuatrimestre(id):
+    """
+    Permite eliminar un cuatrimestre específico.
+    """
+    cuatrimestre = Cuatrimestre.query.get_or_404(id)  # Obtiene el registro o lanza un error 404
+
+    db.session.delete(cuatrimestre)  # Elimina el registro de la base de datos
+    db.session.commit()
+
+    flash('Cuatrimestre eliminado exitosamente.', 'success')
+    return redirect(url_for('academic_bp.listar_cuatrimestres'))
+
