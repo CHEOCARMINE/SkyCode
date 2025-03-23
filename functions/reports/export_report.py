@@ -1,9 +1,16 @@
 import matplotlib
-matplotlib.use('Agg')  # 👈 Esto evita que matplotlib intente abrir una ventana en Mac
+matplotlib.use('Agg')  
 
 import os
 from fpdf import FPDF
 import matplotlib.pyplot as plt
+import os
+import uuid
+
+# ------------------------------------------------------------
+# Route para descargar el reporte estadistico en PDF
+# ------------------------------------------------------------
+
 class PDF(FPDF):
     def header(self):
         """Encabezado del PDF"""
@@ -83,56 +90,46 @@ def generar_pdf_reporte(datos_reporte):
 
     return report_path  # 📂 Retorna la ruta del PDF generado.
 
+# ------------------------------------------------------------
+# Route para descargar el reporte por materia en PDF
+# ------------------------------------------------------------
 
-class PDFMateria(FPDF):
+class PDF(FPDF):
     def header(self):
         self.set_font("Arial", "B", 16)
-        self.set_fill_color(52, 73, 94)  # Azul oscuro
+        self.set_fill_color(44, 62, 80)
         self.set_text_color(255, 255, 255)
-        self.cell(0, 10, "Reporte por Materia - SkyCode", ln=True, align='C', fill=True)
+        self.cell(0, 10, "Reporte por Materia - SkyCode", ln=True, align="C", fill=True)
         self.ln(10)
 
     def footer(self):
         self.set_y(-15)
         self.set_font("Arial", "I", 10)
         self.set_text_color(128, 128, 128)
-        self.cell(0, 10, f"Página {self.page_no()} / {{nb}}", align='C')
+        self.cell(0, 10, f"Página {self.page_no()} / {{nb}}", align="C")
 
 def generar_pdf_reporte_materia(datos):
     report_dir = "static/reports"
     if not os.path.exists(report_dir):
         os.makedirs(report_dir)
 
-    # Crear gráfico de barras
-    alumnos = [reg["alumno"] for reg in datos["calificaciones"]]
-    calificaciones = [reg["calificacion"] for reg in datos["calificaciones"]]
+    pdf_path = os.path.join(report_dir, f"reporte_materia_{uuid.uuid4().hex}.pdf")
 
-    plt.figure(figsize=(10, 5))
-    plt.bar(alumnos, calificaciones, color='cornflowerblue')
-    plt.xlabel("Alumnos")
-    plt.ylabel("Calificación")
-    plt.title(f"Desempeño en {datos['materia']}")
-    plt.xticks(rotation=45, ha='right')
-    plt.tight_layout()
-
-    grafico_path = os.path.join(report_dir, "grafico_materia.png")
-    plt.savefig(grafico_path)
-    plt.close()
-
-    # Crear PDF
-    pdf = PDFMateria()
+    pdf = PDF()
     pdf.alias_nb_pages()
-    pdf.set_auto_page_break(auto=True, margin=20)
     pdf.add_page()
-
+    pdf.set_auto_page_break(auto=True, margin=20)
     pdf.set_font("Arial", size=12)
-    pdf.cell(0, 10, f"Materia: {datos['materia']}", ln=True, align="C")
-    pdf.ln(10)
 
-    # Tabla de calificaciones
-    pdf.set_fill_color(52, 73, 94)
-    pdf.set_text_color(255, 255, 255)
+    # Título
+    pdf.set_font("Arial", "B", 14)
+    pdf.cell(0, 10, f"Materia: {datos['materia']}", ln=True, align="C")
+    pdf.ln(5)
+
+    # Tabla
     pdf.set_font("Arial", "B", 12)
+    pdf.set_fill_color(44, 62, 80)
+    pdf.set_text_color(255, 255, 255)
     pdf.cell(130, 10, "Alumno", border=1, align="C", fill=True)
     pdf.cell(50, 10, "Calificación", border=1, align="C", fill=True)
     pdf.ln()
@@ -140,16 +137,38 @@ def generar_pdf_reporte_materia(datos):
     pdf.set_font("Arial", size=12)
     pdf.set_text_color(0, 0, 0)
 
-    for reg in datos["calificaciones"]:
-        pdf.cell(130, 10, reg["alumno"], border=1, align="C")
-        pdf.cell(50, 10, str(reg["calificacion"]), border=1, align="C")
-        pdf.ln()
+    if datos["calificaciones"]:
+        for reg in datos["calificaciones"]:
+            nombre = reg.get("alumno", "N/A")
+            calif = reg.get("calificacion", 0)
+            pdf.cell(130, 10, nombre, border=1)
+            pdf.cell(50, 10, str(calif), border=1, align="C")
+            pdf.ln()
+    else:
+        pdf.cell(180, 10, "No hay alumnos registrados para esta materia.", ln=True, align="C")
 
-    pdf.ln(10)
-    # Agrega el gráfico
-    pdf.image(grafico_path, x=10, w=190)
+    # Gráfica solo si hay datos
+    nombres = [reg["alumno"] for reg in datos["calificaciones"]]
+    califs = [reg["calificacion"] for reg in datos["calificaciones"]]
 
-    pdf_path = os.path.join(report_dir, "reporte_materia.pdf")
+    if nombres and califs:
+        plt.figure(figsize=(10, 5))
+        plt.barh(nombres, califs, color='skyblue')
+        plt.xlabel("Calificación")
+        plt.title(f"Gráfica de Calificaciones - {datos['materia']}")
+        plt.tight_layout()
+
+        # Guardar imagen temporal
+        img_path = f"static/reports/temp_{uuid.uuid4().hex}.png"
+        plt.savefig(img_path)
+        plt.close()
+
+        # Añadir imagen al PDF
+        pdf.add_page()
+        pdf.image(img_path, x=10, y=30, w=pdf.w - 20)
+
+        # Borrar imagen
+        os.remove(img_path)
+
     pdf.output(pdf_path)
-
     return pdf_path

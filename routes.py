@@ -568,7 +568,9 @@ def download_report_pdf():
         flash(f"Error al generar el PDF: {str(e)}", "danger")
         return redirect(url_for('reports_bp.mostrar_reportes'))
 
-
+# ------------------------------------------------------------
+# Route de Reporte por Materia
+# ------------------------------------------------------------
 
 
 @academic_bp.route('/reportes/materia', methods=['GET'])
@@ -584,7 +586,9 @@ def reporte_por_materia():
 
     return render_template('reporte_por_materia.html', materias=materias, datos_materia=datos_materia, materia_id=materia_id)
 
-
+# ------------------------------------------------------------
+# Route para descargar el reporte por materia en PDF
+# ------------------------------------------------------------
 
 @academic_bp.route('/reporte-materia/pdf/<int:materia>', methods=['GET'])
 @login_required
