@@ -15,6 +15,8 @@ from functions.reports.generate_statistical_report import generate_statistical_r
 from functions.reports.export_report import generar_pdf_reporte
 from functions.reports.generate_course_report import generate_course_report
 from functions.reports.export_report import generar_pdf_reporte_materia
+from functions.reports.generate_student_report import generate_student_report
+from functions.reports.export_report import generar_pdf_reporte_alumno
 
 
 academic_bp = Blueprint('academic_bp', __name__)
@@ -601,3 +603,34 @@ def descargar_reporte_materia_pdf(materia):
     path_pdf = generar_pdf_reporte_materia(datos)
 
     return send_file(path_pdf, as_attachment=True)
+
+# ------------------------------------------------------------
+# Route de Reporte por Alumno
+# ------------------------------------------------------------
+
+
+@academic_bp.route('/reporte-alumno', methods=['GET'])
+@login_required
+def reporte_por_alumno():
+    if current_user.rol_id != 3:
+        flash("No tienes permisos para acceder a esta sección.", "danger")
+        return redirect(url_for('academic_bp.index'))
+
+    alumnos = Alumno.query.all()
+    return render_template('reporte_por_alumno.html', alumnos=alumnos)
+
+
+# ------------------------------------------------------------
+# Route para descargar el reporte por alumno en PDF
+# ------------------------------------------------------------
+
+@academic_bp.route('/reporte-alumno/pdf/<string:matricula>', methods=['GET'])
+@login_required
+def descargar_reporte_alumno_pdf(matricula):
+    datos = generate_student_report(matricula)
+    if not datos:
+        flash("No se encontraron datos para este alumno.", "warning")
+        return redirect(url_for('academic_bp.reporte_por_alumno'))
+
+    pdf_path = generar_pdf_reporte_alumno(datos)
+    return send_file(pdf_path, as_attachment=True)

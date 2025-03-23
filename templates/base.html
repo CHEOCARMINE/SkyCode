@@ -120,6 +120,14 @@
           <span>Reporte por Materia</span>
         </a>
       </li>
+     <!-- Opción para ver reportes por alumno -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('academic_bp.reporte_por_alumno') }}">
+          <i class="fas fa-user-graduate"></i>
+          <span>Reporte por Alumno</span>
+        </a>
+      </li>
+      
       {# Aquí puedes agregar enlaces específicos para Directivo #}
     {% endif %}
   {% endif %}

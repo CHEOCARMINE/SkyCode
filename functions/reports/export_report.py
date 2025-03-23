@@ -172,3 +172,89 @@ def generar_pdf_reporte_materia(datos):
 
     pdf.output(pdf_path)
     return pdf_path
+
+
+# ------------------------------------------------------------
+# Route para descargar el reporte por alumno en PDF
+# ------------------------------------------------------------
+
+
+def generar_pdf_reporte_alumno(datos_alumno):
+    """
+    Genera un PDF con la información del alumno, historial académico y gráfica de pastel.
+    """
+    report_dir = "static/reports"
+    if not os.path.exists(report_dir):
+        os.makedirs(report_dir)
+
+    pdf_path = os.path.join(report_dir, f"reporte_por_alumno.pdf")
+
+    # 1. Crear la imagen de la gráfica
+    labels = ['Aprobado', 'Reprobado', 'En curso']
+    sizes = [
+        datos_alumno.get("conteo_aprobadas", 0),
+        datos_alumno.get("conteo_reprobadas", 0),
+        datos_alumno.get("conteo_en_curso", 0)
+    ]
+
+    colors = ['#2ecc71', '#e74c3c', '#f1c40f']
+    fig, ax = plt.subplots(figsize=(6, 6))
+    ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=140, colors=colors)
+    ax.axis('equal')  # Para que el pastel sea circular
+
+    image_filename = os.path.join(report_dir, f"{uuid.uuid4().hex}_avance.png")
+    plt.savefig(image_filename, bbox_inches='tight')
+    plt.close()
+
+    # 2. Crear el PDF
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.set_font("Arial", size=12)
+
+    # Encabezado
+    pdf.set_font("Arial", "B", 16)
+    pdf.set_fill_color(41, 128, 185)  # Azul
+    pdf.set_text_color(255)
+    pdf.cell(0, 10, "Reporte por Alumno - SkyCode", ln=True, align="C", fill=True)
+    pdf.ln(10)
+
+    # Datos Generales
+    pdf.set_text_color(0)
+    pdf.set_font("Arial", "B", 14)
+    pdf.cell(0, 10, "Datos del Alumno", ln=True)
+    pdf.set_font("Arial", size=12)
+    alumno = datos_alumno.get("alumno", {})
+    pdf.cell(0, 10, f"Nombre: {alumno.get('nombre_completo', 'N/A')}", ln=True)
+    pdf.cell(0, 10, f"Matrícula: {alumno.get('matricula', 'N/A')}", ln=True)
+    pdf.cell(0, 10, f"Carrera: {alumno.get('carrera', 'N/A')}", ln=True)
+    pdf.ln(5)
+
+    # Tabla de Historial Académico
+    pdf.set_font("Arial", "B", 14)
+    pdf.cell(0, 10, "Historial Académico", ln=True)
+    pdf.set_font("Arial", "B", 12)
+    pdf.set_fill_color(52, 73, 94)
+    pdf.set_text_color(255)
+    pdf.cell(100, 10, "Materia", 1, 0, 'C', True)
+    pdf.cell(40, 10, "Calificación", 1, 0, 'C', True)
+    pdf.cell(40, 10, "Estado", 1, 1, 'C', True)
+
+    pdf.set_font("Arial", size=12)
+    pdf.set_text_color(0)
+    for reg in datos_alumno.get("historial", []):
+        pdf.cell(100, 10, reg.get("materia", "N/A"), 1)
+        pdf.cell(40, 10, str(reg.get("calificacion", "N/A")), 1)
+        pdf.cell(40, 10, reg.get("estado", "N/A"), 1, ln=True)
+
+    pdf.ln(10)
+
+    # Imagen de la gráfica de avance
+    pdf.set_font("Arial", "B", 14)
+    pdf.cell(0, 10, "Avance en la Carrera", ln=True)
+    pdf.image(image_filename, w=160)
+    os.remove(image_filename)
+
+    pdf.output(pdf_path)
+    return pdf_path
+
