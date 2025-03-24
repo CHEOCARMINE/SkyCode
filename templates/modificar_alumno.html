@@ -358,26 +358,19 @@
 
         <!-- Select para Carrera -->
         <div class="form-group col-md-6">
-        <label for="carrera_alumno">Carrera</label>
-        <div class="input-group">
-            <select id="carrera_alumno" name="carrera_alumno" class="form-control" disabled>
-            {% for carrera in carreras %}
-                <option value="{{ carrera.nombre }}"
-                {% if form_data and form_data['carrera_alumno'] == carrera.nombre %}
-                    selected
-                {% elif alumno.carrera and alumno.carrera.nombre == carrera.nombre %}
-                    selected
-                {% endif %}>
-                {{ carrera.nombre }}
-                </option>
-            {% endfor %}
-            </select>
-            <div class="input-group-append">
-            <button type="button" class="btn btn-outline-secondary" onclick="enableField('carrera_alumno')">
-                <i class="fas fa-pencil-alt"></i>
-            </button>
+            <label for="carrera_alumno">Carrera</label>
+            <div class="input-group">
+                <!-- Campo deshabilitado para mostrar la carrera actual -->
+                <input type="text" class="form-control" id="carrera_alumno" 
+                       name="carrera_alumno" 
+                       value="{{ alumno.carrera.nombre if alumno.carrera else 'No asignada' }}" 
+                       disabled>
             </div>
+            <!-- Campo oculto para enviar la carrera actual al servidor -->
+            <input type="hidden" name="carrera_alumno" 
+                   value="{{ alumno.carrera.nombre if alumno.carrera else '' }}">
         </div>
+        
         <!-- Campo oculto para enviar el valor del select -->
         <input type="hidden" name="carrera_alumno" value="{{ form_data.carrera_alumno if form_data and form_data.carrera_alumno else (alumno.carrera.nombre if alumno.carrera else '') }}">
         </div>
