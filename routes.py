@@ -173,7 +173,7 @@ def alumnos():
     for alumno in students_page:
         student_data = {
             "matricula": alumno.matricula,
-            "primer_nombre": alumno.primer_nombre,
+            "nombre": alumno.nombre,  # Cambiado: antes era alumno.primer_nombre
             "primer_apellido": alumno.primer_apellido,
             "segundo_apellido": alumno.segundo_apellido,
             "carrera": str(alumno.carrera.nombre) if alumno.carrera else "",

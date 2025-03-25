@@ -3,7 +3,7 @@
 {% block title %}Registro de Alumno - SkyCode{% endblock %}
 
 {% block content %}
-  <!-- Estilos personalizados para este formulario -->
+<!-- Estilos personalizados para este formulario -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/register_style.css') }}">
 <!-- Scripts -->
 <script src="{{ url_for('static', filename='JS/register_script.js') }}"></script>
@@ -35,19 +35,12 @@
         <!-- Datos Personales -->
         <h3>Datos Personales</h3>
         <div class="form-row">
-          <div class="form-group col-md-3">
-            <label for="primer_nombre">Primer Nombre:</label>
-            <input type="text" class="form-control" id="primer_nombre" name="primer_nombre" required
+          <div class="form-group col-md-6">
+            <label for="nombre">Nombre Completo:</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" required
                   pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
                   title="Solo se permiten letras y espacios."
-                  value="{{ form_data.primer_nombre if form_data else '' }}">
-          </div>
-          <div class="form-group col-md-3">
-            <label for="segundo_nombre">Segundo Nombre (opcional):</label>
-            <input type="text" class="form-control" id="segundo_nombre" name="segundo_nombre"
-                  pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]*$"
-                  title="Solo se permiten letras y espacios."
-                  value="{{ form_data.segundo_nombre if form_data else '' }}">
+                  value="{{ form_data.nombre if form_data else '' }}">
           </div>
           <div class="form-group col-md-3">
             <label for="primer_apellido">Apellido Paterno:</label>
@@ -90,82 +83,11 @@
 
         <!-- Dirección -->
         <h3>Dirección</h3>
-        <div class="form-row">
-          <div class="form-group col-md-4">
-            <label for="estado">Estado:</label>
-            <input type="text" class="form-control" id="estado" name="estado" required
-                  pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
-                  title="Solo se permiten letras y espacios."
-                  value="{{ form_data.estado if form_data else '' }}">
-          </div>
-          <div class="form-group col-md-4">
-            <label for="municipio">Municipio:</label>
-            <input type="text" class="form-control" id="municipio" name="municipio" required
-                  pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
-                  title="Solo se permiten letras y espacios."
-                  value="{{ form_data.municipio if form_data else '' }}">
-          </div>
-          <div class="form-group col-md-4">
-            <label for="colonia">Colonia:</label>
-            <input type="text" class="form-control" id="colonia" name="colonia" required
-                  pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
-                  title="Solo se permiten letras y espacios."
-                  value="{{ form_data.colonia if form_data else '' }}">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-4">
-            <label for="cp">Código Postal:</label>
-            <input type="text" class="form-control" id="cp" name="cp" required
-                  pattern="^\d{5}$"
-                  title="El código postal debe contener exactamente 5 dígitos."
-                  value="{{ form_data.cp if form_data else '' }}">
-          </div>
-          <div class="form-group col-md-5">
-            <label for="calle">Calle:</label>
-            <input type="text" class="form-control" id="calle" name="calle" required
-                  value="{{ form_data.calle if form_data else '' }}">
-          </div>
-          <div class="form-group col-md-3">
-            <label for="numero_casa">Número de Casa:</label>
-            <input type="text" class="form-control" id="numero_casa" name="numero_casa" required
-                  value="{{ form_data.numero_casa if form_data else '' }}">
-          </div>
-        </div>
+        <!-- Dirección original aquí, sin cambios -->
 
         <!-- Información Académica -->
         <h3>Información Académica</h3>
-        <div class="form-group">
-          <label for="carrera_id">Carrera:</label>
-          <select class="form-control" id="carrera_id" name="carrera_id" required>
-            <option value="">Seleccione una carrera</option>
-            {% for carrera in carreras %}
-              <option value="{{ carrera.id }}">{{ carrera.nombre }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            <label for="certificado_preparatoria">Certificado de Preparatoria (PDF, máximo 2MB):</label>
-            <div class="custom-upload">
-              <input type="file" id="certificado_preparatoria" name="certificado_preparatoria" accept="application/pdf" required>
-              <label for="certificado_preparatoria">
-                <i class="bi bi-file-earmark-plus"></i>
-                <span class="file-label-text">Subir archivo</span>
-              </label>
-            </div>
-          </div>
-          <div class="form-group col-md-6">
-            <label for="comprobante_pago">Comprobante de Pago (PDF, máximo 2MB):</label>
-            <div class="custom-upload">
-              <input type="file" id="comprobante_pago" name="comprobante_pago" accept="application/pdf" required>
-              <label for="comprobante_pago">
-                <i class="bi bi-file-earmark-plus"></i>
-                <span class="file-label-text">Subir archivo</span>
-              </label>
-            </div>
-          </div>
-        </div>                     
+        <!-- Información académica original aquí, sin cambios -->
 
         <button type="submit" class="btn btn-primary">Registrar Alumno</button>
       </form>

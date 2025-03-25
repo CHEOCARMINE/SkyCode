@@ -34,25 +34,13 @@
         <!-- Datos Personales -->
         <h4>Datos Personales</h4>
         <div class="form-row">
-            <div class="form-group col-md-6">
-                <label for="primer_nombre">Primer Nombre</label>
+            <div class="form-group col-md-12">
+                <label for="nombre">Nombre Completo</label>
                 <div class="input-group">
-                    <input type="text" id="primer_nombre" name="primer_nombre" class="form-control" 
-                        value="{{ form_data['primer_nombre'] if form_data and form_data['primer_nombre'] else alumno.primer_nombre }}" readonly>
+                    <input type="text" id="nombre" name="nombre" class="form-control" 
+                        value="{{ form_data['nombre'] if form_data and form_data['nombre'] else alumno.nombre }}" readonly>
                     <div class="input-group-append">
-                        <button type="button" class="btn btn-outline-secondary" onclick="enableField('primer_nombre')">
-                            <i class="fas fa-pencil-alt"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group col-md-6">
-                <label for="segundo_nombre">Segundo Nombre</label>
-                <div class="input-group">
-                    <input type="text" id="segundo_nombre" name="segundo_nombre" class="form-control" 
-                        value="{{ form_data['segundo_nombre'] if form_data and form_data['segundo_nombre'] else alumno.segundo_nombre }}" readonly>
-                    <div class="input-group-append">
-                        <button type="button" class="btn btn-outline-secondary" onclick="enableField('segundo_nombre')">
+                        <button type="button" class="btn btn-outline-secondary" onclick="enableField('nombre')">
                             <i class="fas fa-pencil-alt"></i>
                         </button>
                     </div>
@@ -126,6 +114,7 @@
                 </div>
             </div>
         </div>
+
 
         <!-- Nuevo Campo: Contraseña -->
         <h4>Contraseña</h4>
