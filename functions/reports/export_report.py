@@ -258,3 +258,91 @@ def generar_pdf_reporte_alumno(datos_alumno):
     pdf.output(pdf_path)
     return pdf_path
 
+
+# ------------------------------------------------------------
+# Route para descargar el reporte por evaluacion en PDF
+# ------------------------------------------------------------
+class PDFEvaluacion(FPDF):
+    def header(self):
+        self.set_font("Arial", "B", 16)
+        self.set_fill_color(44, 62, 80)  # Azul base
+        self.set_text_color(255, 255, 255)  # Texto blanco
+        self.cell(0, 10, "Reporte por Evaluación - SkyCode", ln=True, align='C', fill=True)
+        self.ln(5)
+
+    def footer(self):
+        self.set_y(-15)
+        self.set_font("Arial", "I", 10)
+        self.set_text_color(128, 128, 128)
+        self.cell(0, 10, f"Página {self.page_no()} / {{nb}}", align='C')
+
+
+
+def generar_pdf_reporte_evaluacion(reporte):
+    path_dir = "static/reports"
+    if not os.path.exists(path_dir):
+        os.makedirs(path_dir)
+
+    path_pdf = os.path.join(path_dir, "reporte_evaluacion.pdf")
+
+    pdf = PDFEvaluacion()
+    pdf.alias_nb_pages()
+    pdf.add_page()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.set_font("Arial", size=12)
+
+    if not reporte:
+        pdf.cell(0, 10, "No hay datos disponibles.", ln=True, align='C')
+    else:
+        # Gráfico de barras: Promedio por materia
+        materias = []
+        promedios = []
+
+        for grupo in reporte:
+            materia = grupo["materia"]
+            alumnos = grupo["alumnos"]
+            materias.append(materia)
+
+            if alumnos:
+                promedio = sum([a["calificacion"] for a in alumnos]) / len(alumnos)
+            else:
+                promedio = 0
+
+            promedios.append(promedio)
+
+        # 🎯 Guardar gráfico
+        grafica_path = os.path.join(path_dir, "grafica_evaluacion.png")
+        plt.figure(figsize=(10, 5))
+        plt.barh(materias, promedios)
+        plt.xlabel("Promedio")
+        plt.title("Promedio por Materia")
+        plt.tight_layout()
+        plt.savefig(grafica_path)
+        plt.close()
+
+        # 🧾 Sección de tabla por materia
+        for grupo in reporte:
+            pdf.set_font("Arial", "B", 12)
+            pdf.cell(0, 10, f"Materia: {grupo['materia']}", ln=True)
+            pdf.set_font("Arial", size=11)
+
+            pdf.set_fill_color(220, 220, 220)
+            pdf.cell(100, 8, "Alumno", 1, 0, 'C', fill=True)
+            pdf.cell(40, 8, "Calificación", 1, 1, 'C', fill=True)
+
+            for alumno in grupo["alumnos"]:
+                pdf.cell(100, 8, alumno["alumno"], 1)
+                pdf.cell(40, 8, str(alumno["calificacion"]), 1)
+                pdf.ln()
+
+            pdf.ln(5)
+
+        # Agregar la gráfica como imagen
+        if os.path.exists(grafica_path):
+            pdf.add_page()
+            pdf.set_font("Arial", "B", 12)
+            pdf.cell(0, 10, "Gráfica de Promedios por Materia", ln=True, align="C")
+            pdf.image(grafica_path, x=30, w=150)
+
+    pdf.output(path_pdf)
+    return path_pdf

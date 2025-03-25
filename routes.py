@@ -17,6 +17,8 @@ from functions.reports.generate_course_report import generate_course_report
 from functions.reports.export_report import generar_pdf_reporte_materia
 from functions.reports.generate_student_report import generate_student_report
 from functions.reports.export_report import generar_pdf_reporte_alumno
+from functions.reports.generate_evaluation_report import generate_evaluation_report
+from functions.reports.export_report import generar_pdf_reporte_evaluacion
 
 
 academic_bp = Blueprint('academic_bp', __name__)
@@ -634,3 +636,29 @@ def descargar_reporte_alumno_pdf(matricula):
 
     pdf_path = generar_pdf_reporte_alumno(datos)
     return send_file(pdf_path, as_attachment=True)
+
+
+# ------------------------------------------------------------
+# Route de Reporte por Evaluacion
+# ------------------------------------------------------------
+
+@academic_bp.route('/reporte_evaluacion', methods=['GET'])
+@login_required
+def reporte_por_evaluacion():
+    if current_user.rol_id != 3:
+        flash("No tienes permisos para ver esta sección.", "danger")
+        return redirect(url_for('academic_bp.index'))
+
+    datos = generate_evaluation_report()
+    return render_template("reporte_por_evaluacion.html", datos=datos)
+
+# ------------------------------------------------------------
+# Route para descargar el reporte por evaluacion en PDF
+# ------------------------------------------------------------
+
+@academic_bp.route('/reporte_evaluacion/pdf', methods=['GET'])
+@login_required
+def descargar_pdf_evaluacion():
+    datos = generate_evaluation_report()
+    path_pdf = generar_pdf_reporte_evaluacion(datos)
+    return send_file(path_pdf, as_attachment=True)

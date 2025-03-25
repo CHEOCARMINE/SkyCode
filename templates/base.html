@@ -127,6 +127,15 @@
           <span>Reporte por Alumno</span>
         </a>
       </li>
+
+        <!-- Opción para ver reportes por evaluación -->
+<li class="nav-item">
+  <a class="nav-link" href="{{ url_for('academic_bp.reporte_por_evaluacion') }}">
+    <i class="fas fa-clipboard-list"></i>
+    <span>Reporte por Evaluación</span>
+  </a>
+</li>
+
       
       {# Aquí puedes agregar enlaces específicos para Directivo #}
     {% endif %}
