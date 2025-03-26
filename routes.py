@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 from math import ceil
 from functions.auth.register import registrar_alumno as process_registration
 from functions.user_management.view_students import get_students
-from models import db, Carrera, EstadoAlumno, Alumno, Materia, Coordinadores_Directivos,Cuatrimestre
+from models import db, Carrera, EstadoAlumno, Alumno, Materia, Coordinadores_Directivos,Cuatrimestre, Docente
 from functions.academic_progress import get_academic_progress
 from services import send_email 
 from functions.user_management.update_students_data import actualizar_alumno_y_usuario
@@ -17,6 +17,9 @@ from functions.reports.export_report import generar_pdf_reporte
 academic_bp = Blueprint('academic_bp', __name__)
 alumno_progress_bp = Blueprint('alumno_progress', __name__)
 reports_bp = Blueprint('reports_bp', __name__)
+docentes_bp = Blueprint('docentes_bp', __name__, url_prefix='/docentes')
+
+
 
 # ------------------------------------------------------------
 # Route del Index
@@ -667,4 +670,87 @@ def eliminar_cuatrimestre(id):
 
     flash('Cuatrimestre eliminado exitosamente.', 'success')
     return redirect(url_for('academic_bp.listar_cuatrimestres'))
+    
+# ------------------------------------------------------------
+# Ruta para listar todos los docentes
+# ------------------------------------------------------------
+@docentes_bp.route('/', methods=['GET'])
+def listar_docentes():
+    docentes = Docente.query.all()
+    return render_template('listar_docentes.html', docentes=docentes)
 
+# ------------------------------------------------------------
+# Ruta para registrar un nuevo docente
+# ------------------------------------------------------------
+@docentes_bp.route('/nuevo', methods=['GET', 'POST'])
+def registrar_docente():
+    if request.method == 'POST':
+        # Recoger datos del formulario
+        nombre = request.form.get('nombre')
+        primer_apellido = request.form.get('primer_apellido')
+        segundo_apellido = request.form.get('segundo_apellido')
+        correo_electronico = request.form.get('correo_electronico')
+
+        # Crear el nuevo docente
+        nuevo_docente = Docente(
+            nombre=nombre,
+            primer_apellido=primer_apellido,
+            segundo_apellido=segundo_apellido,
+            correo_electronico=correo_electronico
+        )
+
+        # Guardar en la base de datos
+        try:
+            db.session.add(nuevo_docente)
+            db.session.commit()
+            flash('Docente registrado exitosamente.', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error al registrar el docente: {str(e)}', 'danger')
+
+        return redirect(url_for('docentes_bp.listar_docentes'))
+    
+    return render_template('registrar_docente.html')
+
+# ------------------------------------------------------------
+# Ruta para editar un docente existente
+# ------------------------------------------------------------
+@docentes_bp.route('/<int:id>/editar', methods=['GET', 'POST'])
+def editar_docente(id):
+    docente = Docente.query.get_or_404(id)
+
+    if request.method == 'POST':
+        # Actualizar datos con lo enviado desde el formulario
+        docente.nombre = request.form.get('nombre')
+        docente.primer_apellido = request.form.get('primer_apellido')
+        docente.segundo_apellido = request.form.get('segundo_apellido')
+        docente.correo_electronico = request.form.get('correo_electronico')
+
+        # Guardar cambios
+        try:
+            db.session.commit()
+            flash('Docente actualizado exitosamente.', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error al actualizar el docente: {str(e)}', 'danger')
+
+        return redirect(url_for('docentes_bp.listar_docentes'))
+    
+    return render_template('editar_docente.html', docente=docente)
+
+# ------------------------------------------------------------
+# Ruta para eliminar un docente
+# ------------------------------------------------------------
+@docentes_bp.route('/<int:id>/eliminar', methods=['POST'])
+def eliminar_docente(id):
+    docente = Docente.query.get_or_404(id)
+
+    try:
+        db.session.delete(docente)
+        db.session.commit()
+        flash('Docente eliminado exitosamente.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error al eliminar el docente: {str(e)}', 'danger')
+
+    return redirect(url_for('docentes_bp.listar_docentes'))

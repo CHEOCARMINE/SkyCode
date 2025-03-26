@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Listado de Docentes{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="my-4">Listado de Docentes</h1>
+  <a href="{{ url_for('docentes_bp.registrar_docente') }}" class="btn btn-primary mb-4">Registrar Docente</a>
+
+  {% if docentes %}
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Correo Electrónico</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for docente in docentes %}
+      <tr>
+        <td>{{ docente.id }}</td>
+        <td>{{ docente.nombre }} {{ docente.primer_apellido }} {{ docente.segundo_apellido }}</td>
+        <td>{{ docente.correo_electronico }}</td>
+        <td>
+          <a href="{{ url_for('docentes_bp.editar_docente', id=docente.id) }}" class="btn btn-warning btn-sm">Editar</a>
+          <form action="{{ url_for('docentes_bp.eliminar_docente', id=docente.id) }}" method="POST" style="display:inline;">
+            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No hay docentes registrados.</p>
+  {% endif %}
+</div>
+{% endblock %}
