@@ -60,7 +60,13 @@
       <span>Avance Académico</span>
     </a>
   </li>
-
+     <!-- Link para ver materias pendientes, visible solo para Alumnos -->
+<li class="nav-item">
+  <a class="nav-link" href="{{ url_for('academic_bp.materias_pendientes', alumno_id=current_user.id) }}">
+    <i class="fas fa-fw fa-clock"></i> <!-- Ícono de reloj para materias pendientes -->
+    <span>Materias Pendientes</span>
+  </a>
+</li>
     {% elif current_user.rol_id == 2 %}
       <!-- Encabezado de sección para Coordinador -->
       <div class="sidebar-heading">
@@ -87,6 +93,9 @@
           <span>Gestión de Materias</span>
         </a>
       </li>
+        
+      
+
       {% elif current_user.rol_id == 3 %}
       <!-- Encabezado de sección para Directivo -->
       <div class="sidebar-heading">
@@ -113,6 +122,13 @@
           <span>Reportes</span>
         </a>
       </li>
+      <!-- Link para gestión de cuatrimestres, visible solo para Directivos -->
+<li class="nav-item">
+  <a class="nav-link" href="{{ url_for('academic_bp.listar_cuatrimestres') }}">
+    <i class="fas fa-fw fa-calendar"></i> <!-- Ícono de calendario para cuatrimestres -->
+    <span>Gestión de Cuatrimestres</span>
+  </a>
+</li>
       {# Aquí puedes agregar enlaces específicos para Directivo #}
     {% endif %}
   {% endif %}
@@ -125,6 +141,8 @@
       </div>
     </ul>
     <!-- Fin de la barra lateral -->
+
+
 
     <!-- Contenedor del contenido principal -->
     <div id="content-wrapper" class="d-flex flex-column">

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Agregar Cuatrimestre{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center">Agregar Cuatrimestre</h1>
+    <form action="{{ url_for('academic_bp.agregar_cuatrimestre') }}" method="POST">
+        <div class="mb-3">
+            <label for="nocuatrimestre" class="form-label">Número del Cuatrimestre</label>
+            <input type="number" class="form-control" id="nocuatrimestre" name="nocuatrimestre" required>
+        </div>
+        <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <input type="text" class="form-control" id="descripcion" name="descripcion" required>
+        </div>
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <a href="{{ url_for('academic_bp.listar_cuatrimestres') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

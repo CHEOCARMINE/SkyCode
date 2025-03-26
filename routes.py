@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 from math import ceil
 from functions.auth.register import registrar_alumno as process_registration
 from functions.user_management.view_students import get_students
-from models import db, Carrera, EstadoAlumno, Alumno, Materia, Coordinadores_Directivos
+from models import db, Carrera, EstadoAlumno, Alumno, Materia, Coordinadores_Directivos,Cuatrimestre
 from functions.academic_progress import get_academic_progress
 from services import send_email 
 from functions.user_management.update_students_data import actualizar_alumno_y_usuario
@@ -173,7 +173,7 @@ def alumnos():
     for alumno in students_page:
         student_data = {
             "matricula": alumno.matricula,
-            "primer_nombre": alumno.primer_nombre,
+            "nombre": alumno.nombre,  # Cambiado: antes era alumno.primer_nombre
             "primer_apellido": alumno.primer_apellido,
             "segundo_apellido": alumno.segundo_apellido,
             "carrera": str(alumno.carrera.nombre) if alumno.carrera else "",
@@ -213,8 +213,7 @@ def modificar_alumno():
     if request.method == "POST":
         # Recoger datos del formulario
         matricula = request.form.get('matricula')
-        primer_nombre  = request.form.get('primer_nombre')
-        segundo_nombre = request.form.get('segundo_nombre')
+        nombre = request.form.get('nombre')  # Cambio: antes era primer_nombre
         primer_apellido = request.form.get('primer_apellido')
         segundo_apellido = request.form.get('segundo_apellido')
         curp = request.form.get('curp')
@@ -234,7 +233,7 @@ def modificar_alumno():
         nuevo_estado = request.form.get('estado_alumno')
         nueva_carrera = request.form.get('carrera_alumno')
         
-        # Contraseña y Docuemntos
+        # Contraseña y Documentos
         nueva_contrasena = request.form.get('contraseña')
         nuevo_certificado = request.files.get('certificado_preparatoria')
         nuevo_comprobante = request.files.get('comprobante_pago')
@@ -242,7 +241,9 @@ def modificar_alumno():
         try:
             alumno_actualizado = actualizar_alumno_y_usuario(
                 matricula,
-                primer_nombre, segundo_nombre, primer_apellido, segundo_apellido,
+                nombre,  # Cambio: antes era primer_nombre
+                primer_apellido,
+                segundo_apellido,
                 curp, telefono, correo,
                 pais, estado_domicilio, municipio, colonia, cp, calle, numero_casa,
                 nuevo_estado, nueva_carrera,
@@ -263,11 +264,11 @@ def modificar_alumno():
         
         # Construir el mensaje de correo con todos los datos modificados.
         subject = "Actualización de tus datos en SkyCode"
-        body = f"Hola {alumno_actualizado.primer_nombre},\n\n"
+        body = f"Hola {alumno_actualizado.nombre},\n\n"  # Cambio: antes era primer_nombre
         body += "Se han actualizado los siguientes datos en tu cuenta:\n\n"
         # Datos personales
         body += "Datos Personales:\n"
-        body += f"  Nombre: {alumno_actualizado.primer_nombre} {alumno_actualizado.segundo_nombre or ''}\n"
+        body += f"  Nombre: {alumno_actualizado.nombre}\n"  # Cambio: antes era primer_nombre + segundo_nombre
         body += f"  Apellidos: {alumno_actualizado.primer_apellido} {alumno_actualizado.segundo_apellido}\n"
         body += f"  CURP: {alumno_actualizado.curp}\n"
         body += f"  Teléfono: {alumno_actualizado.telefono}\n"
@@ -564,4 +565,106 @@ def download_report_pdf():
     except Exception as e:
         flash(f"Error al generar el PDF: {str(e)}", "danger")
         return redirect(url_for('reports_bp.mostrar_reportes'))
+
+@academic_bp.route('/materias/pendientes/<int:alumno_id>', methods=['GET'])
+@login_required
+def materias_pendientes(alumno_id):
+    """
+    Muestra las materias pendientes por cursar y sugeridas para el siguiente cuatrimestre.
+    """
+    # Consultar materias pendientes
+    materias_pendientes = db.session.execute("""
+        SELECT m.id, m.nombre
+        FROM Materias m
+        LEFT JOIN Calificaciones c
+            ON m.id = c.materia_id AND c.alumno_id = :alumno_id
+        WHERE c.calificacion IS NULL OR c.calificacion < 70
+    """, {"alumno_id": alumno_id}).fetchall()
+
+    # Consultar materias sugeridas (siguiendo correlativas)
+    materias_sugeridas = db.session.execute("""
+        SELECT m.id, m.nombre
+        FROM Materias m
+        LEFT JOIN Calificaciones c
+            ON m.id = c.materia_id AND c.alumno_id = :alumno_id
+        WHERE (c.calificacion IS NULL OR c.calificacion < 70)
+          AND (m.correlativa_id IS NULL 
+            OR m.correlativa_id IN (
+                SELECT materia_id
+                FROM Calificaciones
+                WHERE calificacion >= 70 AND alumno_id = :alumno_id
+            ))
+    """, {"alumno_id": alumno_id}).fetchall()
+
+    return render_template(
+        'materias_pendientes.html',
+        pendientes=materias_pendientes,
+        sugeridas=materias_sugeridas
+    )
+# ------------------------------------------------------------
+# Route para Cuatrimestres 
+# ------------------------------------------------------------
+@academic_bp.route('/cuatrimestres', methods=['GET'])
+@login_required
+def listar_cuatrimestres():
+    """
+    Lista todos los cuatrimestres existentes.
+    """
+    cuatrimestres = Cuatrimestre.query.all()  # Consulta todos los registros en la tabla Cuatrimestres
+    return render_template('listar_cuatrimestres.html', cuatrimestres=cuatrimestres)
+@academic_bp.route('/cuatrimestres/agregar', methods=['GET', 'POST'])
+
+
+@login_required
+def agregar_cuatrimestre():
+    """
+    Permite agregar un nuevo cuatrimestre.
+    """
+    if request.method == 'POST':
+        nocuatrimestre = request.form.get('nocuatrimestre')
+        descripcion = request.form.get('descripcion')
+
+        # Crear un nuevo objeto Cuatrimestre y guardarlo en la base de datos
+        nuevo_cuatrimestre = Cuatrimestre(nocuatrimestre=nocuatrimestre, descripcion=descripcion)
+        db.session.add(nuevo_cuatrimestre)
+        db.session.commit()
+
+        flash('Cuatrimestre agregado exitosamente.', 'success')
+        return redirect(url_for('academic_bp.listar_cuatrimestres'))
+    
+    return render_template('agregar_cuatrimestre.html')
+
+@academic_bp.route('/cuatrimestres/editar/<int:id>', methods=['GET', 'POST'])
+@login_required
+def editar_cuatrimestre(id):
+    """
+    Permite editar un cuatrimestre existente.
+    """
+    cuatrimestre = Cuatrimestre.query.get_or_404(id)  # Obtiene el registro o lanza un error 404
+
+    if request.method == 'POST':
+        # Actualizar los campos
+        cuatrimestre.nocuatrimestre = request.form.get('nocuatrimestre')
+        cuatrimestre.descripcion = request.form.get('descripcion')
+        db.session.commit()
+
+        flash('Cuatrimestre actualizado exitosamente.', 'success')
+        return redirect(url_for('academic_bp.listar_cuatrimestres'))
+    
+    return render_template('editar_cuatrimestre.html', cuatrimestre=cuatrimestre)
+
+@academic_bp.route('/cuatrimestres/eliminar/<int:id>', methods=['POST'])
+
+@login_required
+def eliminar_cuatrimestre(id):
+    """
+    Permite eliminar un cuatrimestre específico.
+    """
+    cuatrimestre = Cuatrimestre.query.get_or_404(id)  # Obtiene el registro o lanza un error 404
+
+    db.session.delete(cuatrimestre)  # Elimina el registro de la base de datos
+    db.session.commit()
+
+    flash('Cuatrimestre eliminado exitosamente.', 'success')
+    return redirect(url_for('academic_bp.listar_cuatrimestres'))
 

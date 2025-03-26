@@ -22,8 +22,7 @@ from services import send_email
 def registrar_alumno():
     if request.method == "POST":
         # Recoger datos personales
-        primer_nombre  = request.form.get('primer_nombre')
-        segundo_nombre = request.form.get('segundo_nombre')  # Opcional
+        nombre = request.form.get('nombre')  # Cambio: antes era primer_nombre
         primer_apellido = request.form.get('primer_apellido')
         segundo_apellido = request.form.get('segundo_apellido')
         curp = request.form.get('curp')
@@ -51,11 +50,8 @@ def registrar_alumno():
             return redirect(url_for('academic_bp.registrar_alumno'))
 
         # Validar que los campos de nombres y apellidos contengan solo letras
-        if not validate_letters(primer_nombre):
-            flash("El primer nombre debe contener solo letras y espacios.", "register-danger")
-            return redirect(url_for('academic_bp.registrar_alumno'))
-        if segundo_nombre and not validate_letters(segundo_nombre, required=False):
-            flash("El segundo nombre debe contener solo letras y espacios.", "register-danger")
+        if not validate_letters(nombre):  # Cambio: antes era primer_nombre
+            flash("El nombre debe contener solo letras y espacios.", "register-danger")
             return redirect(url_for('academic_bp.registrar_alumno'))
         if not validate_letters(primer_apellido):
             flash("El primer apellido debe contener solo letras y espacios.", "register-danger")
@@ -128,8 +124,7 @@ def registrar_alumno():
         # Inserción del alumno usando el ID del domicilio
         nuevo_alumno = insertar_alumno(
             matricula,
-            primer_nombre,
-            segundo_nombre,
+            nombre,  # Cambio: antes era primer_nombre
             primer_apellido,
             segundo_apellido,
             curp,
@@ -156,7 +151,7 @@ def registrar_alumno():
         subject = "Bienvenido a SkyCode - Contraseña Temporal"
         recipients = [correo]
         body = (
-            f"Hola {primer_nombre} {primer_apellido},\n\n"
+            f"Hola {nombre} {primer_apellido},\n\n"  # Cambio: antes era primer_nombre
             f"Tu usuario es tu matrícula: {matricula}\n"
             f"Tu contraseña temporal es: {temp_password}\n\n"
             "Por favor, cambia tu contraseña al ingresar al sistema.\n\n"

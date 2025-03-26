@@ -63,31 +63,34 @@ def insertar_domicilio(estado, municipio, colonia, cp, calle, numero_casa, pais=
     db.session.commit()  # Commit para asignar un ID al domicilio
     return nuevo_domicilio
 
-def insertar_alumno(matricula, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, 
+def insertar_alumno(matricula, nombre, primer_apellido, segundo_apellido, 
                     curp, domicilio_id, telefono, correo_electronico, certificado_preparatoria, 
                     comprobante_pago, estado_id, carrera_id):
     """
-    Inserta un nuevo registro en la tabla Alumnos usando el ID del domicilio insertado.
+    Inserta un nuevo registro en la tabla Alumnos.
     Retorna el objeto Alumno insertado.
     """
+    # Se crea un nuevo objeto Alumno con los campos actualizados
     nuevo_alumno = Alumno(
-        matricula=matricula,
-        primer_nombre=primer_nombre,
-        segundo_nombre=segundo_nombre,
-        primer_apellido=primer_apellido,
-        segundo_apellido=segundo_apellido,
-        curp=curp,
-        domicilio_id=domicilio_id,
-        telefono=telefono,
-        correo_electronico=correo_electronico,
-        certificado_preparatoria=certificado_preparatoria,
-        comprobante_pago=comprobante_pago,
-        estado_id=estado_id,
-        carrera_id=carrera_id
+        matricula=matricula,  # Sin cambios
+        nombre=nombre,  # Cambio: antes era primer_nombre
+        primer_apellido=primer_apellido,  # Sin cambios
+        segundo_apellido=segundo_apellido,  # Sin cambios
+        curp=curp,  # Sin cambios
+        domicilio_id=domicilio_id,  # Sin cambios
+        telefono=telefono,  # Sin cambios
+        correo_electronico=correo_electronico,  # Sin cambios
+        certificado_preparatoria=certificado_preparatoria,  # Sin cambios
+        comprobante_pago=comprobante_pago,  # Sin cambios
+        estado_id=estado_id,  # Sin cambios
+        carrera_id=carrera_id  # Sin cambios
     )
+
+    # Se agrega el nuevo objeto a la sesión de la base de datos
     db.session.add(nuevo_alumno)
-    db.session.commit()
-    return nuevo_alumno
+    db.session.commit()  # Se confirman los cambios en la base de datos
+    return nuevo_alumno  # Se retorna el objeto Alumno insertado
+
 
 def crear_usuario_para_alumno(alumno_id, hashed_password, rol_id=1):
     """
@@ -116,43 +119,47 @@ def existe_alumno_por_curp(curp):
 # ------------------------------------------------------------
 
 def actualizar_alumno_y_usuario(matricula, 
-                                primer_nombre, segundo_nombre, primer_apellido, segundo_apellido,
+                                nombre, primer_apellido, segundo_apellido,
                                 curp, telefono, correo_electronico,
                                 pais, estado_domicilio, municipio, colonia, cp, calle, numero_casa,
                                 nuevo_estado, nueva_carrera):
+    """
+    Actualiza los datos personales, domicilio, estado y carrera de un alumno, 
+    así como el estado de su usuario asociado.
+    """
     # Recuperar el alumno por matrícula
     alumno = Alumno.query.filter_by(matricula=matricula).first()
     if not alumno:
-        return None  
+        return None  # Si no se encuentra el alumno, retorna None
 
     # Actualizar datos personales del alumno
-    alumno.primer_nombre = primer_nombre
-    alumno.segundo_nombre = segundo_nombre
-    alumno.primer_apellido = primer_apellido
-    alumno.segundo_apellido = segundo_apellido
-    alumno.curp = curp
-    alumno.telefono = telefono
-    alumno.correo_electronico = correo_electronico
+    alumno.nombre = nombre  # Cambio realizado: antes era primer_nombre
+    # Eliminamos la referencia a segundo_nombre
+    alumno.primer_apellido = primer_apellido  # Sin cambios
+    alumno.segundo_apellido = segundo_apellido  # Sin cambios
+    alumno.curp = curp  # Sin cambios
+    alumno.telefono = telefono  # Sin cambios
+    alumno.correo_electronico = correo_electronico  # Sin cambios
 
     # Actualizar datos del domicilio, si existe
     if alumno.domicilio:
-        alumno.domicilio.pais = pais
-        alumno.domicilio.estado = estado_domicilio
-        alumno.domicilio.municipio = municipio
-        alumno.domicilio.colonia = colonia
-        alumno.domicilio.cp = cp
-        alumno.domicilio.calle = calle
-        alumno.domicilio.numero_casa = numero_casa
+        alumno.domicilio.pais = pais  # Sin cambios
+        alumno.domicilio.estado = estado_domicilio  # Sin cambios
+        alumno.domicilio.municipio = municipio  # Sin cambios
+        alumno.domicilio.colonia = colonia  # Sin cambios
+        alumno.domicilio.cp = cp  # Sin cambios
+        alumno.domicilio.calle = calle  # Sin cambios
+        alumno.domicilio.numero_casa = numero_casa  # Sin cambios
 
     # Actualizar el estado del alumno
     estado_obj = EstadoAlumno.query.filter_by(nombre_estado=nuevo_estado).first()
     if estado_obj:
-        alumno.estado_id = estado_obj.id
+        alumno.estado_id = estado_obj.id  # Actualiza el ID de estado
 
     # Actualizar la carrera
     carrera_obj = Carrera.query.filter_by(nombre=nueva_carrera).first()
     if carrera_obj:
-        alumno.carrera_id = carrera_obj.id
+        alumno.carrera_id = carrera_obj.id  # Actualiza el ID de la carrera
 
     # Actualizar el estado del usuario asociado
     usuario = alumno.usuario  
@@ -160,10 +167,11 @@ def actualizar_alumno_y_usuario(matricula,
         # Si el nuevo estado es "Activo", asigna 1; de lo contrario, 0.
         usuario.activo = 1 if nuevo_estado.lower() == "activo" else 0
 
-    # Realizar el commit de los cambios
+    # Realizar el commit de los cambios en la base de datos
     db.session.commit()
 
-    return alumno
+    return alumno  # Retorna el objeto alumno actualizado
+
 
 # ------------------------------------------------------------
 # 🔥 Aquí van las funciones NUEVAS para obtener datos académicos 🔥
