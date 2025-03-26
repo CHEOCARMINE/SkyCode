@@ -38,7 +38,7 @@
                     <input type="text" name="matricula" class="form-control auto-submit" placeholder="Matrícula" value="{{ request.args.get('matricula', '') }}">
                 </div>
                 <div class="col-md-2">
-                    <input type="text" name="nombre" class="form-control auto-submit" placeholder="Nombre Completo" value="{{ request.args.get('nombre', '') }}">
+                    <input type="text" name="nombre" class="form-control auto-submit" placeholder="Nombre(S)" value="{{ request.args.get('nombre', '') }}">
                 </div>
                 <div class="col-md-2">
                     <input type="text" name="apellido_paterno" class="form-control auto-submit" placeholder="Apellido Paterno" value="{{ request.args.get('apellido_paterno', '') }}">
@@ -76,7 +76,7 @@
         <thead>
             <tr>
                 <th>Matrícula</th>
-                <th>Nombre Completo</th>
+                <th>Nombre(S)</th>
                 <th>Apellido Paterno</th>
                 <th>Apellido Materno</th>
                 <th>Carrera</th>
