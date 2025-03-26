@@ -56,8 +56,7 @@ class Alumno(db.Model):
     __tablename__ = "Alumnos"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     matricula = db.Column(db.String(20), unique=True, nullable=False)
-    primer_nombre = db.Column(db.String(100), nullable=False)
-    segundo_nombre = db.Column(db.String(100))
+    nombre = db.Column(db.String(100), nullable=False)
     primer_apellido = db.Column(db.String(100), nullable=False)
     segundo_apellido = db.Column(db.String(100), nullable=False)
     curp = db.Column(db.String(18), unique=True)

@@ -10,7 +10,7 @@ def generate_course_report(materia_id):
         return None
 
     calificaciones = db.session.query(
-        Alumno.primer_nombre,
+        Alumno.nombre,
         Alumno.primer_apellido,
         Calificacion.calificacion
     ).join(Calificacion).filter(

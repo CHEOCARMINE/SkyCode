@@ -19,6 +19,8 @@ from functions.reports.generate_student_report import generate_student_report
 from functions.reports.export_report import generar_pdf_reporte_alumno
 from functions.reports.generate_evaluation_report import generate_evaluation_report
 from functions.reports.export_report import generar_pdf_reporte_evaluacion
+from functions.reports.generate_group_report import generate_group_report
+from functions.reports.export_report import generar_pdf_reporte_grupo
 
 
 academic_bp = Blueprint('academic_bp', __name__)
@@ -662,3 +664,26 @@ def descargar_pdf_evaluacion():
     datos = generate_evaluation_report()
     path_pdf = generar_pdf_reporte_evaluacion(datos)
     return send_file(path_pdf, as_attachment=True)
+
+
+# ------------------------------------------------------------
+# Route de Reporte por Grupo
+# ------------------------------------------------------------
+
+@academic_bp.route('/reporte_grupo')
+@login_required
+def reporte_por_grupo():
+    if current_user.rol_id != 3:
+        flash("No tienes permisos para ver esta sección.", "danger")
+        return redirect(url_for('academic_bp.index'))
+
+    datos = generate_group_report()
+    return render_template("reporte_por_grupo.html", datos=datos)
+
+
+@academic_bp.route('/reporte_grupo/pdf')
+@login_required
+def descargar_pdf_grupo():
+    datos = generate_group_report()
+    pdf_path = generar_pdf_reporte_grupo(datos)
+    return send_file(pdf_path, as_attachment=True)

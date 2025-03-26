@@ -10,17 +10,19 @@ def generate_evaluation_report():
 
     for materia in materias:
         calificaciones = db.session.query(
-            Alumno.primer_nombre,
+            Alumno.nombre,
             Alumno.primer_apellido,
+            Alumno.segundo_apellido,
             Calificacion.calificacion
         ).join(Calificacion).filter(
             Calificacion.materia_id == materia.id
         ).all()
 
         alumnos_data = []
-        for nombre, apellido, calif in calificaciones:
+        for nombre, ap1, ap2, calif in calificaciones:
+            nombre_completo = f"{nombre} {ap1} {ap2}"
             alumnos_data.append({
-                "alumno": f"{nombre} {apellido}",
+                "alumno": nombre_completo,
                 "calificacion": float(calif)
             })
 

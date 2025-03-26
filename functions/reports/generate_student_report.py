@@ -34,7 +34,7 @@ def generate_student_report(alumno_id):
 
     datos = {
         "alumno": {
-            "nombre_completo": f"{alumno.primer_nombre} {alumno.primer_apellido}",
+            "nombre_completo": f"{alumno.nombre} {alumno.primer_apellido}",
             "matricula": alumno.matricula,
             "carrera": alumno.carrera.nombre if alumno.carrera else "N/A"
         },

@@ -346,3 +346,63 @@ def generar_pdf_reporte_evaluacion(reporte):
 
     pdf.output(path_pdf)
     return path_pdf
+
+# ------------------------------------------------------------
+# Route para descargar el reporte por grupo en PDF
+# ------------------------------------------------------------
+
+class PDFGrupo(FPDF):
+    def header(self):
+        self.set_font("Arial", "B", 16)
+        self.set_fill_color(44, 62, 80)
+        self.set_text_color(255, 255, 255)
+        self.cell(0, 10, "Reporte por Grupo - SkyCode", 0, 1, 'C', fill=True)
+        self.ln(5)
+
+    def footer(self):
+        self.set_y(-15)
+        self.set_font("Arial", "I", 10)
+        self.set_text_color(128, 128, 128)
+        self.cell(0, 10, f"Página {self.page_no()} / {{nb}}", align='C')
+
+def generar_pdf_reporte_grupo(datos):
+    path_dir = "static/reports"
+    if not os.path.exists(path_dir):
+        os.makedirs(path_dir)
+
+    path_pdf = os.path.join(path_dir, "reporte_grupo.pdf")
+
+    pdf = PDFGrupo()
+    pdf.alias_nb_pages()
+    pdf.add_page()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.set_font("Arial", size=12)
+
+    if not datos:
+        pdf.cell(0, 10, "No hay datos disponibles.", ln=True, align='C')
+    else:
+        for grupo in datos:
+            pdf.set_font("Arial", "B", 12)
+            pdf.cell(0, 10, f"Carrera: {grupo['carrera']} ({grupo['cantidad']} alumnos)", ln=True)
+            pdf.set_font("Arial", size=11)
+            pdf.cell(100, 8, "Alumno", 1)
+            pdf.cell(60, 8, "Estado", 1)
+            pdf.ln()
+            for alumno in grupo["alumnos"]:
+                pdf.cell(100, 8, alumno["nombre"], 1)
+                pdf.cell(60, 8, alumno["estado"], 1)
+                pdf.ln()
+            pdf.ln(5)
+
+    # 🔸 Agregar gráfica si existe
+    graph_path = os.path.join("static/reports", "grafica_grupo.png")
+    if os.path.exists(graph_path):
+        pdf.add_page()
+        pdf.set_font("Arial", "B", 12)
+        pdf.cell(0, 10, "Gráfica de Alumnos por Grupo", ln=True, align="C")
+        pdf.image(graph_path, x=30, w=150)
+
+    pdf.output(path_pdf)
+    return path_pdf
+
+
