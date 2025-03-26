@@ -213,8 +213,7 @@ def modificar_alumno():
     if request.method == "POST":
         # Recoger datos del formulario
         matricula = request.form.get('matricula')
-        primer_nombre  = request.form.get('primer_nombre')
-        segundo_nombre = request.form.get('segundo_nombre')
+        nombre = request.form.get('nombre')  # Cambio: antes era primer_nombre
         primer_apellido = request.form.get('primer_apellido')
         segundo_apellido = request.form.get('segundo_apellido')
         curp = request.form.get('curp')
@@ -234,7 +233,7 @@ def modificar_alumno():
         nuevo_estado = request.form.get('estado_alumno')
         nueva_carrera = request.form.get('carrera_alumno')
         
-        # Contraseña y Docuemntos
+        # Contraseña y Documentos
         nueva_contrasena = request.form.get('contraseña')
         nuevo_certificado = request.files.get('certificado_preparatoria')
         nuevo_comprobante = request.files.get('comprobante_pago')
@@ -242,7 +241,9 @@ def modificar_alumno():
         try:
             alumno_actualizado = actualizar_alumno_y_usuario(
                 matricula,
-                primer_nombre, segundo_nombre, primer_apellido, segundo_apellido,
+                nombre,  # Cambio: antes era primer_nombre
+                primer_apellido,
+                segundo_apellido,
                 curp, telefono, correo,
                 pais, estado_domicilio, municipio, colonia, cp, calle, numero_casa,
                 nuevo_estado, nueva_carrera,
@@ -263,11 +264,11 @@ def modificar_alumno():
         
         # Construir el mensaje de correo con todos los datos modificados.
         subject = "Actualización de tus datos en SkyCode"
-        body = f"Hola {alumno_actualizado.primer_nombre},\n\n"
+        body = f"Hola {alumno_actualizado.nombre},\n\n"  # Cambio: antes era primer_nombre
         body += "Se han actualizado los siguientes datos en tu cuenta:\n\n"
         # Datos personales
         body += "Datos Personales:\n"
-        body += f"  Nombre: {alumno_actualizado.primer_nombre} {alumno_actualizado.segundo_nombre or ''}\n"
+        body += f"  Nombre: {alumno_actualizado.nombre}\n"  # Cambio: antes era primer_nombre + segundo_nombre
         body += f"  Apellidos: {alumno_actualizado.primer_apellido} {alumno_actualizado.segundo_apellido}\n"
         body += f"  CURP: {alumno_actualizado.curp}\n"
         body += f"  Teléfono: {alumno_actualizado.telefono}\n"
