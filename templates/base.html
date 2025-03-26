@@ -60,13 +60,8 @@
       <span>Avance Académico</span>
     </a>
   </li>
-     <!-- Link para ver materias pendientes, visible solo para Alumnos -->
-<li class="nav-item">
-  <a class="nav-link" href="{{ url_for('academic_bp.materias_pendientes', alumno_id=current_user.id) }}">
-    <i class="fas fa-fw fa-clock"></i> <!-- Ícono de reloj para materias pendientes -->
-    <span>Materias Pendientes</span>
-  </a>
-</li>
+     
+
     {% elif current_user.rol_id == 2 %}
       <!-- Encabezado de sección para Coordinador -->
       <div class="sidebar-heading">
@@ -170,7 +165,7 @@
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">{% if current_user.is_authenticated %}
                   {% if current_user.alumno %}
-                    {{ current_user.alumno.primer_nombre }} {{ current_user.alumno.primer_apellido }}
+                    {{ current_user.alumno.nombre }} {{ current_user.alumno.primer_apellido }}
                   {% elif current_user.coordinador_directivo %}
                     {{ current_user.coordinador_directivo.primer_nombre }} {{ current_user.coordinador_directivo.primer_apellido }}
                   {% else %}
