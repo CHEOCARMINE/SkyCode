@@ -13,7 +13,7 @@ from database import bcrypt  # Para encriptar la contraseña
 
 def actualizar_alumno_y_usuario(
     matricula,
-    primer_nombre, segundo_nombre, primer_apellido, segundo_apellido,
+    nombre, primer_apellido, segundo_apellido,
     curp, telefono, correo_electronico,
     pais, estado_domicilio, municipio, colonia, cp, calle, numero_casa,
     nuevo_estado, nueva_carrera,
@@ -32,11 +32,8 @@ def actualizar_alumno_y_usuario(
     """
 
     # Validaciones de datos personales
-    if not validate_letters(primer_nombre):
-        flash("El primer nombre contiene caracteres no válidos.", "modify-danger")
-        return None
-    if segundo_nombre and not validate_letters(segundo_nombre, required=False):
-        flash("El segundo nombre contiene caracteres no válidos.", "modify-danger")
+    if not validate_letters(nombre):
+        flash("El nombre contiene caracteres no válidos.", "modify-danger")
         return None
     if not validate_letters(primer_apellido):
         flash("El apellido paterno contiene caracteres no válidos.", "modify-danger")
@@ -84,8 +81,7 @@ def actualizar_alumno_y_usuario(
         return None
 
     # Actualizar datos personales del alumno
-    alumno.primer_nombre = primer_nombre
-    alumno.segundo_nombre = segundo_nombre
+    alumno.nombre = nombre  # Cambio: antes era alumno.primer_nombre
     alumno.primer_apellido = primer_apellido
     alumno.segundo_apellido = segundo_apellido
     alumno.curp = curp

@@ -18,7 +18,7 @@ def get_students(
     query = Alumno.query
 
     if nombre:
-        query = query.filter(Alumno.primer_nombre.ilike(f"%{nombre}%"))
+        query = query.filter(Alumno.nombre.ilike(f"%{nombre}%"))  # Cambio: antes era Alumno.primer_nombre
     if apellido_paterno:
         query = query.filter(Alumno.primer_apellido.ilike(f"%{apellido_paterno}%"))
     if apellido_materno:
@@ -42,7 +42,7 @@ def get_students(
     for alumno in alumnos:
         student_data = {
             "matricula": alumno.matricula,
-            "primer_nombre": alumno.primer_nombre,
+            "nombre": alumno.nombre,  # Cambio: antes era alumno.primer_nombre
             "primer_apellido": alumno.primer_apellido,
             "segundo_apellido": alumno.segundo_apellido,
             "carrera": alumno.carrera.nombre if alumno.carrera else "",
