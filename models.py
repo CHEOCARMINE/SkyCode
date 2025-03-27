@@ -255,6 +255,7 @@ class Docente(db.Model):
     primer_apellido = db.Column(db.String(100), nullable=False)
     segundo_apellido = db.Column(db.String(100))
     correo_electronico = db.Column(db.String(100), nullable=False, unique=True)
+    matricula = db.Column(db.String(20), unique=True, nullable=False)  # Nuevo campo
 
     # Relación muchos-a-muchos con la tabla Materias mediante Docente_Materia
     materias = db.relationship('Materia', secondary='Docente_Materia', backref='docentes')

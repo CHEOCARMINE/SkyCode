@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from models import Alumno, Coordinadores_Directivos  # Se usa para generar la matrícula basada en el último registro
+from models import Alumno, Coordinadores_Directivos, Docente  # Se usa para generar la matrícula basada en el último registro
 
 # ----- Generación Automática de Matrícula -----
 def generar_matricula():
@@ -134,6 +134,34 @@ def generar_matricula_coordinador_directivo(tipo_usuario: str) -> str:
     else:
         ultimo_secuencia = 0
     
+    nuevo_secuencia = ultimo_secuencia + 1
+    matricula = f"{prefix}{nuevo_secuencia:04d}"
+    
+    return matricula
+
+   # ----- Generación Automática de Matrícula para Docentes -----
+def generar_matricula_docente():
+    """
+    Genera la matrícula automáticamente para Docentes con el formato:
+    DOC + año actual + número secuencial (4 dígitos)
+
+    Ejemplo:
+      DOC20250001
+    """
+    año = datetime.now().year
+    prefix = f"DOC{año}"
+    
+    # Consulta el último registro cuya matrícula comience con el prefijo
+    ultimo_docente = Docente.query.filter(
+        Docente.matricula.like(f"{prefix}%")
+    ).order_by(Docente.matricula.desc()).first()
+
+    # Determina la nueva secuencia
+    if ultimo_docente:
+        ultimo_secuencia = int(ultimo_docente.matricula[-4:])
+    else:
+        ultimo_secuencia = 0
+
     nuevo_secuencia = ultimo_secuencia + 1
     matricula = f"{prefix}{nuevo_secuencia:04d}"
     

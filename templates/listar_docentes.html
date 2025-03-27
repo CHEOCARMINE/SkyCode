@@ -12,6 +12,7 @@
     <thead>
       <tr>
         <th>ID</th>
+        <th>Matrícula</th>
         <th>Nombre</th>
         <th>Correo Electrónico</th>
         <th>Acciones</th>
@@ -21,6 +22,7 @@
       {% for docente in docentes %}
       <tr>
         <td>{{ docente.id }}</td>
+        <td>{{ docente.matricula }}</td> <!-- Mostrar matrícula -->
         <td>{{ docente.nombre }} {{ docente.primer_apellido }} {{ docente.segundo_apellido }}</td>
         <td>{{ docente.correo_electronico }}</td>
         <td>

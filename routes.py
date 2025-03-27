@@ -684,6 +684,8 @@ def listar_docentes():
 # ------------------------------------------------------------
 @docentes_bp.route('/nuevo', methods=['GET', 'POST'])
 def registrar_docente():
+    from functions.auth.validations import generar_matricula_docente  # Importar función de matrícula
+
     if request.method == 'POST':
         # Recoger datos del formulario
         nombre = request.form.get('nombre')
@@ -691,12 +693,16 @@ def registrar_docente():
         segundo_apellido = request.form.get('segundo_apellido')
         correo_electronico = request.form.get('correo_electronico')
 
-        # Crear el nuevo docente
+        # Generar la matrícula automáticamente
+        matricula = generar_matricula_docente()
+
+        # Crear el nuevo docente con la matrícula
         nuevo_docente = Docente(
             nombre=nombre,
             primer_apellido=primer_apellido,
             segundo_apellido=segundo_apellido,
-            correo_electronico=correo_electronico
+            correo_electronico=correo_electronico,
+            matricula=matricula
         )
 
         # Guardar en la base de datos
@@ -755,6 +761,9 @@ def eliminar_docente(id):
 
     return redirect(url_for('docentes_bp.listar_docentes'))
 
+# ------------------------------------------------------------
+# Ruta para asignar materias a un docente
+# ------------------------------------------------------------
 @docentes_bp.route('/<int:docente_id>/asignar_materias', methods=['GET', 'POST'])
 @login_required
 def asignar_materias(docente_id):
@@ -790,6 +799,9 @@ def asignar_materias(docente_id):
     # Renderiza el formulario de asignación con las materias y el docente
     return render_template('asignar_materias_docente.html', docente=docente, materias=materias)
 
+# ------------------------------------------------------------
+# Ruta para ver docentes y materias asignadas
+# ------------------------------------------------------------
 @docentes_bp.route('/ver_docentes_materias', methods=['GET'])
 @login_required
 def ver_docentes_materias():

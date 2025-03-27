@@ -6,23 +6,38 @@
 <div class="container">
   <h1 class="my-4">Editar Docente</h1>
   <form action="{{ url_for('docentes_bp.editar_docente', id=docente.id) }}" method="POST">
+    <!-- Campo de Matrícula -->
     <div class="form-group">
-      <label for="nombre">Nombre:</label>
+      <label for="matricula">Matrícula</label>
+      <input type="text" class="form-control" id="matricula" value="{{ docente.matricula }}" readonly>
+    </div>
+
+    <!-- Campo de Nombre -->
+    <div class="form-group">
+      <label for="nombre">Nombre</label>
       <input type="text" class="form-control" id="nombre" name="nombre" value="{{ docente.nombre }}" required>
     </div>
+
+    <!-- Campo de Primer Apellido -->
     <div class="form-group">
-      <label for="primer_apellido">Apellido Paterno:</label>
+      <label for="primer_apellido">Primer Apellido</label>
       <input type="text" class="form-control" id="primer_apellido" name="primer_apellido" value="{{ docente.primer_apellido }}" required>
     </div>
+
+    <!-- Campo de Segundo Apellido -->
     <div class="form-group">
-      <label for="segundo_apellido">Apellido Materno:</label>
+      <label for="segundo_apellido">Segundo Apellido</label>
       <input type="text" class="form-control" id="segundo_apellido" name="segundo_apellido" value="{{ docente.segundo_apellido }}">
     </div>
+
+    <!-- Campo de Correo Electrónico -->
     <div class="form-group">
-      <label for="correo_electronico">Correo Electrónico:</label>
+      <label for="correo_electronico">Correo Electrónico</label>
       <input type="email" class="form-control" id="correo_electronico" name="correo_electronico" value="{{ docente.correo_electronico }}" required>
     </div>
-    <button type="submit" class="btn btn-success">Actualizar</button>
+
+    <!-- Botón Guardar -->
+    <button type="submit" class="btn btn-primary mt-3">Guardar Cambios</button>
   </form>
 </div>
 {% endblock %}
