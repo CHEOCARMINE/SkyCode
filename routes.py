@@ -13,6 +13,15 @@ from functions.user_management.update_user_data import actualizar_coordinador_di
 from database import bcrypt, db
 from functions.reports.generate_statistical_report import generate_statistical_report
 from functions.reports.export_report import generar_pdf_reporte
+from functions.reports.generate_course_report import generate_course_report
+from functions.reports.export_report import generar_pdf_reporte_materia
+from functions.reports.generate_student_report import generate_student_report
+from functions.reports.export_report import generar_pdf_reporte_alumno
+from functions.reports.generate_evaluation_report import generate_evaluation_report
+from functions.reports.export_report import generar_pdf_reporte_evaluacion
+from functions.reports.generate_group_report import generate_group_report
+from functions.reports.export_report import generar_pdf_reporte_grupo
+
 
 academic_bp = Blueprint('academic_bp', __name__)
 alumno_progress_bp = Blueprint('alumno_progress', __name__)
@@ -668,3 +677,117 @@ def eliminar_cuatrimestre(id):
     flash('Cuatrimestre eliminado exitosamente.', 'success')
     return redirect(url_for('academic_bp.listar_cuatrimestres'))
 
+# ------------------------------------------------------------
+# Route de Reporte por Materia
+# ------------------------------------------------------------
+
+
+@academic_bp.route('/reportes/materia', methods=['GET'])
+@login_required
+def reporte_por_materia():
+    if current_user.rol_id != 3:
+        flash("No tienes permisos para ver esta sección.", "danger")
+        return redirect(url_for('academic_bp.index'))
+
+    materias = Materia.query.all()
+    materia_id = request.args.get('materia_id', type=int)
+    datos_materia = generate_course_report(materia_id) if materia_id else None
+
+    return render_template('reporte_por_materia.html', materias=materias, datos_materia=datos_materia, materia_id=materia_id)
+
+# ------------------------------------------------------------
+# Route para descargar el reporte por materia en PDF
+# ------------------------------------------------------------
+
+@academic_bp.route('/reporte-materia/pdf/<int:materia>', methods=['GET'])
+@login_required
+def descargar_reporte_materia_pdf(materia):
+    datos = generate_course_report(materia)
+    if not datos:
+        flash("No hay datos para esta materia.", "warning")
+        return redirect(url_for('academic_bp.reporte_por_materia'))
+
+    path_pdf = generar_pdf_reporte_materia(datos)
+
+    return send_file(path_pdf, as_attachment=True)
+
+# ------------------------------------------------------------
+# Route de Reporte por Alumno
+# ------------------------------------------------------------
+
+
+@academic_bp.route('/reporte-alumno', methods=['GET'])
+@login_required
+def reporte_por_alumno():
+    if current_user.rol_id != 3:
+        flash("No tienes permisos para acceder a esta sección.", "danger")
+        return redirect(url_for('academic_bp.index'))
+
+    alumnos = Alumno.query.all()
+    return render_template('reporte_por_alumno.html', alumnos=alumnos)
+
+
+# ------------------------------------------------------------
+# Route para descargar el reporte por alumno en PDF
+# ------------------------------------------------------------
+
+@academic_bp.route('/reporte-alumno/pdf/<string:matricula>', methods=['GET'])
+@login_required
+def descargar_reporte_alumno_pdf(matricula):
+    datos = generate_student_report(matricula)
+    if not datos:
+        flash("No se encontraron datos para este alumno.", "warning")
+        return redirect(url_for('academic_bp.reporte_por_alumno'))
+
+    pdf_path = generar_pdf_reporte_alumno(datos)
+    return send_file(pdf_path, as_attachment=True)
+
+# ------------------------------------------------------------
+# Route de Reporte por Evaluacion
+# ------------------------------------------------------------
+
+@academic_bp.route('/reporte_evaluacion', methods=['GET'])
+@login_required
+def reporte_por_evaluacion():
+    if current_user.rol_id != 3:
+        flash("No tienes permisos para ver esta sección.", "danger")
+        return redirect(url_for('academic_bp.index'))
+
+    datos = generate_evaluation_report()
+    return render_template("reporte_por_evaluacion.html", datos=datos)
+
+# ------------------------------------------------------------
+# Route para descargar el reporte por evaluacion en PDF
+# ------------------------------------------------------------
+
+@academic_bp.route('/reporte_evaluacion/pdf', methods=['GET'])
+@login_required
+def descargar_pdf_evaluacion():
+    datos = generate_evaluation_report()
+    path_pdf = generar_pdf_reporte_evaluacion(datos)
+    return send_file(path_pdf, as_attachment=True)
+
+# ------------------------------------------------------------
+# Route de Reporte por Grupo
+# ------------------------------------------------------------
+
+@academic_bp.route('/reporte_grupo')
+@login_required
+def reporte_por_grupo():
+    if current_user.rol_id != 3:
+        flash("No tienes permisos para ver esta sección.", "danger")
+        return redirect(url_for('academic_bp.index'))
+
+    datos = generate_group_report()
+    return render_template("reporte_por_grupo.html", datos=datos)
+
+# ------------------------------------------------------------
+# Route para descargar el reporte por grupo en PDF
+# ------------------------------------------------------------
+
+@academic_bp.route('/reporte_grupo/pdf')
+@login_required
+def descargar_pdf_grupo():
+    datos = generate_group_report()
+    pdf_path = generar_pdf_reporte_grupo(datos)
+    return send_file(pdf_path, as_attachment=True)

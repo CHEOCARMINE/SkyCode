@@ -119,9 +119,40 @@
       <li class="nav-item">
         <a class="nav-link" href="{{ url_for('reports_bp.mostrar_reportes') }}">
           <i class="fas fa-chart-bar"></i>
-          <span>Reportes</span>
+          <span>Reportes Estadisticos</span>
         </a>
       </li>
+      <!-- Opción para ver reportes por materia -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('academic_bp.reporte_por_materia') }}">
+          <i class="fas fa-book"></i>
+          <span>Reporte por Materia</span>
+        </a>
+      </li>
+     <!-- Opción para ver reportes por alumno -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('academic_bp.reporte_por_alumno') }}">
+          <i class="fas fa-user-graduate"></i>
+          <span>Reporte por Alumno</span>
+        </a>
+      </li>
+
+        <!-- Opción para ver reportes por evaluación -->
+<li class="nav-item">
+  <a class="nav-link" href="{{ url_for('academic_bp.reporte_por_evaluacion') }}">
+    <i class="fas fa-clipboard-list"></i>
+    <span>Reporte por Evaluación</span>
+  </a>
+</li>
+
+<!-- Link para ver reporte por grupo -->
+<li class="nav-item">
+  <a class="nav-link" href="{{ url_for('academic_bp.reporte_por_grupo') }}">
+    <i class="fas fa-users"></i>
+    <span>Reporte por Grupo</span>
+  </a>
+</li>
+
       <!-- Link para gestión de cuatrimestres, visible solo para Directivos -->
 <li class="nav-item">
   <a class="nav-link" href="{{ url_for('academic_bp.listar_cuatrimestres') }}">

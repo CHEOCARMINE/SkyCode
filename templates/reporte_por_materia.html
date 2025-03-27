@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Reporte por Materia - SkyCode{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="text-center mb-3"> Reporte por Materia</h1>
+  <p class="text-center text-muted mb-4">Consulta el desempeño académico por materia.</p>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <form method="get" action="{{ url_for('academic_bp.reporte_por_materia') }}">
+        <div class="form-group">
+          <label for="materia_id">Selecciona una materia:</label>
+          <select class="form-control" name="materia_id" id="materia_id" onchange="this.form.submit()">
+            <option value="">-- Selecciona --</option>
+            {% for materia in materias %}
+              <option value="{{ materia.id }}" {% if materia.id == materia_id %}selected{% endif %}>
+                {{ materia.nombre }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {% if datos_materia %}
+  <div class="card mb-4">
+    <div class="card-header">
+      <strong>Materia:</strong> {{ datos_materia.materia }}
+    </div>
+    <div class="card-body">
+      <table class="table table-bordered">
+        <thead class="thead-dark">
+          <tr>
+            <th>Alumno</th>
+            <th>Calificación</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for reg in datos_materia.calificaciones %}
+          <tr>
+            <td>{{ reg.alumno }}</td>
+            <td>{{ reg.calificacion }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="text-center mt-4">
+        <a href="{{ url_for('academic_bp.descargar_reporte_materia_pdf', materia=materia_id) }}" class="btn btn-primary">
+            <i class="fas fa-file-pdf"></i> Descargar PDF
+          </a>
+          
+      </div>
+      
+    </div>
+  </div>
+  {% elif materia_id %}
+    <div class="alert alert-warning text-center">No hay calificaciones para esta materia.</div>
+  {% endif %}
+</div>
+{% endblock %}
