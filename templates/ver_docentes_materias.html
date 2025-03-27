@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Docentes y Materias{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="my-4">Docentes y Materias Asignadas</h1>
+
+  {% if docentes %}
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID Docente</th>
+        <th>Nombre</th>
+        <th>Materias</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for docente in docentes %}
+      <tr>
+        <td>{{ docente.id }}</td>
+        <td>{{ docente.nombre }} {{ docente.primer_apellido }} {{ docente.segundo_apellido }}</td>
+        <td>
+          {% if docente.materias %}
+          <ul>
+            {% for materia in docente.materias %}
+            <li>{{ materia.nombre }} ({{ materia.codigo }})</li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p>No tiene materias asignadas.</p>
+          {% endif %}
+        </td>
+        <td>
+          <!-- Botón para asignar materias -->
+          <a href="{{ url_for('docentes_bp.asignar_materias', docente_id=docente.id) }}" class="btn btn-primary btn-sm">
+            Asignar Materias
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No hay docentes registrados o con materias asignadas.</p>
+  {% endif %}
+</div>
+{% endblock %}

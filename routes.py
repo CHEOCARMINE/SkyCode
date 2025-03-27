@@ -754,3 +754,37 @@ def eliminar_docente(id):
         flash(f'Error al eliminar el docente: {str(e)}', 'danger')
 
     return redirect(url_for('docentes_bp.listar_docentes'))
+
+@docentes_bp.route('/<int:docente_id>/asignar_materias', methods=['GET', 'POST'])
+@login_required
+def asignar_materias(docente_id):
+    docente = Docente.query.get_or_404(docente_id)
+    materias = Materia.query.all()
+
+    if request.method == 'POST':
+        # Obtener las materias seleccionadas desde el formulario
+        materias_ids = request.form.getlist('materias')
+
+        # Actualizar la relación Docente-Materias
+        docente.materias = Materia.query.filter(Materia.id.in_(materias_ids)).all()
+        try:
+            db.session.commit()
+            flash('Materias asignadas correctamente al docente.', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error al asignar materias: {str(e)}', 'danger')
+
+        return redirect(url_for('docentes_bp.listar_docentes'))
+
+    return render_template('asignar_materias_docente.html', docente=docente, materias=materias)
+
+@docentes_bp.route('/ver_docentes_materias', methods=['GET'])
+@login_required
+def ver_docentes_materias():
+    docentes = Docente.query.all()  # Recupera todos los docentes
+    return render_template('ver_docentes_materias.html', docentes=docentes)
+
+
+    
+    
+   

@@ -131,6 +131,22 @@
     <span>Gestión de Docentes</span>
   </a>
 </li>
+
+<!-- Link para gestionar la relación de Docentes y Materias Solo para Directivos -->
+<li class="nav-item">
+  <a class="nav-link" href="{{ url_for('docentes_bp.asignar_materias', docente_id=current_user.id) }}">
+    <i class="fas fa-fw fa-chalkboard-teacher"></i> <!-- Ícono para la relación docente-materias -->
+    <span>Relación Docente-Materias</span>
+  </a>
+</li>
+<!-- Link para ver la relación de Docentes y Materias Solo para Directivos -->
+<li class="nav-item">
+  <a class="nav-link" href="{{ url_for('docentes_bp.ver_docentes_materias') }}">
+    <i class="fas fa-fw fa-book-open"></i> <!-- Ícono para docentes y materias -->
+    <span>Docentes y Materias</span>
+  </a>
+</li>
+
       {# Aquí puedes agregar enlaces específicos para Directivo #}
     {% endif %}
   {% endif %}

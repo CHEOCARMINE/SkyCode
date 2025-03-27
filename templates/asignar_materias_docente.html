@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Relacionar Docente con Materias{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="my-4">Relacionar Docente con Materias</h1>
+
+  <form action="{{ url_for('docentes_bp.asignar_materias', docente_id=docente.id) }}" method="POST">
+    <div class="form-group">
+      <label for="docente">Docente:</label>
+      <input type="text" class="form-control" id="docente" value="{{ docente.nombre }} {{ docente.primer_apellido }} {{ docente.segundo_apellido }}" readonly>
+    </div>
+    
+    <div class="form-group">
+      <label for="materias">Materias que imparte:</label>
+      <select multiple class="form-control" id="materias" name="materias">
+        {% for materia in materias %}
+        <option value="{{ materia.id }}" 
+          {% if materia.id in docente.materias_ids %}
+          selected
+          {% endif %}
+        >
+          {{ materia.nombre }} ({{ materia.codigo }})
+        </option>
+        {% endfor %}
+      </select>
+      <small class="form-text text-muted">Mantén presionada la tecla Ctrl (Cmd en Mac) para seleccionar múltiples materias.</small>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Guardar Relación</button>
+  </form>
+</div>
+{% endblock %}
