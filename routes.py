@@ -672,12 +672,30 @@ def eliminar_cuatrimestre(id):
     return redirect(url_for('academic_bp.listar_cuatrimestres'))
     
 # ------------------------------------------------------------
-# Ruta para listar todos los docentes
+# Ruta para listar todos los docentes con soporte de paginación
 # ------------------------------------------------------------
 @docentes_bp.route('/', methods=['GET'])
 def listar_docentes():
-    docentes = Docente.query.all()
-    return render_template('listar_docentes.html', docentes=docentes)
+    # Obtener el número de página actual de los argumentos GET, por defecto es 1
+    page = request.args.get('page', 1, type=int)
+    per_page = 10  # Número de registros por página
+
+    # Paginación usando SQLAlchemy
+    pagination = Docente.query.paginate(page=page, per_page=per_page)
+
+    # Elementos de la página actual
+    docentes = pagination.items
+    total_pages = pagination.pages
+    current_page = pagination.page
+
+    # Renderizar la plantilla con las variables necesarias
+    return render_template(
+        'listar_docentes.html',
+        docentes=docentes,
+        total_pages=total_pages,
+        current_page=current_page
+    )
+
 
 # ------------------------------------------------------------
 # Ruta para registrar un nuevo docente
