@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from models import Alumno  # Se usa para generar la matrícula basada en el último registro
+from models import Alumno, Coordinadores_Directivos  # Se usa para generar la matrícula basada en el último registro
 
 # ----- Generación Automática de Matrícula -----
 def generar_matricula():
@@ -104,3 +104,37 @@ def validate_alphanumeric(text, required=True):
     """
     pattern = r'^[A-Za-z0-9\s\-]+$' if required else r'^[A-Za-z0-9\s\-]*$'
     return bool(re.match(pattern, text))
+
+# ----- Generación Automática de Matrícula para Coordinadores y Directivos -----
+def generar_matricula_coordinador_directivo(tipo_usuario: str) -> str:
+    """
+    Genera la matrícula automáticamente para Coordinadores y Directivos con el formato:
+    <Prefijo><Año><Número secuencial de 4 dígitos>
+    
+    Ejemplos:
+      COO20250001
+      DIR20250001
+
+    :param tipo_usuario: 'COO' para coordinadores o 'DIR' para directivos.
+    :return: Matrícula generada.
+    """
+    if tipo_usuario not in ['COO', 'DIR']:
+        raise ValueError("El tipo de usuario debe ser 'COO' o 'DIR'.")
+    
+    year = datetime.now().year
+    prefix = f"{tipo_usuario}{year}"
+    
+    # Consulta el último registro cuya matrícula comience con el prefijo
+    ultimo_registro = Coordinadores_Directivos.query.filter(
+        Coordinadores_Directivos.matricula.like(f"{prefix}%")
+    ).order_by(Coordinadores_Directivos.matricula.desc()).first()
+    
+    if ultimo_registro:
+        ultimo_secuencia = int(ultimo_registro.matricula[-4:])
+    else:
+        ultimo_secuencia = 0
+    
+    nuevo_secuencia = ultimo_secuencia + 1
+    matricula = f"{prefix}{nuevo_secuencia:04d}"
+    
+    return matricula

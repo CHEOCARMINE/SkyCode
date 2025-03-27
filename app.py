@@ -2,11 +2,12 @@ from flask import Flask, redirect, render_template, request, url_for, flash
 from config import config_by_name
 from database import init_db
 from services import init_mail
-from routes import academic_bp
+from routes import academic_bp, alumno_progress_bp 
 from functions.auth.login import auth_bp as login_bp
 from flask_login import LoginManager, current_user
 from models import Materia, Usuario, Alumno
 from routes import alumno_progress_bp
+from routes import reports_bp
 
 def create_app(config_name="development"):
     """
@@ -55,6 +56,7 @@ def create_app(config_name="development"):
     app.register_blueprint(academic_bp)
     app.register_blueprint(login_bp)
     app.register_blueprint(alumno_progress_bp)
+    app.register_blueprint(reports_bp)
 
     # Manejo del error 413 (Request Entity Too Large)
     @app.errorhandler(413)

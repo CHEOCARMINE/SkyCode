@@ -54,11 +54,16 @@ class Domicilio(db.Model):
         return f"<Domicilio {self.calle} {self.numero_casa}, {self.colonia}, {self.municipio}>"
 
 class Alumno(db.Model):
+    # Nombre de la tabla en la base de datos
     __tablename__ = "Alumnos"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     matricula = db.Column(db.String(20), unique=True, nullable=False)
-    primer_nombre = db.Column(db.String(100), nullable=False)
-    segundo_nombre = db.Column(db.String(100))
+
+    # Se renombra el campo primer_nombre a nombre para simplificar y unificar los nombres
+    nombre = db.Column(db.String(100), nullable=False)  # Cambio realizado: antes era primer_nombre
+
+    # Eliminamos segundo_nombre ya que solo usaremos un campo para almacenar el nombre completo
+    # segundo_nombre = db.Column(db.String(100) --> Eliminado
     primer_apellido = db.Column(db.String(100), nullable=False)
     segundo_apellido = db.Column(db.String(100), nullable=False)
     curp = db.Column(db.String(18), unique=True)
@@ -69,14 +74,13 @@ class Alumno(db.Model):
     comprobante_pago = db.Column(db.LargeBinary)
     estado_id = db.Column(db.Integer, db.ForeignKey("EstadosAlumnos.id"), nullable=False)
     carrera_id = db.Column(db.Integer, db.ForeignKey("Carreras.id"), nullable=False)
-
-    # Relaciones
     domicilio = db.relationship("Domicilio", backref="alumnos")
     estado = db.relationship("EstadoAlumno", backref="alumnos")
     carrera = db.relationship("Carrera", backref="alumnos")
 
+    # Método para representar el objeto Alumno en formato legible
     def __repr__(self):
-        return f"<Alumno {self.primer_nombre} {self.primer_apellido}>"
+        return f"<Alumno {self.nombre} {self.primer_apellido}>"
 
 class Usuario(db.Model, UserMixin):
     __tablename__ = "Usuarios"

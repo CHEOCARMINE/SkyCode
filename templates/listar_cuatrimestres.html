@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Cuatrimestres{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center">Cuatrimestres</h1>
+    <a href="{{ url_for('academic_bp.agregar_cuatrimestre') }}" class="btn btn-primary mb-3">Agregar Cuatrimestre</a>
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Número</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cuatrimestre in cuatrimestres %}
+            <tr>
+                <td>{{ cuatrimestre.id }}</td>
+                <td>{{ cuatrimestre.nocuatrimestre }}</td>
+                <td>{{ cuatrimestre.descripcion }}</td>
+                <td>
+                    <a href="{{ url_for('academic_bp.editar_cuatrimestre', id=cuatrimestre.id) }}" class="btn btn-warning btn-sm">Editar</a>
+                    <form action="{{ url_for('academic_bp.eliminar_cuatrimestre', id=cuatrimestre.id) }}" method="POST" style="display:inline-block;">
+                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

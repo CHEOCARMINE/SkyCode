@@ -63,31 +63,34 @@ def insertar_domicilio(estado, municipio, colonia, cp, calle, numero_casa, pais=
     db.session.commit()  # Commit para asignar un ID al domicilio
     return nuevo_domicilio
 
-def insertar_alumno(matricula, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, 
+def insertar_alumno(matricula, nombre, primer_apellido, segundo_apellido, 
                     curp, domicilio_id, telefono, correo_electronico, certificado_preparatoria, 
                     comprobante_pago, estado_id, carrera_id):
     """
-    Inserta un nuevo registro en la tabla Alumnos usando el ID del domicilio insertado.
+    Inserta un nuevo registro en la tabla Alumnos.
     Retorna el objeto Alumno insertado.
     """
+    # Se crea un nuevo objeto Alumno con los campos actualizados
     nuevo_alumno = Alumno(
-        matricula=matricula,
-        primer_nombre=primer_nombre,
-        segundo_nombre=segundo_nombre,
-        primer_apellido=primer_apellido,
-        segundo_apellido=segundo_apellido,
-        curp=curp,
-        domicilio_id=domicilio_id,
-        telefono=telefono,
-        correo_electronico=correo_electronico,
-        certificado_preparatoria=certificado_preparatoria,
-        comprobante_pago=comprobante_pago,
-        estado_id=estado_id,
-        carrera_id=carrera_id
+        matricula=matricula,  # Sin cambios
+        nombre=nombre,  # Cambio: antes era primer_nombre
+        primer_apellido=primer_apellido,  # Sin cambios
+        segundo_apellido=segundo_apellido,  # Sin cambios
+        curp=curp,  # Sin cambios
+        domicilio_id=domicilio_id,  # Sin cambios
+        telefono=telefono,  # Sin cambios
+        correo_electronico=correo_electronico,  # Sin cambios
+        certificado_preparatoria=certificado_preparatoria,  # Sin cambios
+        comprobante_pago=comprobante_pago,  # Sin cambios
+        estado_id=estado_id,  # Sin cambios
+        carrera_id=carrera_id  # Sin cambios
     )
+
+    # Se agrega el nuevo objeto a la sesión de la base de datos
     db.session.add(nuevo_alumno)
-    db.session.commit()
-    return nuevo_alumno
+    db.session.commit()  # Se confirman los cambios en la base de datos
+    return nuevo_alumno  # Se retorna el objeto Alumno insertado
+
 
 def crear_usuario_para_alumno(alumno_id, hashed_password, rol_id=1):
     """
@@ -111,44 +114,52 @@ def existe_alumno_por_curp(curp):
     from models import Alumno 
     return Alumno.query.filter_by(curp=curp).first()
 
+# ------------------------------------------------------------
+# Funciones para Modificar a los Alumnos
+# ------------------------------------------------------------
+
 def actualizar_alumno_y_usuario(matricula, 
-                                primer_nombre, segundo_nombre, primer_apellido, segundo_apellido,
+                                nombre, primer_apellido, segundo_apellido,
                                 curp, telefono, correo_electronico,
                                 pais, estado_domicilio, municipio, colonia, cp, calle, numero_casa,
                                 nuevo_estado, nueva_carrera):
+    """
+    Actualiza los datos personales, domicilio, estado y carrera de un alumno, 
+    así como el estado de su usuario asociado.
+    """
     # Recuperar el alumno por matrícula
     alumno = Alumno.query.filter_by(matricula=matricula).first()
     if not alumno:
-        return None  
+        return None  # Si no se encuentra el alumno, retorna None
 
     # Actualizar datos personales del alumno
-    alumno.primer_nombre = primer_nombre
-    alumno.segundo_nombre = segundo_nombre
-    alumno.primer_apellido = primer_apellido
-    alumno.segundo_apellido = segundo_apellido
-    alumno.curp = curp
-    alumno.telefono = telefono
-    alumno.correo_electronico = correo_electronico
+    alumno.nombre = nombre  # Cambio realizado: antes era primer_nombre
+    # Eliminamos la referencia a segundo_nombre
+    alumno.primer_apellido = primer_apellido  # Sin cambios
+    alumno.segundo_apellido = segundo_apellido  # Sin cambios
+    alumno.curp = curp  # Sin cambios
+    alumno.telefono = telefono  # Sin cambios
+    alumno.correo_electronico = correo_electronico  # Sin cambios
 
     # Actualizar datos del domicilio, si existe
     if alumno.domicilio:
-        alumno.domicilio.pais = pais
-        alumno.domicilio.estado = estado_domicilio
-        alumno.domicilio.municipio = municipio
-        alumno.domicilio.colonia = colonia
-        alumno.domicilio.cp = cp
-        alumno.domicilio.calle = calle
-        alumno.domicilio.numero_casa = numero_casa
+        alumno.domicilio.pais = pais  # Sin cambios
+        alumno.domicilio.estado = estado_domicilio  # Sin cambios
+        alumno.domicilio.municipio = municipio  # Sin cambios
+        alumno.domicilio.colonia = colonia  # Sin cambios
+        alumno.domicilio.cp = cp  # Sin cambios
+        alumno.domicilio.calle = calle  # Sin cambios
+        alumno.domicilio.numero_casa = numero_casa  # Sin cambios
 
     # Actualizar el estado del alumno
     estado_obj = EstadoAlumno.query.filter_by(nombre_estado=nuevo_estado).first()
     if estado_obj:
-        alumno.estado_id = estado_obj.id
+        alumno.estado_id = estado_obj.id  # Actualiza el ID de estado
 
     # Actualizar la carrera
     carrera_obj = Carrera.query.filter_by(nombre=nueva_carrera).first()
     if carrera_obj:
-        alumno.carrera_id = carrera_obj.id
+        alumno.carrera_id = carrera_obj.id  # Actualiza el ID de la carrera
 
     # Actualizar el estado del usuario asociado
     usuario = alumno.usuario  
@@ -156,10 +167,11 @@ def actualizar_alumno_y_usuario(matricula,
         # Si el nuevo estado es "Activo", asigna 1; de lo contrario, 0.
         usuario.activo = 1 if nuevo_estado.lower() == "activo" else 0
 
-    # Realizar el commit de los cambios
+    # Realizar el commit de los cambios en la base de datos
     db.session.commit()
 
-    return alumno
+    return alumno  # Retorna el objeto alumno actualizado
+
 
 # ------------------------------------------------------------
 # 🔥 Aquí van las funciones NUEVAS para obtener datos académicos 🔥
@@ -236,6 +248,128 @@ def obtener_materias_pendientes(alumno_id):
 
     return [materia.nombre for materia in materias_pendientes]
 
+# ------------------------------------------------------------
+# Funciones para el registro de nuevos Coordiandores y Directivos
+# ------------------------------------------------------------
+
+def insertar_coordinador_directivo(matricula, primer_nombre, primer_apellido, correo_electronico):
+    """
+    Inserta un nuevo registro en la tabla Coordinadores_Directivos.
+    Retorna el objeto Coordinadores_Directivos insertado.
+    """
+    nuevo_registro = Coordinadores_Directivos(
+        matricula=matricula,
+        primer_nombre=primer_nombre,
+        primer_apellido=primer_apellido,
+        correo_electronico=correo_electronico
+    )
+    db.session.add(nuevo_registro)
+    db.session.commit()
+    return nuevo_registro
+
+def crear_usuario_para_coordinador_directivo(coordinador_directivo_id, hashed_password, rol_id):
+    """
+    Crea el usuario asociado al coordinador o directivo usando su ID, encripta la contraseña y lo guarda.
+    Retorna el objeto Usuario creado.
+    """
+    nuevo_usuario = Usuario(
+        contraseña=hashed_password,
+        rol_id=rol_id,
+        coordinador_directivo_id=coordinador_directivo_id
+    )
+    db.session.add(nuevo_usuario)
+    db.session.commit()
+    return nuevo_usuario
+
+# ------------------------------------------------------------
+# Funciones para modificar a los Coordiandores y Directivos
+# ------------------------------------------------------------
+
+def actualizar_coordinador_directivo(user_id, primer_nombre, primer_apellido, correo_electronico, nuevo_estado):
+    """
+    Actualiza los datos del Coordinador/Directivo y el estado del usuario asociado.
+    
+    Parámetros:
+      - user_id: ID del Coordinador/Directivo en la tabla Coordinadores_Directivos.
+      - primer_nombre: Nuevo nombre.
+      - primer_apellido: Nuevo apellido.
+      - correo_electronico: Nuevo correo.
+      - nuevo_estado: Estado de la cuenta ("Activo" o "Inactivo").
+    
+    Retorna:
+      - El registro actualizado de Coordinadores_Directivos, o None si no se encontró.
+    """
+    # Recuperar el registro por su ID
+    registro = Coordinadores_Directivos.query.get(user_id)
+    if not registro:
+        return None
+
+    # Actualizar datos editables del registro
+    registro.primer_nombre = primer_nombre
+    registro.primer_apellido = primer_apellido
+    registro.correo_electronico = correo_electronico
+
+    # Actualizar el estado del usuario asociado (si existe)
+    usuario = registro.usuario
+    if usuario:
+        # Se usa 1 para activo y 0 para inactivo
+        usuario.activo = 1 if nuevo_estado.lower() == "activo" else 0
+
+    # Realizar commit de los cambios
+    db.session.commit()
+
+    return registro
+
+# ------------------------------------------------------------
+# Funciones de Reportes Estadisticos
+# ------------------------------------------------------------
+
+def obtener_numero_alumnos_inscritos():
+    """
+    Retorna el número total de alumnos inscritos.
+    """
+    return db.session.query(Alumno).count()
+
+def obtener_numero_alumnos_egresados():
+    """
+    Retorna el número total de alumnos egresados.
+    """
+    return db.session.query(Alumno).filter(Alumno.estado_id == 3).count()
+
+
+def obtener_promedios_por_carrera():
+    """
+    Retorna un diccionario con el promedio general de calificaciones por carrera.
+    Si no hay datos, retorna 0 en lugar de "N/A".
+    """
+    carreras = db.session.query(Carrera).all()
+    promedios = {}
+
+    for carrera in carreras:
+        promedio = db.session.query(db.func.avg(Calificacion.calificacion)).join(Alumno).filter(
+            Alumno.carrera_id == carrera.id,
+            Calificacion.calificacion != None
+        ).scalar() or 0  # Si no hay datos, devuelve 0 en lugar de None o "N/A"
+        
+        promedios[carrera.nombre] = round(promedio, 2)  # Redondeo seguro
+
+    return promedios
+
+
+def obtener_estadisticas_generales():
+    try:
+        total_alumnos = Alumno.query.count()
+        total_egresados = Alumno.query.filter(Alumno.estado_id == 3).count()
+        promedio_global = db.session.query(db.func.avg(Calificacion.calificacion)).scalar() or 0
+    except Exception as e:
+        db.session.rollback()
+        raise e  # Sigue mostrando el error, pero no cierra la sesión manualmente.
+
+    return {
+        "total_alumnos": total_alumnos,
+        "total_egresados": total_egresados,
+        "promedio_global": round(promedio_global, 2)
+    }
 
 # -------------------------------------------------
 # Nota:

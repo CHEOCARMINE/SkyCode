@@ -34,25 +34,13 @@
         <!-- Datos Personales -->
         <h4>Datos Personales</h4>
         <div class="form-row">
-            <div class="form-group col-md-6">
-                <label for="primer_nombre">Primer Nombre</label>
+            <div class="form-group col-md-12">
+                <label for="nombre">Nombre(S)</label>
                 <div class="input-group">
-                    <input type="text" id="primer_nombre" name="primer_nombre" class="form-control" 
-                        value="{{ form_data['primer_nombre'] if form_data and form_data['primer_nombre'] else alumno.primer_nombre }}" readonly>
+                    <input type="text" id="nombre" name="nombre" class="form-control" 
+                        value="{{ form_data['nombre'] if form_data and form_data['nombre'] else alumno.nombre }}" readonly>
                     <div class="input-group-append">
-                        <button type="button" class="btn btn-outline-secondary" onclick="enableField('primer_nombre')">
-                            <i class="fas fa-pencil-alt"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group col-md-6">
-                <label for="segundo_nombre">Segundo Nombre</label>
-                <div class="input-group">
-                    <input type="text" id="segundo_nombre" name="segundo_nombre" class="form-control" 
-                        value="{{ form_data['segundo_nombre'] if form_data and form_data['segundo_nombre'] else alumno.segundo_nombre }}" readonly>
-                    <div class="input-group-append">
-                        <button type="button" class="btn btn-outline-secondary" onclick="enableField('segundo_nombre')">
+                        <button type="button" class="btn btn-outline-secondary" onclick="enableField('nombre')">
                             <i class="fas fa-pencil-alt"></i>
                         </button>
                     </div>
@@ -126,6 +114,7 @@
                 </div>
             </div>
         </div>
+
 
         <!-- Nuevo Campo: Contraseña -->
         <h4>Contraseña</h4>
@@ -358,26 +347,19 @@
 
         <!-- Select para Carrera -->
         <div class="form-group col-md-6">
-        <label for="carrera_alumno">Carrera</label>
-        <div class="input-group">
-            <select id="carrera_alumno" name="carrera_alumno" class="form-control" disabled>
-            {% for carrera in carreras %}
-                <option value="{{ carrera.nombre }}"
-                {% if form_data and form_data['carrera_alumno'] == carrera.nombre %}
-                    selected
-                {% elif alumno.carrera and alumno.carrera.nombre == carrera.nombre %}
-                    selected
-                {% endif %}>
-                {{ carrera.nombre }}
-                </option>
-            {% endfor %}
-            </select>
-            <div class="input-group-append">
-            <button type="button" class="btn btn-outline-secondary" onclick="enableField('carrera_alumno')">
-                <i class="fas fa-pencil-alt"></i>
-            </button>
+            <label for="carrera_alumno">Carrera</label>
+            <div class="input-group">
+                <!-- Campo deshabilitado para mostrar la carrera actual -->
+                <input type="text" class="form-control" id="carrera_alumno" 
+                       name="carrera_alumno" 
+                       value="{{ alumno.carrera.nombre if alumno.carrera else 'No asignada' }}" 
+                       disabled>
             </div>
+            <!-- Campo oculto para enviar la carrera actual al servidor -->
+            <input type="hidden" name="carrera_alumno" 
+                   value="{{ alumno.carrera.nombre if alumno.carrera else '' }}">
         </div>
+        
         <!-- Campo oculto para enviar el valor del select -->
         <input type="hidden" name="carrera_alumno" value="{{ form_data.carrera_alumno if form_data and form_data.carrera_alumno else (alumno.carrera.nombre if alumno.carrera else '') }}">
         </div>
