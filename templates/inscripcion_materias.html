@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -87,83 +86,42 @@
             border-radius: 4px;
         }
     </style>
-    <script>
-        const materiasCargadas = [];
-
-        async function buscarMateria(crn) {
-            try {
-                const response = await fetch(`/api/materias/${crn}`);
-                if (!response.ok) {
-                    throw new Error('CRN no encontrado');
-                }
-                const materia = await response.json();
-                return materia;
-            } catch (error) {
-                console.error('Error al buscar materia:', error);
-                return null;
-            }
-        }
-
-        async function agregarMateria() {
-            const crnInput = document.getElementById('crn');
-            const crnValue = crnInput.value.trim();
-            const materia = await buscarMateria(crnValue);
-            if (materia) {
-                const nuevaMateria = { crn: crnValue, nombre: materia.nombre };
-                const materiaItem = document.createElement('div');
-                materiaItem.className = 'materia-item';
-                materiaItem.textContent = `Materia: ${nuevaMateria.nombre} (CRN: ${crnValue})`;
-                document.getElementById('historial').appendChild(materiaItem);
-                materiasCargadas.push(nuevaMateria);
-                actualizarResumen();
-                crnInput.value = '';
-            } else {
-                alert('CRN no encontrado. Por favor, intenta nuevamente.');
-            }
-        }
-
-        function actualizarResumen() {
-            const resumenDiv = document.getElementById('resumen');
-            resumenDiv.innerHTML = '<h2>Resumen de Carga Académica</h2>';
-            materiasCargadas.forEach(materia => {
-                const materiaResumen = document.createElement('div');
-                materiaResumen.textContent = `Materia: ${materia.nombre}`;
-                resumenDiv.appendChild(materiaResumen);
-            });
-        }
-
-        function guardarMaterias() {
-            // Aquí puedes agregar la lógica para guardar todas las materias en la base de datos.
-            console.log('Materias a guardar:', materiasCargadas);
-            alert('Materias guardadas exitosamente.');
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // No es necesario cargar datos al inicio, ya que se buscarán por CRN.
-        });
-    </script>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>Selección de Materias</h1>
         </div>
-        <div class="form-group">
-            <label for="crn">Ingresa el CRN de la Materia</label>
-            <input type="text" id="crn" name="crn" placeholder="Ej. 1234" required>
-        </div>
-        <button type="button" class="btn" onclick="agregarMateria()">Agregar Materia</button>
+        <form method="POST" action="{{ url_for('inscripcion_materias') }}">
+            <div class="form-group">
+                <label for="crn">Ingresa el CRN de la Materia</label>
+                <input type="text" id="crn" name="crn" placeholder="Ej. 1234" required>
+            </div>
+            <button type="submit" class="btn">Agregar Materia</button>
+        </form>
         <div class="historial" id="historial">
             <h2>Historial de Materias</h2>
-            <!-- Las materias cargadas se mostrarán aquí -->
+            {% for materia in materias %}
+                <div class="materia-item">
+                    <p>Nombre: {{ materia.nombre }}</p>
+                    <p>Código: {{ materia.codigo }}</p>
+                    <input type="hidden" name="materias" value="{{ materia.crn }}">
+                </div>
+            {% endfor %}
         </div>
-        <div class="resumen" id="resumen">
-            <h2>Resumen de Carga Académica</h2>
-            <!-- El resumen de la carga académica se mostrará aquí -->
-        </div>
-        <button type="button" class="btn" onclick="guardarMaterias()">Guardar Cambios</button>
+        <form method="POST" action="{{ url_for('confirmar_inscripcion') }}">
+            <div class="resumen" id="resumen">
+                <h2>Resumen de Carga Académica</h2>
+                {% for materia in materias %}
+                    <div class="materia-item">
+                        <p>Nombre: {{ materia.nombre }}</p>
+                        <p>Código: {{ materia.codigo }}</p>
+                        <input type="hidden" name="materias" value="{{ materia.crn }}">
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="submit" class="btn">Confirmar Inscripción</button>
+        </form>
     </div>
 </body>
 </html>
-```
-
