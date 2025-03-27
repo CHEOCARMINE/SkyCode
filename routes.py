@@ -758,15 +758,25 @@ def eliminar_docente(id):
 @docentes_bp.route('/<int:docente_id>/asignar_materias', methods=['GET', 'POST'])
 @login_required
 def asignar_materias(docente_id):
+    # Obtén al docente por su ID o muestra un error 404 si no existe
     docente = Docente.query.get_or_404(docente_id)
+    
+    # Obtén todas las materias disponibles para mostrarlas en el formulario
     materias = Materia.query.all()
 
     if request.method == 'POST':
-        # Obtener las materias seleccionadas desde el formulario
+        # Obtener los IDs de las materias seleccionadas desde el formulario
         materias_ids = request.form.getlist('materias')
 
-        # Actualizar la relación Docente-Materias
-        docente.materias = Materia.query.filter(Materia.id.in_(materias_ids)).all()
+        # Buscar las materias que corresponden a esos IDs
+        nuevas_materias = Materia.query.filter(Materia.id.in_(materias_ids)).all()
+
+        # Agregar solo las materias nuevas (que no estén asignadas todavía)
+        for nueva_materia in nuevas_materias:
+            if nueva_materia not in docente.materias:
+                docente.materias.append(nueva_materia)
+
+        # Guardar los cambios
         try:
             db.session.commit()
             flash('Materias asignadas correctamente al docente.', 'success')
@@ -774,17 +784,15 @@ def asignar_materias(docente_id):
             db.session.rollback()
             flash(f'Error al asignar materias: {str(e)}', 'danger')
 
-        return redirect(url_for('docentes_bp.listar_docentes'))
+        # Redirige de nuevo a la lista de docentes
+        return redirect(url_for('docentes_bp.ver_docentes_materias'))
 
+    # Renderiza el formulario de asignación con las materias y el docente
     return render_template('asignar_materias_docente.html', docente=docente, materias=materias)
 
 @docentes_bp.route('/ver_docentes_materias', methods=['GET'])
 @login_required
 def ver_docentes_materias():
-    docentes = Docente.query.all()  # Recupera todos los docentes
+    # Recupera todos los docentes junto con sus materias
+    docentes = Docente.query.all()
     return render_template('ver_docentes_materias.html', docentes=docentes)
-
-
-    
-    
-   
