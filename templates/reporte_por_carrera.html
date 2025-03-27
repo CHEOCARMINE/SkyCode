@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Reporte por Carrera - SkyCode{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="text-center mb-3">Reporte por Carrera</h1>
+  <p class="text-center text-muted">Resumen del total de alumnos y promedio de calificaciones por carrera.</p>
+
+  {% if datos %}
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead class="thead-light">
+          <tr>
+            <th>Carrera</th>
+            <th>Total de Alumnos</th>
+            <th>Promedio</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for carrera in datos %}
+            <tr>
+              <td>{{ carrera.carrera }}</td>
+              <td>{{ carrera.total_alumnos }}</td>
+              <td>{{ carrera.promedio }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="text-center mt-4">
+      <a href="{{ url_for('academic_bp.descargar_pdf_carrera') }}" class="btn btn-primary">
+        <i class="fas fa-file-pdf"></i> Descargar PDF
+      </a>
+    </div>
+  {% else %}
+    <div class="alert alert-info text-center">No hay datos disponibles para mostrar.</div>
+  {% endif %}
+</div>
+{% endblock %}
