@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Reporte por Alumno - SkyCode{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="text-center mb-3">Reporte por Alumno</h1>
+  <p class="text-center text-muted mb-4">Consulta los datos generales y el rendimiento académico del alumno.</p>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <form method="get" action="{{ url_for('academic_bp.reporte_por_alumno') }}">
+        <div class="form-group">
+          <label for="alumno_id">Selecciona un alumno:</label>
+          <select class="form-control" name="alumno_id" id="alumno_id" onchange="this.form.submit()">
+            <option value="">-- Selecciona --</option>
+            {% for alumno in alumnos %}
+              <option value="{{ alumno.id }}" {% if alumno.id == alumno_id %}selected{% endif %}>
+                {{ alumno.nombre_completo }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {% if datos_alumno %}
+  <div class="card mb-4">
+    <div class="card-header">
+      <strong>Alumno:</strong> {{ datos_alumno.nombre_completo }}
+    </div>
+    <div class="card-body">
+      <p><strong>Matrícula:</strong> {{ datos_alumno.matricula }}</p>
+      <p><strong>Correo:</strong> {{ datos_alumno.correo }}</p>
+      <p><strong>Carrera:</strong> {{ datos_alumno.carrera }}</p>
+      <p><strong>Estado:</strong> {{ datos_alumno.estado }}</p>
+
+      <hr>
+
+      <h5>Historial Académico</h5>
+      <table class="table table-bordered mt-3">
+        <thead>
+          <tr>
+            <th>Materia</th>
+            <th>Calificación</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for materia in datos_alumno.historial %}
+          <tr>
+            <td>{{ materia.nombre }}</td>
+            <td>{{ materia.calificacion or "N/A" }}</td>
+            <td>{{ materia.estado }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="text-center mt-4">
+        <a href="{{ url_for('academic_bp.descargar_reporte_alumno_pdf', alumno_id=alumno_id) }}" class="btn btn-primary">
+          <i class="fas fa-file-pdf"></i> Descargar PDF
+        </a>
+      </div>
+    </div>
+  </div>
+  {% elif alumno_id %}
+    <div class="alert alert-warning text-center">No hay información disponible para este alumno.</div>
+  {% endif %}
+</div>
+{% endblock %}

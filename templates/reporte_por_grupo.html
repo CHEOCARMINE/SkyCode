@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Reporte por Grupo - SkyCode{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="text-center mb-3">Reporte por Grupo</h1>
+  <p class="text-center text-muted mb-4">Consulta los alumnos agrupados por carrera.</p>
+
+  {% if datos %}
+    {% for grupo in datos %}
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+          <strong>Carrera:</strong> {{ grupo.carrera }} ({{ grupo.cantidad }} alumnos)
+        </div>
+        <div class="card-body">
+          {% if grupo.alumnos %}
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Alumno</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for alumno in grupo.alumnos %}
+                  <tr>
+                    <td>{{ alumno.nombre }}</td>
+                    <td>{{ alumno.estado }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <div class="alert alert-warning text-center">No hay alumnos en esta carrera.</div>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+
+    <div class="text-center mt-4">
+      <a href="{{ url_for('academic_bp.descargar_pdf_grupo') }}" class="btn btn-primary">
+        <i class="fas fa-file-pdf"></i> Descargar PDF
+      </a>
+    </div>
+
+  {% else %}
+    <div class="alert alert-info text-center">No hay datos disponibles para mostrar.</div>
+  {% endif %}
+</div>
+{% endblock %}
