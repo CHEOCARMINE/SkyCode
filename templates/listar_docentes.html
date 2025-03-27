@@ -3,7 +3,7 @@
 {% block title %}Lista de Docentes - SkyCode{% endblock %}
 
 {% block content %}
-<!-- Enlace al CSS existente de alumnos para reutilizar el estilo -->
+<!-- Estilos personalizados -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/alumno_style.css') }}">
 <!-- Scripts -->
 <script defer>
@@ -27,25 +27,29 @@
         </div>
     {% endif %}
     {% endwith %}
-    
-    <h1 class="mb-4 text-center">Lista de Docentes</h1>
+
+    <h1 class="mb-4">Lista de Docentes</h1>
 
     <!-- Filtros -->
     <div class="filter-box">
-        <h3 class="text-center">Filtro</h3>
+        <h3>Filtro</h3>
         <form id="filterForm" method="get" action="{{ url_for('docentes_bp.listar_docentes') }}" class="mb-4">
             <div class="row">
-                <div class="col-md-2">
-                    <input type="text" name="matricula" class="form-control auto-submit" placeholder="Matrícula" value="{{ request.args.get('matricula', '') }}">
+                <div class="col-md-3">
+                    <input type="text" name="matricula" class="form-control auto-submit" placeholder="Matrícula" 
+                           value="{{ matricula if matricula is not none else '' }}">
                 </div>
-                <div class="col-md-2">
-                    <input type="text" name="nombre" class="form-control auto-submit" placeholder="Nombre(s)" value="{{ request.args.get('nombre', '') }}">
+                <div class="col-md-3">
+                    <input type="text" name="nombre" class="form-control auto-submit" placeholder="Nombre(S)" 
+                           value="{{ nombre if nombre is not none else '' }}">
                 </div>
-                <div class="col-md-2">
-                    <input type="text" name="primer_apellido" class="form-control auto-submit" placeholder="Apellido Paterno" value="{{ request.args.get('primer_apellido', '') }}">
+                <div class="col-md-3">
+                    <input type="text" name="primer_apellido" class="form-control auto-submit" placeholder="Apellido Paterno" 
+                           value="{{ primer_apellido if primer_apellido is not none else '' }}">
                 </div>
-                <div class="col-md-2">
-                    <input type="text" name="segundo_apellido" class="form-control auto-submit" placeholder="Apellido Materno" value="{{ request.args.get('segundo_apellido', '') }}">
+                <div class="col-md-3">
+                    <input type="text" name="segundo_apellido" class="form-control auto-submit" placeholder="Apellido Materno" 
+                           value="{{ segundo_apellido if segundo_apellido is not none else '' }}">
                 </div>
             </div>
             <div class="row mt-3">
@@ -55,63 +59,64 @@
             </div>
         </form>
     </div>
-    
+
     <!-- Tabla de docentes -->
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped table-centered alumnos-table">
-            <thead>
+    <table class="table alumnos-table">
+        <thead>
+            <tr>
+                <th>Matrícula</th>
+                <th>Nombre(S)</th>
+                <th>Correo Electrónico</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if docentes %}
+                {% for docente in docentes %}
                 <tr>
-                    <th>ID</th>
-                    <th>Matrícula</th>
-                    <th>Nombre</th>
-                    <th>Correo Electrónico</th>
-                    <th>Acciones</th>
+                    <td>{{ docente.matricula }}</td>
+                    <td>{{ docente.nombre }} {{ docente.primer_apellido }} {{ docente.segundo_apellido }}</td>
+                    <td>{{ docente.correo_electronico }}</td>
+                    <td>
+                        <a href="{{ url_for('docentes_bp.editar_docente', matricula=docente.matricula) }}" class="btn btn-primary btn-sm">
+                            Ver
+                        </a>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                {% if docentes %}
-                    {% for docente in docentes %}
-                    <tr>
-                        <td>{{ docente.id }}</td>
-                        <td>{{ docente.matricula }}</td>
-                        <td>{{ docente.nombre }} {{ docente.primer_apellido }} {{ docente.segundo_apellido }}</td>
-                        <td>{{ docente.correo_electronico }}</td>
-                        <td>
-                            <a href="{{ url_for('docentes_bp.editar_docente', id=docente.id) }}" class="btn btn-warning btn-sm">Ver</a>
-                            <form action="{{ url_for('docentes_bp.eliminar_docente', id=docente.id) }}" method="POST" style="display:inline;">
-                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <td colspan="5" class="text-center">No se encontraron docentes.</td>
-                    </tr>
-                {% endif %}
-            </tbody>
-        </table>
-    </div>
-    
-    <!-- Paginación -->
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4" class="text-center">No se encontraron docentes.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
     {% if total_pages > 1 %}
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">
             <!-- Botón "Anterior" -->
-            <li class="page-item {% if current_page <= 1 %}disabled{% endif %}">
-                <a class="page-link" href="{{ url_for('docentes_bp.listar_docentes', page=current_page-1) }}" aria-label="Previous">
+            <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+                <a class="page-link"
+                   href="{{ url_for('docentes_bp.listar_docentes', page=page-1, matricula=matricula, nombre=nombre, primer_apellido=primer_apellido, segundo_apellido=segundo_apellido) }}"
+                   aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
             <!-- Números de página -->
             {% for p in range(1, total_pages + 1) %}
-                <li class="page-item {% if p == current_page %}active{% endif %}">
-                    <a class="page-link" href="{{ url_for('docentes_bp.listar_docentes', page=p) }}">{{ p }}</a>
+                <li class="page-item {% if page == p %}active{% endif %}">
+                    <a class="page-link"
+                       href="{{ url_for('docentes_bp.listar_docentes', page=p, matricula=matricula, nombre=nombre, primer_apellido=primer_apellido, segundo_apellido=segundo_apellido) }}">
+                        {{ p }}
+                    </a>
                 </li>
             {% endfor %}
             <!-- Botón "Siguiente" -->
-            <li class="page-item {% if current_page >= total_pages %}disabled{% endif %}">
-                <a class="page-link" href="{{ url_for('docentes_bp.listar_docentes', page=current_page+1) }}" aria-label="Next">
+            <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+                <a class="page-link"
+                   href="{{ url_for('docentes_bp.listar_docentes', page=page+1, matricula=matricula, nombre=nombre, primer_apellido=primer_apellido, segundo_apellido=segundo_apellido) }}"
+                   aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
@@ -119,5 +124,19 @@
     </nav>
     {% endif %}
 </div>
+
+<script>
+    function clearFilters() {
+        // Recargar la página sin parámetros
+        window.location.href = "{{ url_for('docentes_bp.listar_docentes') }}";
+    }
+
+    // Activar la búsqueda automática al cambiar los valores del filtro
+    document.querySelectorAll('.auto-submit').forEach(input => {
+        input.addEventListener('input', () => {
+            document.getElementById('filterForm').submit();
+        });
+    });
+</script>
 {% endblock %}
 

@@ -10,7 +10,6 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th>ID Docente</th>
         <th>Matrícula</th> <!-- Nueva columna para la matrícula -->
         <th>Nombre</th>
         <th>Materias</th>
@@ -20,7 +19,6 @@
     <tbody>
       {% for docente in docentes %}
       <tr>
-        <td>{{ docente.id }}</td>
         <td>{{ docente.matricula }}</td> <!-- Mostrar matrícula -->
         <td>{{ docente.nombre }} {{ docente.primer_apellido }} {{ docente.segundo_apellido }}</td>
         <td>
@@ -49,4 +47,3 @@
   {% endif %}
 </div>
 {% endblock %}
-

@@ -5,6 +5,9 @@
 {% block content %}
 <!-- Estilos personalizados para este formulario -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/modificar_docente_style.css') }}">
+<!-- Script para habilitar campos al presionar el lápiz -->
+<script src="{{ url_for('static', filename='JS/editar_docente_script.js') }}"></script>
+
 <div class="container mt-4">
     <!-- Bloque de mensajes flash para notificaciones -->
     {% with mensajes = get_flashed_messages(with_categories=true, category_filter=['modify-danger', 'modify-success']) %}
@@ -23,7 +26,7 @@
     {% endwith %}
 
     <h1 class="mb-4">Modificar Docente</h1>
-    <form method="POST" action="{{ url_for('docentes_bp.editar_docente', id=docente.id) }}">
+    <form method="POST" action="{{ url_for('docentes_bp.editar_docente', matricula=docente.matricula) }}">
         <!-- Matrícula (solo lectura) -->
         <div class="form-group">
             <label for="matricula">Matrícula</label>
@@ -88,8 +91,16 @@
             </div>
         </div>
 
-        <!-- Botón Guardar -->
-        <button type="submit" class="btn btn-primary mt-4">Guardar Cambios</button>
+        <!-- Botones Guardar y Regresar -->
+        <div class="form-row">
+            <div class="col-md-6 text-left">
+                <a href="{{ url_for('docentes_bp.listar_docentes') }}" class="btn btn-secondary">Regresar</a>
+            </div>
+            <div class="col-md-6 text-right">
+                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            </div>
+        </div>
     </form>
 </div>
 {% endblock %}
+

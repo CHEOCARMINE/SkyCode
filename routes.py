@@ -13,6 +13,7 @@ from functions.user_management.update_user_data import actualizar_coordinador_di
 from database import bcrypt, db
 from functions.reports.generate_statistical_report import generate_statistical_report
 from functions.reports.export_report import generar_pdf_reporte
+from functions.user_management.view_docentes import get_docentes
 
 academic_bp = Blueprint('academic_bp', __name__)
 alumno_progress_bp = Blueprint('alumno_progress', __name__)
@@ -671,31 +672,60 @@ def eliminar_cuatrimestre(id):
     flash('Cuatrimestre eliminado exitosamente.', 'success')
     return redirect(url_for('academic_bp.listar_cuatrimestres'))
     
+
 # ------------------------------------------------------------
-# Ruta para listar todos los docentes con soporte de paginación
+# Ruta para listar todos los docentes con filtros y paginación
 # ------------------------------------------------------------
 @docentes_bp.route('/', methods=['GET'])
 def listar_docentes():
-    # Obtener el número de página actual de los argumentos GET, por defecto es 1
+    # Parámetros de paginación
     page = request.args.get('page', 1, type=int)
-    per_page = 10  # Número de registros por página
+    page_size = 10
 
-    # Paginación usando SQLAlchemy
-    pagination = Docente.query.paginate(page=page, per_page=per_page)
+    # Parámetros de filtros
+    matricula = request.args.get('matricula')
+    nombre = request.args.get('nombre')
+    primer_apellido = request.args.get('primer_apellido')
+    segundo_apellido = request.args.get('segundo_apellido')
 
-    # Elementos de la página actual
-    docentes = pagination.items
-    total_pages = pagination.pages
-    current_page = pagination.page
-
-    # Renderizar la plantilla con las variables necesarias
-    return render_template(
-        'listar_docentes.html',
-        docentes=docentes,
-        total_pages=total_pages,
-        current_page=current_page
+    # Llama a la función de filtrado para obtener la query
+    query = get_docentes(
+        matricula=matricula,
+        nombre=nombre,
+        primer_apellido=primer_apellido,
+        segundo_apellido=segundo_apellido,
+        as_query=True
     )
 
+    # Paginación
+    total = query.count()  # Contar el total de resultados
+    total_pages = ceil(total / page_size)  # Calcular el total de páginas
+    skip = (page - 1) * page_size  # Calcular el desplazamiento
+    docentes_page = query.offset(skip).limit(page_size).all()  # Obtener la página actual
+
+    # Transformar los resultados en una lista de diccionarios para la plantilla
+    docentes_dict = [
+        {
+            "matricula": docente.matricula,
+            "nombre": docente.nombre,
+            "primer_apellido": docente.primer_apellido,
+            "segundo_apellido": docente.segundo_apellido,
+            "correo_electronico": docente.correo_electronico
+        }
+        for docente in docentes_page
+    ]
+
+    # Renderizar la plantilla con los datos
+    return render_template(
+        'listar_docentes.html',
+        docentes=docentes_dict,
+        page=page,
+        total_pages=total_pages,
+        matricula=matricula,
+        nombre=nombre,
+        primer_apellido=primer_apellido,
+        segundo_apellido=segundo_apellido
+    )
 
 # ------------------------------------------------------------
 # Ruta para registrar un nuevo docente
@@ -739,9 +769,13 @@ def registrar_docente():
 # ------------------------------------------------------------
 # Ruta para editar un docente existente
 # ------------------------------------------------------------
-@docentes_bp.route('/<int:id>/editar', methods=['GET', 'POST'])
-def editar_docente(id):
-    docente = Docente.query.get_or_404(id)
+@docentes_bp.route('/<string:matricula>/editar', methods=['GET', 'POST'])
+def editar_docente(matricula):
+    # Buscar el docente por matrícula
+    docente = Docente.query.filter_by(matricula=matricula).first()
+    if not docente:
+        flash("Docente no encontrado", "danger")
+        return redirect(url_for('docentes_bp.listar_docentes'))
 
     if request.method == 'POST':
         # Actualizar datos con lo enviado desde el formulario
@@ -750,7 +784,6 @@ def editar_docente(id):
         docente.segundo_apellido = request.form.get('segundo_apellido')
         docente.correo_electronico = request.form.get('correo_electronico')
 
-        # Guardar cambios
         try:
             db.session.commit()
             flash('Docente actualizado exitosamente.', 'success')
