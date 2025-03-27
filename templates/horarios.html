@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Horarios{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="text-primary">Horarios de Clases</h1>
+  <div id="calendar"></div>
+  <button class="btn btn-primary mt-4" id="print-pdf">Imprimir en PDF</button>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'timeGridWeek',
+      events: '/api/horarios',  // Endpoint para obtener eventos
+      editable: true,
+    });
+    calendar.render();
+
+    document.getElementById('print-pdf').addEventListener('click', function() {
+      window.location.href = '/horarios/imprimir/{{ current_user.matricula }}';
+    });
+  });
+</script>
+{% endblock %}

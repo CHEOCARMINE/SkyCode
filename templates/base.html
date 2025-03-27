@@ -67,6 +67,14 @@
     <span>Materias Pendientes</span>
   </a>
 </li>
+ <!-- Link para ver horarios, visible solo para Alumnos -->
+<li class="nav-item">
+  <a class="nav-link" href="{{ url_for('academic_bp.ver_horarios') }}">
+    <i class="fas fa-calendar-alt"></i> <!-- Ícono de calendario -->
+    <span>Horarios</span>
+  </a>
+</li>
+
     {% elif current_user.rol_id == 2 %}
       <!-- Encabezado de sección para Coordinador -->
       <div class="sidebar-heading">
@@ -91,6 +99,13 @@
         <a class="nav-link" href="{{ url_for('academic_bp.listar_materias') }}">
           <i class="fas fa-fw fa-book"></i>
           <span>Gestión de Materias</span>
+        </a>
+      </li>
+      <!-- Link para ver horarios, visible solo para Coordinador -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('academic_bp.ver_horarios') }}">
+          <i class="fas fa-calendar-alt"></i> <!-- Ícono de calendario -->
+          <span>Gestión de Horarios</span>
         </a>
       </li>
         
@@ -160,6 +175,14 @@
     <span>Gestión de Cuatrimestres</span>
   </a>
 </li>
+      <!-- Link para ver horarios, visible solo para Directivos -->
+<li class="nav-item">
+  <a class="nav-link" href="{{ url_for('academic_bp.ver_horarios') }}">
+    <i class="fas fa-calendar-alt"></i> <!-- Ícono de calendario -->
+    <span>Gestión de Horarios</span>
+  </a>
+</li>
+
       {# Aquí puedes agregar enlaces específicos para Directivo #}
     {% endif %}
   {% endif %}

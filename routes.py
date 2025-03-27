@@ -21,6 +21,8 @@ from functions.reports.generate_evaluation_report import generate_evaluation_rep
 from functions.reports.export_report import generar_pdf_reporte_evaluacion
 from functions.reports.generate_group_report import generate_group_report
 from functions.reports.export_report import generar_pdf_reporte_grupo
+from functions.schedule import obtener_horarios_por_matricula
+
 
 
 academic_bp = Blueprint('academic_bp', __name__)
@@ -791,3 +793,19 @@ def descargar_pdf_grupo():
     datos = generate_group_report()
     pdf_path = generar_pdf_reporte_grupo(datos)
     return send_file(pdf_path, as_attachment=True)
+
+#------------------------------
+#Route de los horarios
+#------------------------------
+@academic_bp.route('/horarios', methods=['GET'], endpoint='ver_horarios')
+@login_required
+def ver_horarios():
+    if current_user.rol_id == 1:  # Alumnos
+        horarios = obtener_horarios_por_matricula(current_user.matricula)
+    elif current_user.rol_id in [2, 3]:  # Coordinadores o Directivos
+        matricula = request.args.get('matricula')
+        horarios = obtener_horarios_por_matricula(matricula)
+    else:
+        flash("No tienes permisos para acceder a los horarios.", "danger")
+        return redirect(url_for('academic_bp.index'))
+    return render_template('horarios.html', horarios=horarios)
