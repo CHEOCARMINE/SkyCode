@@ -21,6 +21,8 @@ from functions.reports.generate_evaluation_report import generate_evaluation_rep
 from functions.reports.export_report import generar_pdf_reporte_evaluacion
 from functions.reports.generate_group_report import generate_group_report
 from functions.reports.export_report import generar_pdf_reporte_grupo
+from functions.reports.generate_career_report import generate_career_report
+from functions.reports.export_report import generar_pdf_reporte_carrera
 
 
 academic_bp = Blueprint('academic_bp', __name__)
@@ -790,4 +792,29 @@ def reporte_por_grupo():
 def descargar_pdf_grupo():
     datos = generate_group_report()
     pdf_path = generar_pdf_reporte_grupo(datos)
+    return send_file(pdf_path, as_attachment=True)
+
+# ------------------------------------------------------------
+# Route de Reporte por Carrera
+# ------------------------------------------------------------
+
+@academic_bp.route("/reporte_carrera")
+@login_required
+def reporte_por_carrera():
+    if current_user.rol_id != 3:
+        flash("No tienes permisos para ver esta sección.", "danger")
+        return redirect(url_for('academic_bp.index'))
+
+    datos = generate_career_report()
+    return render_template("reporte_por_carrera.html", datos=datos)
+
+# ------------------------------------------------------------
+# Route para descargar el reporte por carrera en PDF
+# ------------------------------------------------------------
+
+@academic_bp.route("/reporte_carrera/pdf")
+@login_required
+def descargar_pdf_carrera():
+    datos = generate_career_report()
+    pdf_path = generar_pdf_reporte_carrera(datos)
     return send_file(pdf_path, as_attachment=True)

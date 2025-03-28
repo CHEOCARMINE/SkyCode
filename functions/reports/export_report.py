@@ -410,3 +410,67 @@ def generar_pdf_reporte_grupo(datos):
     pdf.output(path_pdf)
     return path_pdf
 
+# ------------------------------------------------------------
+# Route para descargar el reporte por carrera en PDF
+# ------------------------------------------------------------
+
+class PDFCarrera(FPDF):
+    def header(self):
+        self.set_font("Arial", "B", 16)
+        self.set_fill_color(44, 62, 80)
+        self.set_text_color(255, 255, 255)
+        self.cell(0, 10, "Reporte por Carrera - SkyCode", ln=True, align='C', fill=True)
+        self.ln(10)
+
+    def footer(self):
+        self.set_y(-15)
+        self.set_font("Arial", "I", 10)
+        self.set_text_color(128, 128, 128)
+        self.cell(0, 10, f"Página {self.page_no()} / {{nb}}", align='C')
+
+def generar_pdf_reporte_carrera(data):
+    report_dir = "static/reports"
+    if not os.path.exists(report_dir):
+        os.makedirs(report_dir)
+
+    pdf = PDFCarrera()
+    pdf.alias_nb_pages()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+
+    if not data:
+        pdf.cell(0, 10, "No hay datos disponibles para mostrar.", ln=True, align='C')
+    else:
+        pdf.set_font("Arial", "B", 12)
+        pdf.cell(80, 10, "Carrera", 1)
+        pdf.cell(40, 10, "Alumnos", 1)
+        pdf.cell(40, 10, "Promedio", 1)
+        pdf.ln()
+
+        pdf.set_font("Arial", size=12)
+        for carrera in data:
+            pdf.cell(80, 10, carrera["carrera"], 1)
+            pdf.cell(40, 10, str(carrera["total_alumnos"]), 1)
+            pdf.cell(40, 10, str(carrera["promedio"]), 1)
+            pdf.ln()
+
+        # Gráfico de barras
+        nombres = [c["carrera"] for c in data]
+        promedios = [c["promedio"] for c in data]
+
+        plt.figure(figsize=(10, 5))
+        plt.barh(nombres, promedios)
+        plt.title("Promedio por Carrera")
+        plt.xlabel("Promedio")
+        plt.tight_layout()
+        grafica_path = os.path.join(report_dir, "grafica_carrera.png")
+        plt.savefig(grafica_path)
+        plt.close()
+
+        if os.path.exists(grafica_path):
+            pdf.add_page()
+            pdf.image(grafica_path, x=20, w=170)
+
+    pdf_path = os.path.join(report_dir, "reporte_por_carrera.pdf")
+    pdf.output(pdf_path)
+    return pdf_path
