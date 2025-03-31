@@ -60,13 +60,8 @@
       <span>Avance Académico</span>
     </a>
   </li>
-     <!-- Link para ver materias pendientes, visible solo para Alumnos -->
-<li class="nav-item">
-  <a class="nav-link" href="{{ url_for('academic_bp.materias_pendientes', alumno_id=current_user.id) }}">
-    <i class="fas fa-fw fa-clock"></i> <!-- Ícono de reloj para materias pendientes -->
-    <span>Materias Pendientes</span>
-  </a>
-</li>
+     
+
     {% elif current_user.rol_id == 2 %}
       <!-- Encabezado de sección para Coordinador -->
       <div class="sidebar-heading">
@@ -108,6 +103,14 @@
           <span>Registro de Coordinador/Directivo</span>
         </a>
       </li>
+            <!-- Link para registro de Docente -->
+<li class="nav-item">
+  <a class="nav-link" href="{{ url_for('docentes_bp.registrar_docente') }}">
+    <i class="fas fa-fw fa-user-plus"></i> <!-- Ícono para agregar un usuario -->
+    <span>Registro de Docente</span>
+  </a>
+</li>
+
       <!-- Link para registro de Coordinador/Directivo -->
       <li class="nav-item">
         <a class="nav-link" href="{{ url_for('academic_bp.coordinadores_directivos') }}">
@@ -168,6 +171,23 @@
     <span>Gestión de Cuatrimestres</span>
   </a>
 </li>
+<!-- Link para gestión de Docentes Solo para Directivos -->
+<li class="nav-item">
+  <a class="nav-link" href="{{ url_for('docentes_bp.listar_docentes') }}">
+    <i class="fas fa-fw fa-user-tie"></i>
+    <span>Gestión de Docentes</span>
+  </a>
+</li>
+
+
+<!-- Link para ver la relación de Docentes y Materias Solo para Directivos -->
+<li class="nav-item">
+  <a class="nav-link" href="{{ url_for('docentes_bp.ver_docentes_materias') }}">
+    <i class="fas fa-fw fa-book-open"></i> <!-- Ícono para docentes y materias -->
+    <span>Docentes y Materias</span>
+  </a>
+</li>
+
       {# Aquí puedes agregar enlaces específicos para Directivo #}
     {% endif %}
   {% endif %}
@@ -202,7 +222,7 @@
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">{% if current_user.is_authenticated %}
                   {% if current_user.alumno %}
-                    {{ current_user.alumno.primer_nombre }} {{ current_user.alumno.primer_apellido }}
+                    {{ current_user.alumno.nombre }} {{ current_user.alumno.primer_apellido }}
                   {% elif current_user.coordinador_directivo %}
                     {{ current_user.coordinador_directivo.primer_nombre }} {{ current_user.coordinador_directivo.primer_apellido }}
                   {% else %}

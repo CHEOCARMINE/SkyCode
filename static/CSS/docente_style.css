@@ -1,0 +1,77 @@
+/* Estilo para la caja de filtros */
+.filter-box {
+    background-color: #7f8c8d3a; /* Gris claro con transparencia */
+    border: 1px solid #dee2e6; 
+    border-radius: 0.25rem; 
+    padding: 1rem; 
+    margin-bottom: 1rem;
+}
+
+/* Botón para borrar filtros */
+.btn-custom-clear {
+    background-color: #e74d3cb9 !important; /* Rojo suave */
+    border-color: #e74d3cb9 !important;
+    color: #fff;
+    padding: 0.5rem 1rem;   
+    width: 150px;         
+    margin: 0 auto;       
+    display: block; 
+}
+
+/* Estilo para la tabla de docentes */
+.docentes-table thead {
+    background-color: #1E3A8A; /* Azul oscuro */
+    color: #fff;
+}
+
+.docentes-table th,
+.docentes-table td {
+    text-align: center; /* Centrado del texto */
+}
+
+.docentes-table tbody tr:nth-child(odd) {
+    background-color: #ffffff; /* Filas impares en blanco */
+}
+
+.docentes-table tbody tr:nth-child(even) {
+    background-color: #7f8c8da1; /* Filas pares en gris claro */
+    color: #fff;
+}
+
+/* Paginación */
+.pagination .page-link {
+    font-size: 1rem;         
+    padding: 0.50rem 1rem;    
+}
+
+/* Estilo para la página activa */
+.pagination .page-item.active .page-link {
+    background-color: #2980B9;  /* Azul brillante */
+    border-color: #2980B9;
+    color: #fff;
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: #bdc3c7;  /* Gris claro para estados deshabilitados */
+    border-color: #bdc3c7;
+    color: #fff;
+}
+
+/* Botones generales */
+.btn {
+    background-color: #297fb9c4;  /* Azul intermedio */
+    border-color: #297fb9c4;
+    color: #fff;
+}
+
+/* Botón para Ver (antes Editar) */
+.btn-warning {
+    background-color: #1E3A8A; /* Azul oscuro */
+    border-color: #1E3A8A;
+    color: #fff;
+}
+
+.btn-warning:hover {
+    background-color: #152A6C; /* Azul más oscuro al pasar el mouse */
+    border-color: #152A6C;
+}

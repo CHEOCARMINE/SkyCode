@@ -246,4 +246,24 @@ class Coordinadores_Directivos(db.Model):
     def __repr__(self):
         return f"<Coordinadores_Directivos {self.primer_nombre} {self.primer_apellido}>"
     
-    
+   
+class Docente(db.Model):
+    __tablename__ = 'Docentes'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    primer_apellido = db.Column(db.String(100), nullable=False)
+    segundo_apellido = db.Column(db.String(100))
+    correo_electronico = db.Column(db.String(100), nullable=False, unique=True)
+    matricula = db.Column(db.String(20), unique=True, nullable=False)  # Nuevo campo
+
+    # Relación muchos-a-muchos con la tabla Materias mediante Docente_Materia
+    materias = db.relationship('Materia', secondary='Docente_Materia', backref='docentes')
+
+# Tabla intermedia para la relación Docentes-Materias
+class DocenteMateria(db.Model):
+    __tablename__ = 'Docente_Materia'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    docente_id = db.Column(db.Integer, db.ForeignKey('Docentes.id', ondelete='CASCADE'), nullable=False)
+    materia_id = db.Column(db.Integer, db.ForeignKey('Materias.id', ondelete='CASCADE'), nullable=False)

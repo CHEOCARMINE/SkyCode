@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 from math import ceil
 from functions.auth.register import registrar_alumno as process_registration
 from functions.user_management.view_students import get_students
-from models import db, Carrera, EstadoAlumno, Alumno, Materia, Coordinadores_Directivos,Cuatrimestre
+from models import db, Carrera, EstadoAlumno, Alumno, Materia, Coordinadores_Directivos,Cuatrimestre, Docente
 from functions.academic_progress import get_academic_progress
 from services import send_email 
 from functions.user_management.update_students_data import actualizar_alumno_y_usuario
@@ -13,6 +13,7 @@ from functions.user_management.update_user_data import actualizar_coordinador_di
 from database import bcrypt, db
 from functions.reports.generate_statistical_report import generate_statistical_report
 from functions.reports.export_report import generar_pdf_reporte
+from functions.user_management.view_docentes import get_docentes
 from functions.reports.generate_course_report import generate_course_report
 from functions.reports.export_report import generar_pdf_reporte_materia
 from functions.reports.generate_student_report import generate_student_report
@@ -24,10 +25,12 @@ from functions.reports.export_report import generar_pdf_reporte_grupo
 from functions.reports.generate_career_report import generate_career_report
 from functions.reports.export_report import generar_pdf_reporte_carrera
 
-
 academic_bp = Blueprint('academic_bp', __name__)
 alumno_progress_bp = Blueprint('alumno_progress', __name__)
 reports_bp = Blueprint('reports_bp', __name__)
+docentes_bp = Blueprint('docentes_bp', __name__, url_prefix='/docentes')
+
+
 
 # ------------------------------------------------------------
 # Route del Index
@@ -678,6 +681,193 @@ def eliminar_cuatrimestre(id):
 
     flash('Cuatrimestre eliminado exitosamente.', 'success')
     return redirect(url_for('academic_bp.listar_cuatrimestres'))
+    
+
+# ------------------------------------------------------------
+# Ruta para listar todos los docentes con filtros y paginación
+# ------------------------------------------------------------
+@docentes_bp.route('/', methods=['GET'])
+def listar_docentes():
+    # Parámetros de paginación
+    page = request.args.get('page', 1, type=int)
+    page_size = 10
+
+    # Parámetros de filtros
+    matricula = request.args.get('matricula')
+    nombre = request.args.get('nombre')
+    primer_apellido = request.args.get('primer_apellido')
+    segundo_apellido = request.args.get('segundo_apellido')
+
+    # Llama a la función de filtrado para obtener la query
+    query = get_docentes(
+        matricula=matricula,
+        nombre=nombre,
+        primer_apellido=primer_apellido,
+        segundo_apellido=segundo_apellido,
+        as_query=True
+    )
+
+    # Paginación
+    total = query.count()  # Contar el total de resultados
+    total_pages = ceil(total / page_size)  # Calcular el total de páginas
+    skip = (page - 1) * page_size  # Calcular el desplazamiento
+    docentes_page = query.offset(skip).limit(page_size).all()  # Obtener la página actual
+
+    # Transformar los resultados en una lista de diccionarios para la plantilla
+    docentes_dict = [
+        {
+            "matricula": docente.matricula,
+            "nombre": docente.nombre,
+            "primer_apellido": docente.primer_apellido,
+            "segundo_apellido": docente.segundo_apellido,
+            "correo_electronico": docente.correo_electronico
+        }
+        for docente in docentes_page
+    ]
+
+    # Renderizar la plantilla con los datos
+    return render_template(
+        'listar_docentes.html',
+        docentes=docentes_dict,
+        page=page,
+        total_pages=total_pages,
+        matricula=matricula,
+        nombre=nombre,
+        primer_apellido=primer_apellido,
+        segundo_apellido=segundo_apellido
+    )
+
+# ------------------------------------------------------------
+# Ruta para registrar un nuevo docente
+# ------------------------------------------------------------
+@docentes_bp.route('/nuevo', methods=['GET', 'POST'])
+def registrar_docente():
+    from functions.auth.validations import generar_matricula_docente  # Importar función de matrícula
+
+    if request.method == 'POST':
+        # Recoger datos del formulario
+        nombre = request.form.get('nombre')
+        primer_apellido = request.form.get('primer_apellido')
+        segundo_apellido = request.form.get('segundo_apellido')
+        correo_electronico = request.form.get('correo_electronico')
+
+        # Generar la matrícula automáticamente
+        matricula = generar_matricula_docente()
+
+        # Crear el nuevo docente con la matrícula
+        nuevo_docente = Docente(
+            nombre=nombre,
+            primer_apellido=primer_apellido,
+            segundo_apellido=segundo_apellido,
+            correo_electronico=correo_electronico,
+            matricula=matricula
+        )
+
+        # Guardar en la base de datos
+        try:
+            db.session.add(nuevo_docente)
+            db.session.commit()
+            flash('Docente registrado exitosamente.', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error al registrar el docente: {str(e)}', 'danger')
+
+        return redirect(url_for('docentes_bp.listar_docentes'))
+    
+    return render_template('registrar_docente.html')
+
+# ------------------------------------------------------------
+# Ruta para editar un docente existente
+# ------------------------------------------------------------
+@docentes_bp.route('/<string:matricula>/editar', methods=['GET', 'POST'])
+def editar_docente(matricula):
+    # Buscar el docente por matrícula
+    docente = Docente.query.filter_by(matricula=matricula).first()
+    if not docente:
+        flash("Docente no encontrado", "danger")
+        return redirect(url_for('docentes_bp.listar_docentes'))
+
+    if request.method == 'POST':
+        # Actualizar datos con lo enviado desde el formulario
+        docente.nombre = request.form.get('nombre')
+        docente.primer_apellido = request.form.get('primer_apellido')
+        docente.segundo_apellido = request.form.get('segundo_apellido')
+        docente.correo_electronico = request.form.get('correo_electronico')
+
+        try:
+            db.session.commit()
+            flash('Docente actualizado exitosamente.', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error al actualizar el docente: {str(e)}', 'danger')
+
+        return redirect(url_for('docentes_bp.listar_docentes'))
+    
+    return render_template('editar_docente.html', docente=docente)
+
+# ------------------------------------------------------------
+# Ruta para eliminar un docente
+# ------------------------------------------------------------
+@docentes_bp.route('/<int:id>/eliminar', methods=['POST'])
+def eliminar_docente(id):
+    docente = Docente.query.get_or_404(id)
+
+    try:
+        db.session.delete(docente)
+        db.session.commit()
+        flash('Docente eliminado exitosamente.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error al eliminar el docente: {str(e)}', 'danger')
+    return redirect(url_for('docentes_bp.listar_docentes'))
+
+# ------------------------------------------------------------
+# Ruta para asignar materias a un docente
+# ------------------------------------------------------------
+@docentes_bp.route('/<int:docente_id>/asignar_materias', methods=['GET', 'POST'])
+@login_required
+def asignar_materias(docente_id):
+    # Obtén al docente por su ID o muestra un error 404 si no existe
+    docente = Docente.query.get_or_404(docente_id)
+    
+    # Obtén todas las materias disponibles para mostrarlas en el formulario
+    materias = Materia.query.all()
+
+    if request.method == 'POST':
+        # Obtener los IDs de las materias seleccionadas desde el formulario
+        materias_ids = request.form.getlist('materias')
+
+        # Buscar las materias que corresponden a esos IDs
+        nuevas_materias = Materia.query.filter(Materia.id.in_(materias_ids)).all()
+
+        # Agregar solo las materias nuevas (que no estén asignadas todavía)
+        for nueva_materia in nuevas_materias:
+            if nueva_materia not in docente.materias:
+                docente.materias.append(nueva_materia)
+
+        # Guardar los cambios
+        try:
+            db.session.commit()
+            flash('Materias asignadas correctamente al docente.', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error al asignar materias: {str(e)}', 'danger')
+
+        # Redirige de nuevo a la lista de docentes
+        return redirect(url_for('docentes_bp.ver_docentes_materias'))
+
+    # Renderiza el formulario de asignación con las materias y el docente
+    return render_template('asignar_materias_docente.html', docente=docente, materias=materias)
+
+# ------------------------------------------------------------
+# Ruta para ver docentes y materias asignadas
+# ------------------------------------------------------------
+@docentes_bp.route('/ver_docentes_materias', methods=['GET'])
+@login_required
+def ver_docentes_materias():
+    # Recupera todos los docentes junto con sus materias
+    docentes = Docente.query.all()
+    return render_template('ver_docentes_materias.html', docentes=docentes)
 
 # ------------------------------------------------------------
 # Route de Reporte por Materia
