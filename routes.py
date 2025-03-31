@@ -868,7 +868,7 @@ def ver_docentes_materias():
     # Recupera todos los docentes junto con sus materias
     docentes = Docente.query.all()
     return render_template('ver_docentes_materias.html', docentes=docentes)
-=======
+
 # ------------------------------------------------------------
 # Route de Reporte por Materia
 # ------------------------------------------------------------
