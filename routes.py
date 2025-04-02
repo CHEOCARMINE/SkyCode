@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 from math import ceil
 from functions.auth.register import registrar_alumno as process_registration
 from functions.user_management.view_students import get_students
-from models import db, Carrera, EstadoAlumno, Alumno, Materia, Coordinadores_Directivos,Cuatrimestre, Docente
+from models import db, Carrera, EstadoAlumno, Alumno, Materia, Coordinadores_Directivos,Cuatrimestre, Docente, PlanEstudios
 from functions.academic_progress import get_academic_progress
 from services import send_email 
 from functions.user_management.update_students_data import actualizar_alumno_y_usuario
@@ -29,6 +29,9 @@ academic_bp = Blueprint('academic_bp', __name__)
 alumno_progress_bp = Blueprint('alumno_progress', __name__)
 reports_bp = Blueprint('reports_bp', __name__)
 docentes_bp = Blueprint('docentes_bp', __name__, url_prefix='/docentes')
+# Crear el Blueprint
+plan_estudios_bp = Blueprint('plan_estudios_bp', __name__)
+
 
 
 
@@ -1008,3 +1011,45 @@ def descargar_pdf_carrera():
     datos = generate_career_report()
     pdf_path = generar_pdf_reporte_carrera(datos)
     return send_file(pdf_path, as_attachment=True)
+
+# ------------------------------------------------------------
+# Route para plan de estudios 
+# ------------------------------------------------------------
+
+@plan_estudios_bp.route('/asignar', methods=['GET', 'POST'])
+def asignar_plan_estudios():
+    if request.method == 'POST':
+        # Recoger datos del formulario
+        carrera_id = request.form.get('carrera_id')
+        materia_id = request.form.get('materia_id')
+        cuatrimestre_id = request.form.get('cuatrimestre')
+
+        # Crear un nuevo registro en PlanEstudios
+        nuevo_plan_estudio = PlanEstudios(
+            carrera_id=carrera_id,
+            materia_id=materia_id,
+            cuatrimestre=cuatrimestre_id
+        )
+
+        # Guardar en la base de datos
+        try:
+            db.session.add(nuevo_plan_estudio)
+            db.session.commit()
+            flash('Plan de estudios asignado exitosamente.', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error al asignar el plan de estudios: {str(e)}', 'danger')
+
+        return redirect(url_for('plan_estudios_bp.asignar_plan_estudios'))
+
+    # Cargar datos para el formulario
+    carreras = Carrera.query.all()
+    materias = Materia.query.all()
+    cuatrimestres = Cuatrimestre.query.all()
+
+    return render_template(
+        'asignar_plan_estudios.html',
+        carreras=carreras,
+        materias=materias,
+        cuatrimestres=cuatrimestres
+    )

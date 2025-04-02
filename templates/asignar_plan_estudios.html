@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Asignar Plan de Estudios{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Asignar Plan de Estudios</h1>
+    <form method="POST" action="{{ url_for('plan_estudios_bp.asignar') }}">
+        <!-- Selección de Carrera -->
+        <div class="form-group">
+            <label for="carrera_id">Carrera</label>
+            <select id="carrera_id" name="carrera_id" class="form-control">
+                {% for carrera in carreras %}
+                <option value="{{ carrera.id }}">{{ carrera.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Selección de Materia -->
+        <div class="form-group">
+            <label for="materia_id">Materia</label>
+            <select id="materia_id" name="materia_id" class="form-control">
+                {% for materia in materias %}
+                <option value="{{ materia.id }}">{{ materia.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Selección de Cuatrimestre -->
+        <div class="form-group">
+            <label for="cuatrimestre">Cuatrimestre</label>
+            <select id="cuatrimestre" name="cuatrimestre" class="form-control">
+                {% for cuatrimestre in cuatrimestres %}
+                <option value="{{ cuatrimestre.id }}">{{ cuatrimestre.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Botón para enviar -->
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+</div>
+{% endblock %}
