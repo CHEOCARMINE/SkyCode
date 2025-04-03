@@ -377,9 +377,7 @@ def mostrar_historial_academico():
         pending_courses=progress_data["pending_courses"]
     )
 
-# ------------------------------------------------------------
-# Route para el registro de Coordinadores/Directivos
-# ------------------------------------------------------------
+
 
 @academic_bp.route('/register_user', methods=['GET', 'POST'])
 @login_required
@@ -389,9 +387,7 @@ def register_user_route():
         return redirect(url_for('auth.index'))
     return registrar_coordinador_directivo()
 
-# ------------------------------------------------------------
-# Route para Ver Coordinadores y Directivos
-# ------------------------------------------------------------
+
 
 @academic_bp.route('/coordinadores_directivos', methods=['GET'])
 @login_required
