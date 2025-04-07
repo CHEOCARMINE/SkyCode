@@ -1,15 +1,12 @@
-from flask import Flask, redirect, url_for, flash
+from flask import Flask, redirect, render_template, url_for, flash
 from config import config_by_name
 from database import init_db
 from services import init_mail
-from routes import academic_bp, alumno_progress_bp, docentes_bp 
+from routes import academic_bp, alumno_progress_bp, docentes_bp
 from functions.auth.login import auth_bp as login_bp
-from flask_login import LoginManager
-from models import Usuario
-from routes import alumno_progress_bp 
+from flask_login import LoginManager, current_user
+from models import Alumno, Usuario
 from routes import reports_bp
-
-
 
 def create_app(config_name="development"):
     """
@@ -51,6 +48,13 @@ def create_app(config_name="development"):
     def request_entity_too_large(error):
         flash("El archivo subido es demasiado grande.", "registe-danger")
         return redirect(url_for('academic_bp.registrar_alumno'))
+
+    # Aquí agregamos la ruta /perfil dentro de la función create_app
+    @app.route('/perfil') 
+    def perfil():
+        usuario = Usuario.query.get(current_user.id)
+        alumno = Alumno.query.get(usuario.alumno_id) if usuario and usuario.alumno_id else None
+        return render_template('perfil.html', alumno=alumno)
     
     return app
 
