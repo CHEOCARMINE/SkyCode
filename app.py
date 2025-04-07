@@ -49,7 +49,7 @@ def create_app(config_name="development"):
         flash("El archivo subido es demasiado grande.", "registe-danger")
         return redirect(url_for('academic_bp.registrar_alumno'))
 
-    # Aquí agregamos la ruta /perfil dentro de la función create_app
+    # Aquí agregamos la ruta /perfil 
     @app.route('/perfil') 
     def perfil():
         usuario = Usuario.query.get(current_user.id)
