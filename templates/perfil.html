@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil del Alumno</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .banner {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .profile-header {
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .profile-header h2 {
+           0;
+            color: #333;
+        }
+        .profile-header p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .profile-nav {
+            display: flex;
+            justify-content: space-around;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .profile-nav a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .profile-nav a:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section h3 {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .section p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .section .info-item {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="banner">
+        <h1>Perfil del Alumno</h1>
+    </div>
+    <div class="container">
+        <div class="profile-header">
+            <h2>{{ alumno.nombre }} {{ alumno.primer_apellido }}</h2>
+            <p>Alumno de {{ alumno.carrera.nombre }}</p>
+            <p>Universidad de Campeche</p>
+        </div>
+        <div class="section">
+            <h3>Datos Generales</h3>
+            <div class="info-item"><strong>Nombre:</strong> {{ alumno.nombre }} {{ alumno.primer_apellido }} {{ alumno.segundo_apellido }}</div>
+            <div class="info-item"><strong>Matrícula:</strong> {{ alumno.matricula }}</div>
+            <div class="info-item"><strong>Correo Electrónico:</strong> {{ alumno.correo }}</div>
+            <div class="info-item"><strong>Teléfono:</strong> {{ alumno.telefono }}</div>
+            <div class="info-item"><strong>Dirección:</strong> {{ alumno.direccion }}</div>
+            <div class="info-item"><strong>Carrera:</strong> {{ alumno.carrera.nombre }}</div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
