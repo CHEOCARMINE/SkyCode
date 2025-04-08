@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}Comparar Estadísticas - SkyCode{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="text-center">Comparar Estadísticas por Carrera</h1>
+  <form method="get" action="{{ url_for('academic_bp.comparar_estadisticas_route') }}" class="row mb-4">
+    <div class="col-md-5">
+      <label for="carrera_id_1">Carrera 1:</label>
+      <select name="carrera_id_1" id="carrera_id_1" class="form-control" required>
+        <option value="">Selecciona una carrera</option>
+        {% for carrera in carreras %}
+          <option value="{{ carrera.id }}" {% if carrera.id == carrera_id_1 %}selected{% endif %}>{{ carrera.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-5">
+      <label for="carrera_id_2">Carrera 2:</label>
+      <select name="carrera_id_2" id="carrera_id_2" class="form-control" required>
+        <option value="">Selecciona una carrera</option>
+        {% for carrera in carreras %}
+          <option value="{{ carrera.id }}" {% if carrera.id == carrera_id_2 %}selected{% endif %}>{{ carrera.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2 d-flex align-items-end">
+      <button type="submit" class="btn btn-primary w-100">Comparar</button>
+    </div>
+  </form>
+
+  {% if comparacion %}
+    <table class="table table-bordered">
+      <thead class="bg-primary text-white">
+        <tr>
+          <th>Carrera</th>
+          <th>Alumnos Inscritos</th>
+          <th>Egresados</th>
+          <th>Promedio General</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in comparacion %}
+        <tr>
+          <td>{{ item.nombre }}</td>
+          <td>{{ item.total_alumnos }}</td>
+          <td>{{ item.egresados }}</td>
+          <td>{{ item.promedio }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="text-center mt-4">
+        <a href="{{ url_for('academic_bp.descargar_pdf_comparacion', carrera_id_1=carrera_id_1, carrera_id_2=carrera_id_2) }}" class="btn btn-primary">
+            <i class="fas fa-file-pdf"></i> Descargar PDF
+          </a>          
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

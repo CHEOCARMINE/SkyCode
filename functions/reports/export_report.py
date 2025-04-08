@@ -474,3 +474,112 @@ def generar_pdf_reporte_carrera(data):
     pdf_path = os.path.join(report_dir, "reporte_por_carrera.pdf")
     pdf.output(pdf_path)
     return pdf_path
+
+# ------------------------------------------------------------
+# Route para descargar el reporte de comparar en PDF
+# ------------------------------------------------------------
+
+class PDFComparacion(FPDF):
+    def header(self):
+        self.set_font("Arial", "B", 16)
+        self.set_fill_color(44, 62, 80)  # Azul oscuro
+        self.set_text_color(255, 255, 255)
+        self.cell(0, 10, "Comparación de Estadísticas Académicas", 0, 1, 'C', fill=True)
+        self.ln(5)
+
+    def footer(self):
+        self.set_y(-15)
+        self.set_font("Arial", "I", 10)
+        self.set_text_color(128, 128, 128)
+        self.cell(0, 10, f"Página {self.page_no()} / {{nb}}", align='C')
+
+# Función para generar la gráfica
+def generar_grafico_comparacion(data):
+    categorias = ["Inscritos", "Egresados", "Promedio"]
+    valores1 = [
+        data[0]["total_alumnos"],
+        data[0]["total_egresados"],
+        float(data[0]["promedio"]) if data[0]["promedio"] != "" else 0
+    ]
+    valores2 = [
+        data[1]["total_alumnos"],
+        data[1]["total_egresados"],
+        float(data[1]["promedio"]) if data[1]["promedio"] != "" else 0
+    ]
+
+    x = range(len(categorias))
+    width = 0.35
+
+    plt.figure(figsize=(8, 5))
+    plt.bar([i - width/2 for i in x], valores1, width=width, label=data[0]["nombre"])
+    plt.bar([i + width/2 for i in x], valores2, width=width, label=data[1]["nombre"])
+    plt.xticks(x, categorias)
+    plt.ylabel("Valores")
+    plt.title("Comparación por Carrera")
+    plt.legend()
+    plt.tight_layout()
+
+    path_img = "static/reports/grafico_comparacion.png"
+    plt.savefig(path_img)
+    plt.close()
+    return path_img
+
+# Función para generar el PDF final
+def generar_pdf_comparacion_estadisticas(data, carrera_id_1, carrera_id_2):
+    ruta_carpeta = "static/reports"
+    if not os.path.exists(ruta_carpeta):
+        os.makedirs(ruta_carpeta)
+
+    ruta_pdf = os.path.join(ruta_carpeta, "comparacion_estadisticas.pdf")
+
+    carrera1 = data[0]["nombre"]
+    carrera2 = data[1]["nombre"]
+
+    # Generar gráfico
+    path_grafico = generar_grafico_comparacion(data)
+
+    # Crear el PDF
+    pdf = PDFComparacion()
+    pdf.alias_nb_pages()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+
+    # Encabezado
+    pdf.set_font("Arial", "B", 12)
+    pdf.cell(0, 10, f"Comparación entre: {carrera1} y {carrera2}", ln=True)
+    pdf.ln(5)
+
+    # Tabla de comparación
+    pdf.set_font("Arial", "B", 11)
+    pdf.cell(60, 10, "Métrica", 1)
+    pdf.cell(65, 10, carrera1, 1)
+    pdf.cell(65, 10, carrera2, 1)
+    pdf.ln()
+
+    pdf.set_font("Arial", size=11)
+    pdf.cell(60, 10, "Alumnos Inscritos", 1)
+    pdf.cell(65, 10, str(data[0]["total_alumnos"]), 1)
+    pdf.cell(65, 10, str(data[1]["total_alumnos"]), 1)
+    pdf.ln()
+
+    pdf.cell(60, 10, "Egresados", 1)
+    pdf.cell(65, 10, str(data[0]["total_egresados"]), 1)
+    pdf.cell(65, 10, str(data[1]["total_egresados"]), 1)
+    pdf.ln()
+
+    promedio1 = data[0]["promedio"] if data[0]["promedio"] != "" else "N/A"
+    promedio2 = data[1]["promedio"] if data[1]["promedio"] != "" else "N/A"
+    pdf.cell(60, 10, "Promedio General", 1)
+    pdf.cell(65, 10, str(promedio1), 1)
+    pdf.cell(65, 10, str(promedio2), 1)
+    pdf.ln(15)
+
+    # Agregar gráfica si existe
+    if os.path.exists(path_grafico):
+        pdf.set_font("Arial", "B", 12)
+        pdf.cell(0, 10, "Gráfico de Comparación", ln=True, align='C')
+        pdf.image(path_grafico, x=30, w=150)
+
+    # Guardar el PDF
+    pdf.output(ruta_pdf)
+    return ruta_pdf

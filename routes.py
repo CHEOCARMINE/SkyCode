@@ -24,6 +24,9 @@ from functions.reports.generate_group_report import generate_group_report
 from functions.reports.export_report import generar_pdf_reporte_grupo
 from functions.reports.generate_career_report import generate_career_report
 from functions.reports.export_report import generar_pdf_reporte_carrera
+from functions.reports.compare_statistics import comparar_estadisticas
+from functions.reports.export_report import generar_pdf_comparacion_estadisticas
+
 
 academic_bp = Blueprint('academic_bp', __name__)
 alumno_progress_bp = Blueprint('alumno_progress', __name__)
@@ -1008,3 +1011,39 @@ def descargar_pdf_carrera():
     datos = generate_career_report()
     pdf_path = generar_pdf_reporte_carrera(datos)
     return send_file(pdf_path, as_attachment=True)
+
+
+
+
+
+# Vista para comparar estadísticas entre dos carreras
+@academic_bp.route('/comparar_estadisticas')
+@login_required
+def comparar_estadisticas_route():
+    if current_user.rol_id != 3:
+        flash("No tienes permisos para acceder a esta sección.", "danger")
+        return redirect(url_for('academic_bp.index'))
+
+    carrera_id_1 = request.args.get('carrera_id_1', type=int)
+    carrera_id_2 = request.args.get('carrera_id_2', type=int)
+
+    carreras = Carrera.query.all()
+    comparacion = None
+
+    if carrera_id_1 and carrera_id_2:
+        comparacion = comparar_estadisticas(carrera_id_1, carrera_id_2)
+
+    return render_template('comparar_estadisticas.html',
+                           carreras=carreras,
+                           carrera_id_1=carrera_id_1,
+                           carrera_id_2=carrera_id_2,
+                           comparacion=comparacion)
+
+# Ruta para descargar el PDF de la comparación
+@academic_bp.route('/comparar_estadisticas/pdf/<int:carrera_id_1>/<int:carrera_id_2>')
+@login_required
+def descargar_pdf_comparacion(carrera_id_1, carrera_id_2):
+    comparacion = comparar_estadisticas(carrera_id_1, carrera_id_2)
+    pdf_path = generar_pdf_comparacion_estadisticas(comparacion, carrera_id_1, carrera_id_2)
+    return send_file(pdf_path, as_attachment=True)
+
