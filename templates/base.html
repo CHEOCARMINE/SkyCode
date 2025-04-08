@@ -96,43 +96,95 @@
       <div class="sidebar-heading">
         Directivo
       </div>
-      <!-- Link para registro de Coordinador/Directivo -->
+      <!-- Divisor -->
+      <hr class="sidebar-divider">
+
+      <!-- Encabezado -->
+      <div class="sidebar-heading">
+        Registros
+      </div>
+
+            <!-- Link para registro de Coordinador/Directivo -->
       <li class="nav-item">
         <a class="nav-link" href="{{ url_for('academic_bp.register_user_route') }}">
           <i class="fas fa-fw fa-user-plus"></i>
           <span>Registro de Coordinador/Directivo</span>
         </a>
       </li>
-            <!-- Link para registro de Docente -->
-<li class="nav-item">
-  <a class="nav-link" href="{{ url_for('docentes_bp.registrar_docente') }}">
-    <i class="fas fa-fw fa-user-plus"></i> <!-- Ícono para agregar un usuario -->
-    <span>Registro de Docente</span>
-  </a>
-</li>
 
-      <!-- Link para registro de Coordinador/Directivo -->
+            <!-- Link para registro de Docente -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('docentes_bp.registrar_docente') }}">
+          <i class="fas fa-fw fa-user-plus"></i> <!-- Ícono para agregar un usuario -->
+          <span>Registro de Docente</span>
+        </a>
+      </li>
+
+            <!-- Link para gestión de cuatrimestres, visible solo para Directivos -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('academic_bp.listar_cuatrimestres') }}">
+          <i class="fas fa-fw fa-calendar"></i> <!-- Ícono de calendario para cuatrimestres -->
+          <span>Gestión de Cuatrimestres</span>
+        </a>
+      </li>
+
+      <!-- Divisor -->
+      <hr class="sidebar-divider">
+
+      <!-- Encabezado -->
+      <div class="sidebar-heading">
+        Listas
+      </div>
+
+            <!-- Link para Lista de Coordinador/Directivo -->
       <li class="nav-item">
         <a class="nav-link" href="{{ url_for('academic_bp.coordinadores_directivos') }}">
           <i class="fas fa-users-cog"></i>
           <span>Lista de Coordinadores/Directivos</span>
         </a>
       </li>
-      <!-- Opción para ver reportes -->
+
+            <!-- Link para Lista de Docentes Solo para Directivos -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('docentes_bp.listar_docentes') }}">
+          <i class="fas fa-fw fa-user-tie"></i>
+          <span>Lista de Docentes</span>
+        </a>
+      </li>
+
+            <!-- Link para ver la relación de Docentes y Materias Solo para Directivos -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('docentes_bp.ver_docentes_materias') }}">
+          <i class="fas fa-fw fa-book-open"></i> 
+          <span>Docentes y Materias</span>
+        </a>
+      </li>
+
+      <!-- Divisor -->
+      <hr class="sidebar-divider">
+
+      <!-- Encabezado -->
+      <div class="sidebar-heading">
+        Reportes
+      </div>
+
+            <!-- Opción para ver reportes -->
       <li class="nav-item">
         <a class="nav-link" href="{{ url_for('reports_bp.mostrar_reportes') }}">
           <i class="fas fa-chart-bar"></i>
           <span>Reportes Estadisticos</span>
         </a>
       </li>
-      <!-- Opción para ver reportes por materia -->
+
+            <!-- Opción para ver reportes por materia -->
       <li class="nav-item">
         <a class="nav-link" href="{{ url_for('academic_bp.reporte_por_materia') }}">
           <i class="fas fa-book"></i>
           <span>Reporte por Materia</span>
         </a>
       </li>
-     <!-- Opción para ver reportes por alumno -->
+
+            <!-- Opción para ver reportes por alumno -->
       <li class="nav-item">
         <a class="nav-link" href="{{ url_for('academic_bp.reporte_por_alumno') }}">
           <i class="fas fa-user-graduate"></i>
@@ -140,62 +192,37 @@
         </a>
       </li>
 
-        <!-- Opción para ver reportes por evaluación -->
-<li class="nav-item">
-  <a class="nav-link" href="{{ url_for('academic_bp.reporte_por_evaluacion') }}">
-    <i class="fas fa-clipboard-list"></i>
-    <span>Reporte por Evaluación</span>
-  </a>
-</li>
+            <!-- Opción para ver reportes por evaluación -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('academic_bp.reporte_por_evaluacion') }}">
+          <i class="fas fa-clipboard-list"></i>
+          <span>Reporte por Evaluación</span>
+        </a>
+      </li>
 
-<!-- Link para ver reporte por grupo -->
-<li class="nav-item">
-  <a class="nav-link" href="{{ url_for('academic_bp.reporte_por_grupo') }}">
-    <i class="fas fa-users"></i>
-    <span>Reporte por Grupo</span>
-  </a>
-</li>
+            <!-- Link para ver reporte por grupo -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('academic_bp.reporte_por_grupo') }}">
+          <i class="fas fa-users"></i>
+          <span>Reporte por Grupo</span>
+        </a>
+      </li>
 
-<!-- Link para ver reporte por carrera -->
-<li class="nav-item">
-  <a class="nav-link" href="{{ url_for('academic_bp.reporte_por_carrera') }}">
-    <i class="fas fa-graduation-cap"></i>
-    <span>Reporte por Carrera</span>
-  </a>
-</li>
+            <!-- Link para ver reporte por carrera -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('academic_bp.reporte_por_carrera') }}">
+          <i class="fas fa-graduation-cap"></i>
+          <span>Reporte por Carrera</span>
+        </a>
+      </li>
 
-<!-- Link para ver comparacion de estadisticas -->
-<li class="nav-item">
-  <a class="nav-link" href="{{ url_for('academic_bp.comparar_estadisticas_route') }}">
-    <i class="fas fa-balance-scale"></i>
-    <span>Comparar Carreras</span>
-  </a>
-</li>
-
-
-      <!-- Link para gestión de cuatrimestres, visible solo para Directivos -->
-<li class="nav-item">
-  <a class="nav-link" href="{{ url_for('academic_bp.listar_cuatrimestres') }}">
-    <i class="fas fa-fw fa-calendar"></i> <!-- Ícono de calendario para cuatrimestres -->
-    <span>Gestión de Cuatrimestres</span>
-  </a>
-</li>
-<!-- Link para gestión de Docentes Solo para Directivos -->
-<li class="nav-item">
-  <a class="nav-link" href="{{ url_for('docentes_bp.listar_docentes') }}">
-    <i class="fas fa-fw fa-user-tie"></i>
-    <span>Gestión de Docentes</span>
-  </a>
-</li>
-
-
-<!-- Link para ver la relación de Docentes y Materias Solo para Directivos -->
-<li class="nav-item">
-  <a class="nav-link" href="{{ url_for('docentes_bp.ver_docentes_materias') }}">
-    <i class="fas fa-fw fa-book-open"></i> <!-- Ícono para docentes y materias -->
-    <span>Docentes y Materias</span>
-  </a>
-</li>
+            <!-- Link para ver comparacion de estadisticas -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('academic_bp.comparar_estadisticas_route') }}">
+          <i class="fas fa-balance-scale"></i>
+          <span>Comparar Carreras</span>
+        </a>
+      </li>
 
       {# Aquí puedes agregar enlaces específicos para Directivo #}
     {% endif %}
@@ -209,8 +236,6 @@
       </div>
     </ul>
     <!-- Fin de la barra lateral -->
-
-
 
     <!-- Contenedor del contenido principal -->
     <div id="content-wrapper" class="d-flex flex-column">
