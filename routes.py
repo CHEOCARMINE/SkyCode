@@ -795,17 +795,29 @@ def descargar_pdf_grupo():
     return send_file(pdf_path, as_attachment=True)
 
 #------------------------------
-#Route de los horarios
+# Route de los horarios
 #------------------------------
 @academic_bp.route('/horarios', methods=['GET'], endpoint='ver_horarios')
 @login_required
 def ver_horarios():
     if current_user.rol_id == 1:  # Alumnos
+        # Verifica y obtiene horarios del alumno actual
         horarios = obtener_horarios_por_matricula(current_user.matricula)
     elif current_user.rol_id in [2, 3]:  # Coordinadores o Directivos
+        # Obtiene la matrícula de la solicitud GET
         matricula = request.args.get('matricula')
+        if not matricula:
+            flash("Por favor, proporciona una matrícula válida.", "danger")
+            return redirect(url_for('academic_bp.index'))  # Redirige al inicio si no se da matrícula
+        
+        # Verifica y obtiene horarios de la matrícula proporcionada
         horarios = obtener_horarios_por_matricula(matricula)
+        if not horarios:
+            flash("No se encontraron horarios para la matrícula proporcionada.", "warning")
+            return redirect(url_for('academic_bp.index'))  # Redirige si no se encuentran horarios
     else:
         flash("No tienes permisos para acceder a los horarios.", "danger")
-        return redirect(url_for('academic_bp.index'))
+        return redirect(url_for('academic_bp.index'))  # Redirige en caso de falta de permisos
+    
+    # Renderiza la plantilla con los horarios obtenidos
     return render_template('horarios.html', horarios=horarios)

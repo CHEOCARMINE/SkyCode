@@ -246,4 +246,25 @@ class Coordinadores_Directivos(db.Model):
     def __repr__(self):
         return f"<Coordinadores_Directivos {self.primer_nombre} {self.primer_apellido}>"
     
+    from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
+from models import db
+
+from sqlalchemy import Column, Integer, String, ForeignKey, Time
+from sqlalchemy.orm import relationship
+from models import db
+
+class Horario(db.Model):
+    __tablename__ = 'horarios'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    alumno_id = Column(Integer, ForeignKey('alumnos.id'), nullable=False)
+    materia_id = Column(Integer, ForeignKey('materias.id'), nullable=False)
+    dia_semana = Column(String(10), nullable=False)  # Ejemplo: "Lunes"
+    hora_inicio = Column(Time, nullable=False)  # Usar Time para manejar horas
+    hora_fin = Column(Time, nullable=False)
+    salon = Column(String(50), nullable=True)  # Ejemplo: "Aula 101"
     
+    # Relaciones
+    alumno = relationship('Alumno', backref='horarios')  # Relación con Alumno
+    materia = relationship('Materia', backref='horarios')  # Relación con Materia
