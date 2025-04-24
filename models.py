@@ -1,5 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
+from sqlalchemy import Column, Integer, String, Time, Boolean, ForeignKey
+from sqlalchemy.orm import relationship
+from database import db  # Importa db desde database.py
+
+
 
 db = SQLAlchemy()
 
@@ -126,7 +131,7 @@ class Materia(db.Model):
     __tablename__ = "Materias"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(100), nullable=False)
-    crn = db.Column(db.String(50))
+    crn = db.Column(db.String(50), unique=True, index=True)  # Agrega index=True explícitamente
     codigo = db.Column(db.String(50))
     creditos = db.Column(db.Integer, nullable=False)
     correlativa_id = db.Column(db.Integer, db.ForeignKey("Materias.id"))
@@ -136,6 +141,9 @@ class Materia(db.Model):
 
     def __repr__(self):
         return f"<Materia {self.nombre}>"
+
+
+
 
 class PlanEstudios(db.Model):
     __tablename__ = "Plan_Estudios"
@@ -267,3 +275,33 @@ class DocenteMateria(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     docente_id = db.Column(db.Integer, db.ForeignKey('Docentes.id', ondelete='CASCADE'), nullable=False)
     materia_id = db.Column(db.Integer, db.ForeignKey('Materias.id', ondelete='CASCADE'), nullable=False)
+
+#Horario para Materia
+
+class Horario(db.Model):
+    __tablename__ = 'Horarios'  # Definir el nombre correcto de la tabla
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    alumno_id = Column(Integer, ForeignKey('Alumnos.id'), nullable=False)
+    crn = Column(String(10), ForeignKey('Materias.crn'), nullable=False)  # 'Materias' con M mayúscula
+    hora_inicio = Column(Time, nullable=False)  # Guarda la hora de inicio
+    hora_fin = Column(Time, nullable=False)  # Guarda la hora de fin
+    salon = Column(String(50), nullable=True)  # Ejemplo: "Aula 101"
+
+    # Días de la semana en los que hay clase
+    lunes = Column(Boolean, default=False)
+    martes = Column(Boolean, default=False)
+    miercoles = Column(Boolean, default=False)
+    jueves = Column(Boolean, default=False)
+    viernes = Column(Boolean, default=False)
+
+    # Relaciones
+   
+    materia = relationship('Materia', backref=db.backref('horarios', lazy=True))  # Relación con Materia
+
+    def __repr__(self):
+        # Genera una lista de los días en los que se tiene clase
+        dias = [dia for dia in ['lunes', 'martes', 'miercoles', 'jueves', 'viernes'] if getattr(self, dia)]
+        return f'<Horario {self.materia.nombre} - Días: {", ".join(dias)} - {self.hora_inicio} - {self.hora_fin}>'
+
+

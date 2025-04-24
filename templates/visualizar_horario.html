@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horario de Clases</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .table {
+            margin-top: 20px;
+        }
+        .header {
+            text-align: center;
+            font-size: 24px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="header">Horario de Clases</h1>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Hora</th>
+                <th>Lunes</th>
+                <th>Martes</th>
+                <th>Miércoles</th>
+                <th>Jueves</th>
+                <th>Viernes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Hora 08:00 - 09:00 -->
+            <tr>
+                <td>08:00 - 09:00</td>
+                <td>Ser Humano</td>
+                <td>Comunicación</td>
+                <td>Ética Profesional</td>
+                <td>Valores en lo Común</td>
+                <td>Matemáticas III</td>
+            </tr>
+            <!-- Hora 09:00 - 10:00 -->
+            <tr>
+                <td>09:00 - 10:00</td>
+                <td>Estadística</td>
+                <td>Responsabilidad Social</td>
+                <td>Matemáticas III</td>
+                <td>Probabilidad</td>
+                <td>Comunicación</td>
+            </tr>
+            <!-- Hora 10:00 - 11:00 -->
+            <tr>
+                <td>10:00 - 11:00</td>
+                <td>Ética Profesional</td>
+                <td>Nueva Materia</td>
+                <td>Estadística</td>
+                <td>Responsabilidad Social</td>
+                <td>Probabilidad</td>
+            </tr>
+            <!-- Hora 11:00 - 12:00 -->
+            <tr>
+                <td>11:00 - 12:00</td>
+                <td>Matemáticas III</td>
+                <td>Valores en lo Común</td>
+                <td>Ser Humano</td>
+                <td>Ética Profesional</td>
+                <td>Comunicación</td>
+            </tr>
+            <!-- Hora 12:00 - 01:00 -->
+            <tr>
+                <td>12:00 - 01:00</td>
+                <td>Probabilidad</td>
+                <td>Matemáticas III</td>
+                <td>Nueva Materia</td>
+                <td>Estadística</td>
+                <td>Responsabilidad Social</td>
+            </tr>
+            <!-- Hora 01:00 - 02:00 -->
+            <tr>
+                <td>01:00 - 02:00</td>
+                <td>Valores en lo Común</td>
+                <td>Probabilidad</td>
+                <td>Comunicación</td>
+                <td>Ser Humano</td>
+                <td>Matemáticas III</td>
+            </tr>
+            <!-- Hora 02:00 - 03:00 -->
+            <tr>
+                <td>02:00 - 03:00</td>
+                <td>Nueva Materia</td>
+                <td>Estadística</td>
+                <td>Responsabilidad Social</td>
+                <td>Probabilidad</td>
+                <td>Ética Profesional</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <button class="btn btn-primary" id="download">Descargar en PDF</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+    document.getElementById("download").addEventListener("click", function() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Añadir título
+        doc.setFontSize(20);
+        doc.text('Horario de Clases', 105, 20, { align: 'center' });
+
+        // Añadir la tabla
+        doc.autoTable({ 
+            html: '.table', 
+            startY: 30 
+        });
+
+        // Descargar el PDF
+        doc.save('horario_de_clases.pdf');
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscripción de Materias</title>
+</head>
+<body>
+    <h1>Inscripción de Materias</h1>
+    
+    {% if not resumen %}
+        <!-- Si no hay resumen, mostramos la selección de materias -->
+        <form method="POST">
+            <div>
+                <h3>Selecciona las materias que deseas inscribir:</h3>
+                {% for materia in materias %}
+                    <div>
+                        <input type="checkbox" name="materias" value="{{ materia.id }}" id="materia_{{ materia.id }}">
+                        <label for="materia_{{ materia.id }}">{{ materia.nombre }} - {{ materia.creditos }} créditos</label>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <button type="submit">Verificar Inscripción</button>
+        </form>
+
+    {% else %}
+        <!-- Si ya se seleccionaron las materias, mostramos el resumen -->
+        <h3>Materias seleccionadas:</h3>
+        <ul>
+            {% for materia in resumen %}
+                <li>{{ materia.nombre }} - {{ materia.creditos }} créditos</li>
+            {% endfor %}
+        </ul>
+
+        <h4>Total de Créditos: {{ total_creditos }}</h4>
+
+        <form method="POST" action="{{ url_for('confirmar_inscripcion') }}">
+            <button type="submit">Confirmar Inscripción</button>
+        </form>
+
+        <form method="GET" action="{{ url_for('inscribir_materias') }}">
+            <button type="submit">Volver a Seleccionar Materias</button>
+        </form>
+    {% endif %}
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</body>
+</html>

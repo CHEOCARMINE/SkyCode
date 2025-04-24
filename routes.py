@@ -1009,3 +1009,51 @@ def descargar_pdf_carrera():
     datos = generate_career_report()
     pdf_path = generar_pdf_reporte_carrera(datos)
     return send_file(pdf_path, as_attachment=True)
+
+#Validacion de choque de horarios
+
+def validar_choques_horarios(alumno_id, materias_seleccionadas):
+    """
+    Función que valida si las materias seleccionadas por el alumno tienen choques de horarios.
+    """
+    horarios_inscritos = set()
+
+    # Obtener las materias ya inscritas por el alumno
+    inscripciones = Inscripcion.query.filter_by(alumno_id=alumno_id).all()
+    for inscripcion in inscripciones:
+        materia = inscripcion.materia
+        for horario in materia.horarios:
+            horarios_inscritos.add((horario.dia, horario.hora_inicio, horario.hora_fin))
+
+    # Verificar si las materias seleccionadas tienen choques
+    for materia in materias_seleccionadas:
+        for horario in materia.horarios:
+            if (horario.dia, horario.hora_inicio, horario.hora_fin) in horarios_inscritos:
+                return False, f"Choque de horarios con la materia {materia.nombre}."
+    
+    return True, "No hay choques de horarios."
+
+#Validacion de correlativas 
+
+def validar_correlativas(alumno_id, materias_seleccionadas):
+    """
+    Valida que el alumno haya aprobado las materias correlativas antes de inscribirse.
+    """
+    materias_aprobadas = set()
+
+    # Obtener las materias aprobadas por el alumno
+    inscripciones = Inscripcion.query.filter_by(alumno_id=alumno_id).all()
+    for inscripcion in inscripciones:
+        if inscripcion.estado == 'aprobada':  # Solo consideramos las materias aprobadas
+            materias_aprobadas.add(inscripcion.materia.id)
+
+    # Verificar si el alumno ha aprobado las correlativas
+    for materia in materias_seleccionadas:
+        if materia.correlativa_id and materia.correlativa_id not in materias_aprobadas:
+            return False, f"Debe haber aprobado la materia correlativa {materia.correlativa.nombre} antes de inscribirse en {materia.nombre}."
+    
+    return True, "Correlativas válidas."
+
+
+
+#Asignar Horarios a Materias 
